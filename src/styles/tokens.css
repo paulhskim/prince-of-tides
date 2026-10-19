@@ -1,0 +1,218 @@
+/*
+ * Prince of Tides design tokens (Tailwind CSS v4, CSS-first config).
+ * Direction: quiet luxury, editorial, print-inspired. Mineral paper, ink, marsh neutrals, one accent.
+ * Import from src/app/globals.css AFTER `@import "tailwindcss";`:
+ *   @import "../styles/tokens.css";
+ * Spec, usage rules and banned patterns: docs/design-system.md
+ */
+
+@theme {
+  /* Restrict the palette: Tailwind's default colors are removed on purpose. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* ---------- Surfaces ---------- */
+  --color-paper: #ecece5;        /* page background: cool mineral paper (not cream) */
+  --color-sheet: #f6f6f1;        /* inputs, booking ledger, dialogs, lightbox caption bar */
+  --color-stone: #dfe0d6;        /* alternate band, photo placeholders, quote ledger total row */
+  --color-pluff: #2b2d27;        /* the one dark band (footer, arrival). Named for Lowcountry pluff mud */
+
+  /* ---------- Text ---------- */
+  --color-ink: #22241f;          /* body and headings: 13.20:1 on paper */
+  --color-ink-muted: #585b52;    /* secondary text, captions: 5.83:1 on paper */
+  --color-ink-faint: #73766c;    /* disabled text, large index numerals only (3.90:1, never small body text) */
+  --color-on-dark: #e7e8e0;      /* text on pluff: 11.29:1 */
+  --color-on-dark-muted: #a9ac9f;/* secondary on pluff: 6.03:1 */
+
+  /* ---------- The single accent: marsh ---------- */
+  --color-marsh: #475638;        /* primary action fill, selected dates, active links: 6.66:1 on paper */
+  --color-marsh-hover: #36432a;  /* hover/pressed */
+  --color-marsh-soft: #dce0d0;   /* in-range dates, selected row tint */
+
+  /* ---------- Rules ---------- */
+  --color-rule: #c6c8bc;         /* hairlines between content (decorative) */
+  --color-rule-strong: #7d8075;  /* input underlines/borders, calendar outlines: 3.39:1 on paper (UI min 3:1) */
+
+  /* ---------- Status (muted, never bright) ---------- */
+  --color-success: #3d5e3a;
+  --color-warning: #7a5410;
+  --color-danger: #9a3b2c;
+  --color-focus: #22241f;        /* focus ring is ink; on pluff use on-dark */
+
+  /* ---------- Type scale (fluid; min = mobile 360px, max = desktop 1280px+) ---------- */
+  --text-display: clamp(2.5rem, 1.55rem + 4.2vw, 4.75rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: clamp(2.125rem, 1.6rem + 2.4vw, 3.5rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.015em;
+  --text-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.625rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h3: clamp(1.3125rem, 1.2rem + 0.55vw, 1.625rem);
+  --text-h3--line-height: 1.22;
+  --text-quote: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+  --text-quote--line-height: 1.28;
+  --text-lead: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem);
+  --text-lead--line-height: 1.5;
+  --text-prose: 1.125rem;          /* serif reading text: intro, The Space, host letter, area guide */
+  --text-prose--line-height: 1.62;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.35;
+  --text-label--letter-spacing: 0.01em;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.02em;
+
+  /* ---------- Spacing additions (Tailwind 4px base stays) ---------- */
+  --spacing-gutter: clamp(1.25rem, 0.6rem + 2.8vw, 3rem);   /* page side margin */
+  --spacing-col: clamp(1rem, 0.6rem + 1.6vw, 2rem);         /* grid column gap */
+  --spacing-section-lg: clamp(5rem, 3.5rem + 6vw, 9rem);     /* "opening" sections */
+  --spacing-section: clamp(3.5rem, 2.5rem + 4vw, 6rem);      /* standard */
+  --spacing-section-sm: clamp(2.5rem, 2rem + 2vw, 3.5rem);   /* dense, ledger-like sections */
+
+  /* ---------- Containers ---------- */
+  --container-measure: 36rem;  /* 576px, editorial text column (~68 characters) */
+  --container-page: 80rem;     /* 1280px, 12-col grid max */
+  --container-bleed: 100rem;   /* 1600px, gallery and hero max */
+
+  /* ---------- Radii: near zero by policy ---------- */
+  --radius-none: 0;
+  --radius-hair: 1px;          /* only for focus outline smoothing and checkbox boxes */
+  --radius-round: 9999px;      /* only for the guest stepper +/- circles and radio dots */
+
+  /* ---------- Shadow: one, for overlays only ---------- */
+  --shadow-overlay: 0 18px 40px -16px rgb(34 36 31 / 0.28);
+
+  /* ---------- Motion ---------- */
+  --ease-quiet: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
+}
+
+/* Fonts reference CSS variables set by next/font on <html> (see layout.tsx spec). */
+@theme inline {
+  --font-serif: var(--font-serif-family), "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-sans-family), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-serif-family), "Iowan Old Style", Georgia, serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem; /* clears the sticky masthead for anchor jumps */
+    font-feature-settings: "kern" 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-optical-sizing: auto;
+    color: inherit;
+    text-wrap: balance;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: var(--color-rule-strong);
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* Figures in prices, dates, ledgers always align. */
+  table,
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  [data-surface="dark"] :focus-visible {
+    outline-color: var(--color-on-dark);
+  }
+
+  ::selection {
+    background-color: var(--color-marsh-soft);
+    color: var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/*
+ * Photo placeholder until owner photos arrive: flat stone field, hairline frame,
+ * caption set in the corner by the component. No gradients, no patterns, no stock.
+ */
+@utility photo-placeholder {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-stone);
+  box-shadow: inset 0 0 0 1px var(--color-rule);
+}
+
+/* Hairline rule utilities for ledger layouts. */
+@utility rule-top {
+  border-top: 1px solid var(--color-rule);
+}
+
+@utility rule-top-ink {
+  border-top: 1px solid var(--color-ink);
+}

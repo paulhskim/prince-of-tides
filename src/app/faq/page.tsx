@@ -1,0 +1,84 @@
+import { JsonLd } from "@/components/seo/JsonLd";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { faqPageSchema, pageBreadcrumb } from "@/lib/seo/schema";
+import Link from "next/link";
+import { Accordion } from "@/components/site/Accordion";
+import { faqAnswer, faqId } from "@/components/site/faq-data";
+import { Grid } from "@/components/site/layout";
+import { frame } from "@/components/site/text";
+import { hero } from "@/content/copy";
+import { faq, type FaqCategory } from "@/content/faq";
+
+export const metadata = pageMetadata("faq");
+
+function slug(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+export default function FaqPage() {
+  const categories = Array.from(new Set(faq.map((f) => f.category))) as FaqCategory[];
+  return (
+    <>
+      <JsonLd data={[faqPageSchema(faq, faqAnswer), pageBreadcrumb("faq")]} />
+      <header className="pb-section-sm pt-10 lg:pt-16">
+        <Grid>
+          <p className="col-span-4 mb-3 text-label text-ink-muted md:col-span-8 lg:col-span-3 lg:mb-0">{hero.eyebrow}</p>
+          <div className="col-span-4 md:col-span-8 lg:col-span-8 lg:col-start-4">
+            <h1 className="text-h1">Questions</h1>
+            <nav aria-label="Question groups" className="mt-8">
+              <ol className="grid gap-x-col border-t border-ink text-small sm:grid-cols-2 lg:grid-cols-3">
+                {categories.map((c, i) => (
+                  <li key={c} className="border-b border-rule">
+                    <a href={`#${slug(c)}`} className="grid min-h-11 grid-cols-[2.25rem_1fr_auto] items-center no-underline hover:underline">
+                      <span className="text-caption text-ink-muted tabular">{frame(i + 1)}</span>
+                      <span>{c}</span>
+                      <span className="text-caption text-ink-muted tabular">{faq.filter((f) => f.category === c).length}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </div>
+        </Grid>
+      </header>
+
+      <div className="pb-section">
+        {categories.map((c, i) => (
+          <section key={c} id={slug(c)} aria-labelledby={`${slug(c)}-title`} className="scroll-mt-20 py-section-sm">
+            <Grid>
+              <div className="col-span-4 mb-4 md:col-span-8 lg:sticky lg:top-36 lg:col-span-3 lg:mb-0 lg:self-start">
+                <span aria-hidden="true" className="block font-serif text-h3 leading-none text-ink-muted tabular">
+                  {frame(i + 1)}
+                </span>
+                <h2 id={`${slug(c)}-title`} className="mt-2 font-sans text-label font-medium">
+                  {c}
+                </h2>
+              </div>
+              <div className="col-span-4 md:col-span-8 lg:col-span-8 lg:col-start-4">
+                <Accordion
+                  items={faq
+                    .filter((f) => f.category === c)
+                    .map((f) => ({ id: faqId(f.q), question: f.q, answer: faqAnswer(f.a) }))}
+                />
+              </div>
+            </Grid>
+          </section>
+        ))}
+
+        <Grid className="mt-6">
+          <div className="col-span-4 flex flex-wrap items-center justify-between gap-4 border-t border-ink pt-5 md:col-span-8 lg:col-span-9 lg:col-start-4">
+            <Link href="/policies" className="inline-flex min-h-11 items-center">
+              Policies and house rules
+            </Link>
+            <Link
+              href="/#reserve"
+              className="inline-flex h-12 items-center bg-marsh px-6 font-medium text-sheet no-underline hover:bg-marsh-hover"
+            >
+              {hero.primaryCta.label}
+            </Link>
+          </div>
+        </Grid>
+      </div>
+    </>
+  );
+}

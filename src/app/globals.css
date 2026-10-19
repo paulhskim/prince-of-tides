@@ -1,26 +1,63 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Site-level additions (kept minimal). Tokens and base rules live in tokens.css.
+ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* The single orchestrated moment: the cover fades in, no translate. */
+@keyframes cover-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility cover-reveal {
+  animation: cover-in 420ms var(--ease-quiet) both;
+}
+
+@utility cover-reveal-late {
+  animation: cover-in 420ms var(--ease-quiet) 80ms both;
+}
+
+/* Amenity index: numbering continues across groups. */
+@utility index-counter {
+  counter-reset: provision;
+}
+
+@utility index-item {
+  counter-increment: provision;
+  &::before {
+    content: counter(provision, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    font-size: var(--text-caption);
+    letter-spacing: 0.02em;
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+}
+
+/* Hanging opening quotation mark for pull quotes. */
+@utility hang-quote {
+  text-indent: -0.42em;
+}
+
+/* Hide scrollbar on the mobile contact sheet strip while keeping it scrollable. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* On large screens the docked reservation bar sits under the masthead; anchors clear both. */
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 8.5rem;
+  }
 }
