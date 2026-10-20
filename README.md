@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prince of Tides
 
-## Getting Started
+Direct-booking website for Prince of Tides, a two-bedroom condo at Hilton Head Resort, Hilton Head Island, SC
+(Town STR permit 029008).
 
-First, run the development server:
+Next.js 15 (App Router), TypeScript, Tailwind CSS v4. Built to deploy on Vercel.
+
+## Run it locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install --include=dev
+NODE_ENV=development npm run dev     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+On a Mac where `NODE_ENV=production` is set globally, the `--include=dev` and `NODE_ENV=development` parts are
+required, or dev tools are skipped.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Before launch: what the owner fills in
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| What | Where |
+| --- | --- |
+| Nightly rates, cleaning fee, minimum nights, deposit (currently market-based placeholders, `isPlaceholder: true`) | `src/content/site.config.ts` |
+| Host name, email, phone, response time, Airbnb/Vrbo URLs | `src/content/site.config.ts` |
+| Host bio, fan question, beach-gear locker details (search `TODO_OWNER`) | `src/content/copy.ts` |
+| Infant rule (currently: not counted toward 6, max 2) | `src/lib/booking/schemas.ts` |
+| Photos (see naming guide) | `public/photos/README.txt`, `public/photos/manifest.json` |
+| Domain, email, storage, calendar and payment keys | `.env.local` (copy from `.env.example`) |
 
-## Learn More
+Photo rights: the current photos carry a "REsides 2025" watermark. Get the unwatermarked originals and written
+permission (or reshoot) before the site is public. Still needed: both bedrooms, both bathrooms, boardwalk/beach,
+indoor pool, building exterior. Google needs 8+ photos including a bedroom and a bathroom before the
+VacationRental structured data turns on.
 
-To learn more about Next.js, take a look at the following resources:
+## Booking phases
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Request to book (live now).** Guest picks dates, sees an estimate, sends a request. Nothing is charged. The
+   host confirms and invoices. Requests are emailed via Resend when `RESEND_API_KEY`, `EMAIL_FROM` and
+   `BOOKING_NOTIFY_EMAIL` are set, otherwise logged to the console.
+2. **Calendar sync (built, off).** Set `features.icalSync: true` and `AIRBNB_ICAL_URL` / `VRBO_ICAL_URL`. Import
+   `/api/calendar.ics?token=ICAL_EXPORT_TOKEN` into Airbnb and Vrbo so direct bookings block those calendars.
+3. **Instant booking with Stripe (built, off).** Set `features.stripeCheckout: true`, `booking.mode: "instant"`
+   and the Stripe keys. Needs a database first (see below).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Storage: the default file store under `data/` is for local development only. Vercel's filesystem is not
+persistent, so production needs the Postgres adapter described in `docs/booking-architecture.md`.
 
-## Deploy on Vercel
+## Launch checklist (from QA)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Set `NEXT_PUBLIC_SITE_URL` (sitemap and canonical links fall back to localhost otherwise).
+- Configure Resend and verify the sending domain.
+- Add a bot check (Cloudflare Turnstile) and a shared rate limit (the current one is per server instance).
+- Confirm Hilton Head STR compliance: permit number on all ads, 24/7 responsible contact, posted noise rules.
+- Confirm whether SC requires a real estate license for managing this property for pay.
+- Collect and remit the 10% combined accommodations taxes on direct bookings (see `docs/booking-ops.md`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Commands
+
+```bash
+npm run build                          # production build
+npm run lint
+npx tsc --noEmit
+npx tsx --test tests/**/*.test.ts      # unit tests
+npx playwright test                    # end-to-end (needs a running build; see playwright.config.ts)
+```
+
+## Docs
+
+| File | Contents |
+| --- | --- |
+| `docs/BRIEF.md` | Verified facts and hard rules for all copy |
+| `docs/creative-direction.md`, `docs/design-system.md`, `docs/ux-spec.md` | Art direction, tokens, layouts |
+| `docs/creative-review.md` | Creative director's AI-tells review and what changed |
+| `docs/brand-voice.md` | Voice and tone |
+| `docs/seo.md`, `docs/seo-implementation.md` | Keywords, structured data, Google/Airbnb policy research |
+| `docs/booking-ops.md` | Taxes, rate research, policies, compliance, operations checklist |
+| `docs/booking-architecture.md` | Booking system design, phases 1 to 3 |
+| `docs/qa-report.md` | QA findings and open items |

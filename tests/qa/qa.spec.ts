@@ -444,3 +444,70 @@ test.describe("content hard rules (rendered)", () => {
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   });
 });
+
+test.describe("owner photographs", () => {
+  test("gallery and home render real photos through next/image with manifest alt text", async ({ page, request }) => {
+    const manifest = JSON.parse(await (await request.get("/photos/manifest.json")).text()) as { file: string; alt: string }[];
+    test.skip(!manifest.length, "no photographs");
+    await page.goto("/gallery");
+    const thumbs = page.locator("button[aria-label^='Open photograph']");
+    expect(await thumbs.count()).toBe(manifest.length);
+    for (const m of manifest) await expect(page.locator(`button[aria-label$="${m.alt}"]`)).toHaveCount(1);
+    const imgs = await page.$$eval("main img", (els) =>
+      els.map((e) => ({ src: (e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src, sizes: e.getAttribute("sizes"), srcset: e.getAttribute("srcset") })),
+    );
+    for (const i of imgs) {
+      expect(i.src).toContain("/_next/image");
+      expect(i.sizes).toBeTruthy();
+      expect(i.srcset).toBeTruthy();
+    }
+    const res = await request.get(`/_next/image?url=${encodeURIComponent("/photos/" + manifest[0].file)}&w=1080&q=70`, { headers: { accept: "image/avif,image/webp,*/*" } });
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toMatch(/avif|webp/);
+  });
+
+  for (const vp of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`no layout shift while photos load at ${vp.width} (CLS < 0.05)`, async ({ page }) => {
+      await page.setViewportSize(vp);
+      for (const p of ["/", "/gallery"]) {
+        await page.goto(p);
+        await page.evaluate(async () => {
+          for (let y = 0; y < document.body.scrollHeight; y += window.innerHeight * 0.8) {
+            window.scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 120));
+          }
+        });
+        await page.waitForTimeout(500);
+        const cls = await page.evaluate(
+          () =>
+            new Promise<number>((resolve) => {
+              let total = 0;
+              new PerformanceObserver((list) => {
+                for (const e of list.getEntries() as unknown as { value: number; hadRecentInput: boolean }[]) if (!e.hadRecentInput) total += e.value;
+              }).observe({ type: "layout-shift", buffered: true });
+              setTimeout(() => resolve(total), 300);
+            }),
+        );
+        expect(cls, p).toBeLessThan(0.05);
+      }
+    });
+  }
+
+  test("photo frames keep their ratio (no stretched or collapsed images)", async ({ page }) => {
+    for (const w of [390, 1440]) {
+      await page.setViewportSize({ width: w, height: 900 });
+      for (const p of ["/", "/gallery"]) {
+        await page.goto(p);
+        const bad = await page.$$eval("main img", (els) =>
+          els
+            .map((e) => e.getBoundingClientRect())
+            .filter((r) => r.width > 0 && (r.height < 40 || r.width / r.height > 4 || r.height / r.width > 4)).length,
+        );
+        expect(bad, `${w} ${p}`).toBe(0);
+      }
+    }
+  });
+});
