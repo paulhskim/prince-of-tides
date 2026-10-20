@@ -8,13 +8,18 @@
  * original file afterwards, even when a test fails. Run against a server started from this directory.
  */
 import { test, expect, type Page, type Locator } from "@playwright/test";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { computeQuote } from "../../src/content/site.config";
 import { addDays, todayISO, formatLong, formatMoney, shiftMonthsKeepDay } from "../../src/lib/booking/dates";
 import { paymentSchedule, rateForNight, seasonRows } from "../../src/lib/booking/reserve";
 
-const BLOCKS_FILE = path.join(process.cwd(), "src", "lib", "booking", "blocked-dates.json");
+/**
+ * The server reads manual blocks from BLOCKED_DATES_FILE when set (src/lib/booking/availability.ts).
+ * Start the server and this suite with the same BLOCKED_DATES_FILE pointing at a private fixture, so
+ * other servers or agents sharing the repository's blocked-dates.json cannot race the seed.
+ */
+const BLOCKS_FILE = process.env.BLOCKED_DATES_FILE ?? path.join(process.cwd(), "src", "lib", "booking", "blocked-dates.json");
 const SCREENS = path.join(process.cwd(), ".screens", "reserve");
 
 const today = todayISO("America/New_York");
@@ -24,7 +29,7 @@ const BLOCK_END = addDays(today, 44);
 let original: string;
 
 test.beforeAll(() => {
-  original = readFileSync(BLOCKS_FILE, "utf8");
+  original = existsSync(BLOCKS_FILE) ? readFileSync(BLOCKS_FILE, "utf8") : "[]\n";
   const seeded = [...JSON.parse(original), { start: BLOCK_START, end: BLOCK_END, note: "e2e seed" }];
   writeFileSync(BLOCKS_FILE, JSON.stringify(seeded, null, 2) + "\n");
   mkdirSync(SCREENS, { recursive: true });

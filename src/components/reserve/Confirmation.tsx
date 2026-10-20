@@ -60,7 +60,7 @@ export function Confirmation({ data }: { data: ConfirmationData }) {
               Request received.
             </h1>
             <p className="col-span-4 max-w-measure font-serif text-lead oldstyle md:col-span-7 lg:col-span-4 lg:col-start-9 lg:self-end">
-              Thank you, {first}. Your request for {formatLong(data.checkIn)} to {formatLong(data.checkOut)} is with the host. A copy is on its way to {data.email}.
+              Thank you, {first}. Your request for {formatLong(data.checkIn)} to {formatLong(data.checkOut)} is with the host, who will reply to {data.email}.
             </p>
           </div>
         </div>

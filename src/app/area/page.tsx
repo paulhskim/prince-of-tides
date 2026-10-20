@@ -219,7 +219,7 @@ export default function AreaPage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link href="/reserve" className="btn btn-primary">
-              Check dates
+              Reserve
             </Link>
             <Link href="/credits" className="link-caps">
               Photography credits

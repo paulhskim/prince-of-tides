@@ -128,11 +128,11 @@ export const seo: SeoConfig = {
       ],
     },
     book: {
-      title: "Book Direct: Check Dates & Request",
+      title: "Reserve: Rates, Taxes & Request",
       useTemplate: true,
       description:
         "Pick your dates, see an estimated quote and request your stay at Prince of Tides, a 2BR condo at Hilton Head Resort. Book direct with the host.",
-      path: "/book",
+      path: "/reserve",
       keywords: [
         "book direct Hilton Head",
         "Hilton Head condo book direct",
