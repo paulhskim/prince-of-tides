@@ -29,7 +29,7 @@ function BedSchematic({ room }: { room: SleepingRoom }) {
       role="img"
       aria-label={`Schematic: ${description}, two people to a bed`}
       viewBox={`0 0 ${W} ${H}`}
-      className="block h-[clamp(7rem,5rem+6vw,9.5rem)] w-auto max-w-full"
+      className="mx-auto block h-[clamp(8.5rem,6rem+6vw,12rem)] w-auto max-w-full"
       preserveAspectRatio="xMinYMid meet"
     >
       {room.beds.map((b) => {
@@ -147,7 +147,7 @@ export function Rooms() {
   const totalBeds = sleeping.rooms.reduce((n, r) => n + r.beds.length, 0);
 
   return (
-    <section id="rooms" aria-labelledby="rooms-title" className="pb-section-sm pt-section">
+    <section id="rooms" aria-labelledby="rooms-title" className="pb-section-sm pt-section-sm lg:pt-section">
       <Grid className="gap-y-6">
         <div className="col-span-4 md:col-span-8 lg:col-span-12 lg:grid lg:grid-cols-12 lg:gap-x-col">
           <SectionTitle id="rooms-title" numeral={numeral} className="lg:col-span-5">

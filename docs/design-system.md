@@ -336,15 +336,18 @@ cols 1-3: label (text-label, ink-muted)   cols 4-11: h2 (text-h2)
 - Lead is optional; set in `ink`, max 2 sentences.
 - Some sections omit the h2 and let the label plus content speak (amenities index, FAQ teaser) to vary hierarchy.
 
-### 8.5 Masthead (nav)
+### 8.5 Masthead (nav) (round 3: private-club IA)
 
-- Height 72px at top, 56px after 24px scroll. Always `bg-paper` (the cover is on paper, so "transparent over hero" equals paper with no hairline). On scroll: 1px `rule` bottom border appears.
-- Left: wordmark "Prince of Tides" in serif 20px (mobile 18px), links to `/`.
-- Center/right (lg+): sans `text-small` links: The residence, Resort and beach, Photographs, Area guide, Questions. Current section/route: 1px `marsh` underline 6px below baseline.
-- Far right: Primary sm button "Check availability" (scrolls to `#reserve` on home, links to `/book` elsewhere).
-- Desktop reservation bar (lg+, home only): once the cover leaves the viewport, a second 56px row slides in under the masthead (opacity, no movement under reduced motion): `Arrive [date] | Depart [date] | Guests [n] | [Check availability]`, cells separated by 1px rules, opens the calendar popover. See ux-spec section 3.
-- Mobile (below lg): wordmark left, "Menu" text button with `Menu` icon right. Drawer: full-screen `bg-paper` panel from the right (translateX, 360ms), links in serif `text-h3` stacked with hairlines, then contact line and permit number at the bottom. Focus trapped, Esc closes, body scroll locked, focus returns to the Menu button.
-- Skip link "Skip to content" is the first focusable element, visible on focus at top-left in `bg-ink text-paper`.
+Source of truth: `src/components/site/nav.ts` (`NAV`, `RESERVE`, `SECTION_OWNER`, `MORE`).
+
+- **Utility line** (lg+, above the main row, folds away after 24px of scroll and becomes inert): small capitals in muted ink, "Hilton Head Resort, mid-island · Reservations by request · Check-in 4 PM, check-out 10 AM" on the left; the secondary pages (Photographs, Area guide, Questions) on the right, `aria-current="page"` with a brass underline.
+- **Main row**: wordmark left; five plain section links in the order a guest asks, each with its chapter numeral in brass italic (the same numeral the section carries on the page):
+  I The Residence `/#residence`, II The Rooms `/#rooms`, III Privileges `/#privileges`, IV The Island `/#island`, V Rates `/#rates`.
+  Current section (home only): the label gets a 1px brass underline 9px below the baseline and `aria-current="location"`; `SECTION_OWNER` maps sub-sections to their item (amenities to Rooms, beach to Privileges, day and seasons to Island).
+- **Reserve**: a separate outline button, "Reserve", to `/reserve`; hidden on `/reserve` and `/book`. It is the only action in the masthead.
+- **Mobile drawer**: the same five items, numbered, each with a one-line gloss ("Who sleeps where, room by room"), then a full-width primary "Reserve", the note "Reservations by request", then the secondary pages (Photographs, Area guide, Questions, Policies) in small capitals. Focus trapped, Esc closes, scroll locked, page inert, focus returns to Menu.
+- On the home cover the masthead sits on night (`bg-pluff`), and returns to paper on scroll or when the drawer is open.
+- Skip link "Skip to content" is the first focusable element.
 
 ### 8.6 Sticky mobile reservation bar (below lg)
 
@@ -527,3 +530,46 @@ Shoot on a clear morning (8 to 10 AM) and late afternoon; lights off unless need
 | 23 | Host portrait, natural light, plain background (optional) | Portrait | `host.jpg` |
 
 Export: JPEG or WebP, long edge 2400px, sRGB, under 1.5MB each; `next/image` handles resizing. Alt text drafts go in the photo manifest.
+
+## 10. Round 3: the private-club layer
+
+Direction (docs/round3-brief.md): the aesthetic and tone of a private resort, with zero false claims. No
+membership, exclusivity, staff or services are implied. The devices below are the honest ones.
+
+### 10.1 Home, in order
+Cover (night) / I The residence / II The rooms (sleeping arrangements, common rooms) and Provisions /
+III Guest privileges (stone band) and To the beach (with the EstateMap) / IV The island (night, credited
+area photographs), A day unhurried, The island through the year / Guests, in their words / V Rates
+(RateCard) / The arrival dossier (night) / Request a stay (inline form, links to `/reserve`).
+Numerals are reserved for the five nav chapters, so the masthead and the page always agree; sub-sections
+are unnumbered.
+
+### 10.2 Components
+- **Crest** (`Monogram.tsx`): the PT monogram inside a double ring with "PRINCE OF TIDES · HILTON HEAD
+  ISLAND · SOUTH CAROLINA" set on the ring. Decorative, `aria-hidden`, shown only at 88px or more (cover,
+  privileges card, footer). It carries no date or claim.
+- **Sleeping arrangements** (`home/Rooms.tsx`, data `sleeping` in `copy.ts`): a running head with the
+  summary, a three-figure line (bedrooms, beds, full baths), then one plate per bedroom: label, name,
+  a bed schematic, and a ledger (Beds, Bath, In the room, Suits). The schematic draws standard mattress
+  sizes to proportion from above, in a cream frame captioned "Beds to proportion. Not a floor plan."
+  It never draws walls, doors or windows; the real layout is not known. Both schematics share one
+  height so the king and the queen compare honestly. Common rooms follow with the owner photographs
+  shown whole at 3:2 (watermark untouched).
+- **Card of record** (`home/Privileges.tsx`): cream sheet in a double hairline frame, crest and "The
+  privileges of the resort", the resort amenities grouped by use. Food and drink are listed as
+  "purchased on site". The HOA footnote stays beside it.
+- **Island plates** (`home/Island.tsx`): every area photograph goes through the content agent's
+  `<CreditedPhoto>` with its caption and credit line, on night (`tone="dark"`). The running head says
+  "Photographs of Hilton Head Island, credited. Not the residence." The residence and resort are never
+  illustrated with area photographs.
+- **Timetable** (`home/Day.tsx`): hours as display figures with small-capital meridiem; a suggestion,
+  stated as such ("Nothing is arranged for you").
+- **Almanac** (`home/Seasons.tsx`): four columns, the season in the display italic.
+- **Rates** (`home/Rates.tsx`): the booking engineer's `<RateCard columns={2}>` on a cream sheet, then
+  "Reserving here" (the four true book-direct reasons) and one primary action to `/reserve`.
+
+### 10.3 Footer
+Crest, name, place and tagline; "The stay" mirrors the five nav items in order; "Plan" lists Reserve by
+request, The arrival dossier, Photographs, Area guide, Questions; the small print carries the permit,
+Policies and Credits (`/credits`).
+

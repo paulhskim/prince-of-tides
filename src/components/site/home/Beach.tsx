@@ -32,8 +32,8 @@ function shortName(name: string): string {
 }
 
 /**
- * V. To the beach: the honest trade-off, given the page's one large figure. The walk, in order, on
- * the left; the island by distance on the right (beaches, then errands and airports).
+ * To the beach (under III, privileges): the honest trade-off, given the page's one large figure. The
+ * walk on the left; the island by distance on the right (beaches, then errands and airports); the map.
  */
 export function Beach() {
   const { numeral, title } = splitHeading(beachAccess.heading);
@@ -66,16 +66,7 @@ export function Beach() {
 
           <p className="mt-8 max-w-measure font-serif text-prose oldstyle">{smart(beachAccess.body)}</p>
 
-          <h3 className="apparatus mt-12 border-b border-ink pb-2">An afternoon, in order</h3>
-          <ol>
-            {beachAccess.steps.map((s, i) => (
-              <li key={s} className="grid grid-cols-[2.25rem_1fr] border-b border-rule py-3.5">
-                <span className="font-serif text-body italic text-brass">{i + 1}</span>
-                <span className="font-serif text-prose leading-snug oldstyle">{smart(s)}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-3 text-caption text-ink-muted">{beachAccess.footnote}</p>
+          <p className="mt-6 max-w-measure border-t border-rule pt-3 text-caption text-ink-muted">{beachAccess.footnote}</p>
         </div>
 
         <div className="col-span-4 md:col-span-8 lg:col-span-4 lg:col-start-9 lg:pt-[clamp(4rem,2rem+3vw,6rem)]">

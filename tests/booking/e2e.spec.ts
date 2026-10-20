@@ -162,12 +162,14 @@ test("reserve: keyboard dates, rates on the calendar, folio equals computeQuote,
   expect(await page.locator("input").evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBe(0);
   await page.screenshot({ path: path.join(SCREENS, "confirmation-1440.png"), fullPage: true });
 
-  // Refresh keeps the confirmation (this browser's session copy); Back returns to the filled request.
-  await page.reload();
-  await expect(page.getByTestId("reserve-confirmation")).toBeVisible();
+  // Back returns to the filled request; Forward and a refresh show the confirmation again (session copy).
   await page.goBack();
   await expect(page.getByTestId("reserve-confirmation")).toHaveCount(0);
   await expect(page.getByLabel("Full name")).toHaveValue("Ada Lovelace");
+  await page.goForward();
+  await expect(page.getByTestId("reserve-confirmation")).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId("conf-ref")).toHaveText(/^POT-\d{4}-[A-Z0-9]{4}$/);
 });
 
 test("blocked nights cannot be selected; turnover on the block's first night is allowed", async ({ page, request }) => {

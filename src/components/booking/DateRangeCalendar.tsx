@@ -396,7 +396,7 @@ function DayCell({
             : "text-ink-faint";
   const hover = info.selectable && !info.selected ? "hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-ink" : "";
   return (
-    <td role="gridcell" aria-selected={info.selected || undefined} className="p-0">
+    <td role="gridcell" aria-selected={info.selected || undefined} className={`p-0 ${showRates ? "relative" : ""}`}>
       <button
         type="button"
         data-iso={info.iso}
@@ -407,8 +407,8 @@ function DayCell({
         data-rate={rate && rateVisible ? rate.nightly : undefined}
         onClick={() => onChoose(info)}
         onKeyDown={(e) => onKeyDown(e, info.iso)}
-        className={`relative flex w-full flex-col items-center justify-center font-serif text-[1rem] tabular transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-1 ${
-          showRates ? "h-[3.25rem] lg:h-14" : "h-11 lg:h-12"
+        className={`relative flex w-full justify-center font-serif text-[1rem] tabular transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-1 ${
+          showRates ? "h-[3.25rem] items-start pt-2 lg:h-14 lg:pt-2.5" : "h-11 items-center lg:h-12"
         } ${tone} ${hover} ${info.selectable ? "cursor-pointer" : "cursor-default"}`}
       >
         {seasonStart && <span aria-hidden="true" className={`absolute top-1.5 bottom-1.5 left-0 w-0.5 ${kind === "arrival" || kind === "departure" ? "bg-brass-light" : "bg-brass"}`} />}
@@ -418,25 +418,19 @@ function DayCell({
         >
           {Number(info.iso.slice(8, 10))}
         </span>
-        {showRates && (
-          <span
-            aria-hidden="true"
-            className={`mt-0.5 font-sans text-[0.6875rem] leading-none tracking-[0.01em] tabular ${
-              rateVisible
-                ? kind === "arrival"
-                  ? "text-sheet"
-                  : kind === "in-range"
-                    ? "text-ink"
-                    : info.selectable
-                      ? "text-ink-muted"
-                      : "text-ink-faint"
-                : "invisible"
-            }`}
-          >
-            {rate ? shortMoney(rate.nightly) : ""}
-          </span>
-        )}
       </button>
+      {/* The rate sits over the button but outside it (the button's name already carries it), so the
+          visible label of the control stays its date. Clicks pass through to the button. */}
+      {showRates && rateVisible && rate && (
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-x-0 bottom-2 text-center font-sans text-[0.6875rem] leading-none tracking-[0.01em] tabular lg:bottom-2.5 ${
+            kind === "arrival" ? "text-sheet" : kind === "in-range" ? "text-ink" : info.selectable ? "text-ink-muted" : "text-ink-faint"
+          }`}
+        >
+          {shortMoney(rate.nightly)}
+        </span>
+      )}
     </td>
   );
 }

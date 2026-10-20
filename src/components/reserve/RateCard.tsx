@@ -123,19 +123,19 @@ export function RateCard({
               </dd>
             </div>
           )}
-          <div className={`border-b ${rule} ${py}`}>
-            <div className="flex items-baseline justify-between gap-4">
-              <dt>Taxes on lodging and cleaning</dt>
-              <dd className="text-right tabular">{pct(combined)} combined</dd>
-            </div>
-            <ul className={`mt-1.5 space-y-1 text-caption ${muted}`}>
-              {pricing.taxes.map((t) => (
-                <li key={t.name} className="flex justify-between gap-4">
-                  <span>{t.name}</span>
-                  <span className="tabular">{pct(t.rate)}</span>
-                </li>
-              ))}
-            </ul>
+          <div className={`flex flex-wrap items-baseline justify-between gap-x-4 border-b ${rule} ${py}`}>
+            <dt>Taxes on lodging and cleaning</dt>
+            <dd className="text-right tabular">{pct(combined)} combined</dd>
+            <dd className="basis-full">
+              <ul className={`mt-1.5 space-y-1 text-caption ${muted}`}>
+                {pricing.taxes.map((t) => (
+                  <li key={t.name} className="flex justify-between gap-4">
+                    <span>{t.name}</span>
+                    <span className="tabular">{pct(t.rate)}</span>
+                  </li>
+                ))}
+              </ul>
+            </dd>
           </div>
           <div className={`flex items-baseline justify-between gap-4 border-b ${rule} ${py}`}>
             <dt>Refundable security deposit</dt>

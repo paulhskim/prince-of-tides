@@ -177,17 +177,19 @@ export function Masthead() {
                   <Link
                     href={item.href}
                     aria-current={current ? "location" : undefined}
-                    className="group inline-flex min-h-11 items-baseline gap-[0.45rem] no-underline"
+                    className="group inline-flex min-h-11 items-center no-underline"
                   >
-                    <span aria-hidden="true" className={`font-serif text-[0.8125rem] italic leading-none ${onNight ? "text-brass-light" : "text-brass"}`}>
-                      {roman(i + 1)}
-                    </span>
-                    <span
-                      className={`smallcaps decoration-1 underline-offset-[9px] transition-[text-decoration-color] duration-200 group-hover:underline ${
-                        onNight ? "decoration-brass-light" : "decoration-brass"
-                      } ${current ? "underline" : ""}`}
-                    >
-                      {item.label}
+                    <span className="inline-flex items-baseline gap-[0.45rem]">
+                      <span aria-hidden="true" className={`font-serif text-[0.8125rem] italic leading-none ${onNight ? "text-brass-light" : "text-brass"}`}>
+                        {roman(i + 1)}
+                      </span>
+                      <span
+                        className={`smallcaps decoration-1 underline-offset-[9px] transition-[text-decoration-color] duration-200 group-hover:underline ${
+                          onNight ? "decoration-brass-light" : "decoration-brass"
+                        } ${current ? "underline" : ""}`}
+                      >
+                        {item.label}
+                      </span>
                     </span>
                   </Link>
                 </li>
