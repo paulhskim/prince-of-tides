@@ -36,6 +36,49 @@ export function Monogram({ size = 40, className = "" }: { size?: number; classNa
   );
 }
 
+/**
+ * The crest: the monogram inside a double ring, with the name and the island set around it in
+ * spaced capitals, the way a club engraves its seal. Decorative; only ever shown at 96px or larger,
+ * where the ring lettering is legible. It carries no date and no claim, only the name and the place.
+ */
+export function Crest({ size = 128, className = "", id = "crest" }: { size?: number; className?: string; id?: string }) {
+  const path = `${id}-ring`;
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      width={size}
+      height={size}
+      viewBox="0 0 120 120"
+      className={`shrink-0 ${className}`}
+    >
+      <defs>
+        <path id={path} d="M60,60 m-48.5,0 a48.5,48.5 0 1,1 97,0 a48.5,48.5 0 1,1 -97,0" />
+      </defs>
+      <circle cx="60" cy="60" r="58.5" fill="none" stroke="currentColor" strokeOpacity="0.7" strokeWidth="0.6" />
+      <circle cx="60" cy="60" r="56.5" fill="none" stroke="currentColor" strokeOpacity="0.35" strokeWidth="0.4" />
+      <circle cx="60" cy="60" r="40" fill="none" stroke="currentColor" strokeOpacity="0.55" strokeWidth="0.6" />
+      <text
+        fontFamily="var(--font-sans)"
+        fontSize="6.4"
+        fontWeight="500"
+        letterSpacing="2.15"
+        fill="currentColor"
+      >
+        <textPath href={`#${path}`} startOffset="0">
+          PRINCE OF TIDES &#183; HILTON HEAD ISLAND &#183; SOUTH CAROLINA &#183;
+        </textPath>
+      </text>
+      <text x="51" y="69" textAnchor="middle" fontFamily="var(--font-serif)" fontStyle="italic" fontWeight="300" fontSize="30" fill="currentColor">
+        P
+      </text>
+      <text x="69" y="72" textAnchor="middle" fontFamily="var(--font-serif)" fontWeight="300" fontSize="30" fill="currentColor">
+        T
+      </text>
+    </svg>
+  );
+}
+
 /** Monogram and name, with the place set beneath in small capitals. */
 export function Wordmark({ onNight = false, onClick }: { onNight?: boolean; onClick?: () => void }) {
   return (

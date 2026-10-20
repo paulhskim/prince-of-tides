@@ -28,7 +28,7 @@ export function Testimony() {
   const basedOn = reviewsSection.ratingLabels.basedOn.replace("{{count}}", String(r.count)).replace("{{source}}", r.source);
 
   return (
-    <section id="reviews" aria-labelledby="reviews-title" className="pb-section-lg pt-section">
+    <section id="reviews" aria-labelledby="reviews-title" className="pb-section-sm pt-section">
       <Grid>
         <div className="col-span-4 border-t border-ink pt-5 md:col-span-8 lg:col-span-12">
           <SectionTitle id="reviews-title" numeral={numeral} tier="reference">

@@ -80,7 +80,7 @@ export function SuccessSummary({ id, initial, paid }: { id: string | null; initi
         ) : (
           <p className="mt-5 max-w-measure font-serif text-lead" data-testid="success-missing">
             This page confirms a booking request once one has been sent. If you sent one, the confirmation email holds your
-            reference. To send a request, <Link href="/book">choose your dates</Link>.
+            reference. To send a request, <Link href="/reserve">choose your dates</Link>.
           </p>
         )}
         {paid && !confirmed && (

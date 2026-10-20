@@ -64,7 +64,7 @@ export default function FaqPage() {
             <Link href="/policies" className="link-caps">
               Policies and house rules
             </Link>
-            <Link href="/#reserve" className="btn btn-primary min-h-13">
+            <Link href={hero.primaryCta.href} className="btn btn-primary min-h-13">
               {hero.primaryCta.label}
             </Link>
           </div>

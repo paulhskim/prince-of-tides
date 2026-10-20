@@ -1,35 +1,16 @@
-import Link from "next/link";
-import { ReservationForm } from "@/components/booking/ReservationForm";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { PageHeader } from "@/components/site/layout";
-import { pageMetadata } from "@/lib/seo/metadata";
-import { pageBreadcrumb } from "@/lib/seo/schema";
-import { booking as bookingCopy } from "@/content/copy";
-
-export const metadata = pageMetadata("book");
+import { permanentRedirect } from "next/navigation";
 
 /**
- * /book: focused request page (ux-spec 3.3), opened like a reservation letter: running head, the
- * title in the display cut, the terms in a sentence, then the four parts of the request beside the
- * reservation card. The form reads the stay from the query string on the client.
+ * /book is retired: the reservation page is /reserve. Permanent redirect (308), keeping the query
+ * string so links like /book?checkIn=...&checkOut=...&adults=2 open /reserve with the same stay.
  */
-export default function BookPage() {
-  return (
-    <>
-      <JsonLd data={pageBreadcrumb("book")} />
-      <PageHeader
-        eyebrow="Reservations"
-        folio={
-          <Link href="/" className="no-underline hover:underline">
-            Back to the residence
-          </Link>
-        }
-        title="Request a stay"
-        lead={bookingCopy.reassurance.body}
-      />
-      <div className="mx-auto max-w-page px-gutter pb-section">
-        <ReservationForm variant="page" />
-      </div>
-    </>
-  );
+export default async function BookPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
+  const qs = new URLSearchParams();
+  for (const [k, v] of Object.entries(sp)) {
+    if (Array.isArray(v)) for (const x of v) qs.append(k, x);
+    else if (v !== undefined) qs.append(k, v);
+  }
+  const query = qs.toString();
+  permanentRedirect(query ? `/reserve?${query}` : "/reserve");
 }

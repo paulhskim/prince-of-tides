@@ -196,8 +196,8 @@ export const hero: HeroCopy = {
   headline: "Rest, at the pace of the tide.",
   subhead:
     "Two bedrooms, two baths, inside a gated resort. A heated pool and steam room down the corridor. A boardwalk over the marsh to the sea.",
-  primaryCta: { label: "Request a stay", href: "#reserve" },
-  secondaryCta: { label: "See the rooms", href: "#the-space" },
+  primaryCta: { label: "Request a stay", href: "/reserve" },
+  secondaryCta: { label: "See the rooms", href: "#rooms" },
   trustBadges: [
     "Guest rating 9.2 / 10 on Vrbo",
     "24-hour gated resort",
@@ -326,8 +326,53 @@ export const theSpace: TheSpaceCopy = {
   ],
 };
 
+/**
+ * Sleeping arrangements: who sleeps where, stated once and plainly. Bed sizes and baths are verified
+ * facts (docs/BRIEF.md); "suits" is a suggestion, not a claim. No floor plan: the layout is not drawn.
+ */
+export type SleepingRoom = {
+  id: string;
+  name: string;
+  /** Beds, drawn in the schematic. Sleeps two each. */
+  beds: { size: "king" | "queen" | "full"; label: string }[];
+  sleeps: number;
+  bath: string;
+  features: string[];
+  suits: string;
+};
+
+export const sleeping: { heading: string; intro: string; rooms: SleepingRoom[]; summary: string; notes: string[] } = {
+  heading: "II. The Rooms",
+  intro: "Two bedrooms, two full baths, about 831 square feet. Six people sleep in three beds, and no one is on the sofa.",
+  rooms: [
+    {
+      id: "primary",
+      name: "The primary bedroom",
+      beds: [{ size: "king", label: "King" }],
+      sleeps: 2,
+      bath: "Ensuite bath: single vanity, shower and tub",
+      features: ["Smart TV", "Fresh linens and towels"],
+      suits: "A couple, or whoever organised the trip.",
+    },
+    {
+      id: "second",
+      name: "The second bedroom",
+      beds: [
+        { size: "queen", label: "Queen" },
+        { size: "full", label: "Full" },
+      ],
+      sleeps: 4,
+      bath: "Uses the hall bathroom: single vanity, shower and tub",
+      features: ["Smart TV", "Fresh linens and towels"],
+      suits: "Children, two friends, or a second couple who do not mind company.",
+    },
+  ],
+  summary: "1 king, 1 queen, 1 full. Two full bathrooms. Sleeps 6.",
+  notes: ["A pack 'n play travel crib is provided for an infant.", "Infants under 2 are not counted among the six."],
+};
+
 export const amenities: AmenitiesCopy = {
-  heading: "III. Provisions",
+  heading: "Provisions",
   intro: "What is here, and what is not.",
   groups: [
     {
@@ -388,9 +433,9 @@ export const amenities: AmenitiesCopy = {
 };
 
 export const resort: ResortCopy = {
-  heading: "IV. The Resort",
+  heading: "III. Guest Privileges",
   intro:
-    "Hilton Head Resort is a gated community with more amenities than a week can reasonably use. Building 3 sits beside the indoor atrium, which is to say near the warm water.",
+    "A stay at Prince of Tides comes with the run of Hilton Head Resort, a guard-gated community with more amenities than a week can reasonably use. Building 3 sits beside the indoor atrium, which is to say near the warm water.",
   features: [
     {
       icon: "Footprints",
@@ -448,7 +493,7 @@ export const resort: ResortCopy = {
 };
 
 export const beachAccess: BeachAccessCopy = {
-  heading: "V. To the Beach",
+  heading: "To the Beach",
   body: "The beach is 0.8 to 1.1 miles from the door. Most guests walk, by a private boardwalk raised over the salt marsh. It is, by some accounts, the best part of the day. In season, a complimentary shuttle will take you instead.",
   steps: [
     "Collect chairs and gear from your resort storage locker.",
@@ -463,7 +508,7 @@ export const beachAccess: BeachAccessCopy = {
 const reviewSource = "Verified guest via Vrbo/Expedia";
 
 export const reviewsSection: ReviewsSectionCopy = {
-  heading: "VI. Guests, in Their Words",
+  heading: "Guests, in Their Words",
   subhead: "Unedited, from our Vrbo/Expedia listing.",
   ratingSummary: {
     overall: 9.2,
@@ -520,8 +565,9 @@ export const reviewsSection: ReviewsSectionCopy = {
 };
 
 export const arrival: ArrivalCopy = {
-  heading: "VII. Before You Arrive",
-  intro: "A few notes, gathered from previous stays, so the first hour goes quietly.",
+  heading: "The Arrival Dossier",
+  intro:
+    "Notes gathered from previous stays, so the first hour goes quietly. The door code and the full address follow by email before you arrive.",
   items: [
     {
       title: "At the gate",
@@ -572,7 +618,7 @@ export const host: HostCopy = {
 export const bookingCta: BookingCtaCopy = {
   heading: "Request a stay",
   body: "Choose your dates and see an estimate. Send a request; nothing is charged. We confirm availability and the final figure ourselves.",
-  button: { label: "Request a stay", href: "#reserve" },
+  button: { label: "Request a stay", href: "/reserve" },
 };
 
 export const booking: BookingCopy = {

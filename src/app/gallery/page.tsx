@@ -72,7 +72,7 @@ export default function GalleryPage() {
         <Grid>
           <div className="col-span-full flex flex-wrap items-center justify-between gap-4 border-t border-rule pt-5">
             <p className="font-serif text-lead font-light italic">{hero.headline}</p>
-            <Link href="/#reserve" className="btn btn-primary min-h-13">
+            <Link href={hero.primaryCta.href} className="btn btn-primary min-h-13">
               {hero.primaryCta.label}
             </Link>
           </div>

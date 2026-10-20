@@ -3,23 +3,19 @@ import { ArrowUpRight } from "lucide-react";
 import { footer, hero } from "@/content/copy";
 import { siteConfig } from "@/content/site.config";
 import { Grid, NameSet } from "./layout";
-import { Monogram } from "./Monogram";
+import { Crest } from "./Monogram";
+import { NAV, RESERVE } from "./nav";
 import { isSet } from "./text";
 
-const STAY = [
-  { label: "The residence", href: "/#residence" },
-  { label: "Provisions", href: "/#amenities" },
-  { label: "The resort", href: "/#resort" },
-  { label: "To the beach", href: "/#beach" },
-  { label: "Photographs", href: "/gallery" },
-];
+/** The footer mirrors the masthead: the five sections in the same order, then the planning pages. */
+const STAY = NAV.map(({ label, href }) => ({ label, href }));
 
 const PLAN = [
-  { label: "Request a stay", href: "/#reserve" },
-  { label: "Before you arrive", href: "/#arrival" },
+  { label: "Reserve by request", href: RESERVE.href },
+  { label: "The arrival dossier", href: "/#arrival" },
+  { label: "Photographs", href: "/gallery" },
   { label: "Area guide", href: "/area" },
   { label: "Questions", href: "/faq" },
-  { label: "Policies", href: "/policies" },
 ];
 
 function Column({ title, links }: { title: string; links: { label: string; href: string }[] }) {
@@ -51,7 +47,7 @@ export function Footer() {
     <footer data-surface="dark" className="bg-pluff pb-10 pt-section text-on-dark [&_a]:decoration-on-dark-muted">
       <Grid className="gap-y-12">
         <div className="col-span-4 md:col-span-8 lg:col-span-4">
-          <Monogram size={56} className="text-brass-light" />
+          <Crest size={104} id="footer-crest" className="text-brass-light" />
           <p className="mt-6 font-serif text-[2.25rem] font-light leading-none tracking-[-0.02em]">
             <NameSet name={brand.name} />
           </p>
@@ -81,7 +77,7 @@ export function Footer() {
               </li>
             ) : null}
             <li>
-              <Link href="/#reserve">Send a request with your dates</Link>
+              <Link href={RESERVE.href}>Send a request with your dates</Link>
             </li>
           </ul>
           {listings.length ? (
@@ -114,6 +110,10 @@ export function Footer() {
               &copy; {year} {brand.name}.{" "}
               <Link href="/policies" className="text-on-dark-muted">
                 Policies
+              </Link>
+              {", "}
+              <Link href="/credits" className="text-on-dark-muted">
+                Credits
               </Link>
               <br />
               <span className="font-serif text-small italic">Set in Newsreader and Hanken Grotesk.</span>

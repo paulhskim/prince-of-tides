@@ -15,6 +15,7 @@ import {
   addDays,
   addMonths,
   diffDays,
+  formatMoney,
   formatMonth,
   monthStart,
   shiftMonthsKeepDay,
@@ -23,6 +24,7 @@ import {
 } from "@/lib/booking/dates";
 import { dayInfo, monthMatrix, selectDay, selectionHint, type DayInfo, type Selection } from "@/lib/booking/calendar";
 import { lastBookableDate } from "@/lib/booking/rules";
+import { isSeasonStart, rateForNight, seasonSpansInMonth } from "@/lib/booking/reserve";
 import { ChevronLeft, ChevronRight } from "./icons";
 import { useIsDesktop } from "./state";
 
@@ -55,6 +57,11 @@ export type DateRangeCalendarProps = {
   status?: "loading" | "ready" | "error";
   complete?: boolean;
   className?: string;
+  /**
+   * Show the nightly rate (getNightlyRate, the figure computeQuote uses) under each open date, season
+   * labels under each month and a brass mark where a new season begins. Used by /reserve.
+   */
+  showRates?: boolean;
 };
 
 export function minimumStaySummary(): string {
@@ -81,6 +88,7 @@ export function DateRangeCalendar({
   status = "ready",
   complete = true,
   className = "",
+  showRates = false,
 }: DateRangeCalendarProps) {
   const isDesktop = useIsDesktop();
   const shown = months ?? (isDesktop ? 2 : 1);
@@ -241,6 +249,7 @@ export function DateRangeCalendar({
               <h3 id={headingId} className="flex h-11 items-center pr-24 font-serif text-[1.5rem] font-light tracking-[-0.015em]" aria-live={i === 0 ? "polite" : undefined}>
                 {formatMonth(month)}
               </h3>
+              {showRates && <SeasonLine month={month} />}
               <table role="grid" aria-labelledby={headingId} className="mt-3 w-full table-fixed border-collapse">
                 <thead>
                   <tr>
@@ -264,6 +273,7 @@ export function DateRangeCalendar({
                             tabbable={iso === tabbable}
                             onChoose={choose}
                             onKeyDown={onKeyDown}
+                            showRates={showRates}
                           />
                         ) : (
                           <td key={`e${d}`} role="presentation" />
@@ -299,7 +309,14 @@ export function DateRangeCalendar({
           <span aria-hidden="true" className={`inline-block size-3.5 ${STRIKE} shadow-[inset_0_0_0_1px_var(--color-rule)]`} />
           Unavailable
         </span>
+        {showRates && (
+          <span className="inline-flex items-center gap-2">
+            <span aria-hidden="true" className="inline-block h-3.5 w-0.5 bg-brass" />
+            A new season begins
+          </span>
+        )}
       </div>
+      {showRates && <p className="mt-2 text-caption text-ink-muted">Figures under each date are the nightly rate for the night that begins that day, before cleaning and taxes.</p>}
       <p className="mt-2 text-caption text-ink-muted">{minimumStaySummary()}</p>
       {status === "loading" && <p className="mt-1 text-caption text-ink-muted">Checking the calendar.</p>}
       {(status === "error" || !complete) && (
@@ -326,18 +343,47 @@ export function DateRangeCalendar({
   );
 }
 
+/** The seasons a month spans, e.g. "Late summer and fall to Oct 31, Late fall from Nov 1". */
+function SeasonLine({ month }: { month: ISODate }) {
+  const spans = seasonSpansInMonth(month);
+  const day = (iso: ISODate) => Number(iso.slice(8, 10));
+  const mon = formatMonth(month).split(" ")[0].slice(0, 3);
+  return (
+    <p className="-mt-1 min-h-[1.45em] text-caption text-ink-muted" data-testid="season-line">
+      {spans.length === 1
+        ? `${spans[0].season} season`
+        : spans.map((s, i) => (
+            <span key={s.from}>
+              {i > 0 ? ", then " : ""}
+              {s.season} {i === 0 ? `to ${mon} ${day(s.to)}` : `from ${mon} ${day(s.from)}`}
+            </span>
+          ))}
+    </p>
+  );
+}
+
+/** "$195": whole dollars for the calendar, where space is tight. */
+const shortMoney = (n: number) => formatMoney(n, { cents: false });
+
 function DayCell({
   info,
   tabbable,
   onChoose,
   onKeyDown,
+  showRates = false,
 }: {
   info: DayInfo;
   tabbable: boolean;
   onChoose: (info: DayInfo) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>, iso: ISODate) => void;
+  showRates?: boolean;
 }) {
   const { kind } = info;
+  // A rate is shown for nights a guest could still be charged for: open dates and the chosen nights.
+  const rateVisible = showRates && !info.struck && kind !== "past" && kind !== "beyond" && kind !== "departure";
+  const rate = showRates ? rateForNight(info.iso) : null;
+  const seasonStart = showRates && isSeasonStart(info.iso);
+  const label = rate && rateVisible ? `${info.label}, ${shortMoney(rate.nightly)} per night, ${rate.season}` : info.label;
   const tone =
     kind === "arrival" || kind === "departure"
       ? "bg-marsh text-sheet"
@@ -356,18 +402,40 @@ function DayCell({
         data-iso={info.iso}
         data-kind={kind}
         tabIndex={tabbable ? 0 : -1}
-        aria-label={info.label}
+        aria-label={label}
         aria-disabled={!info.selectable || undefined}
+        data-rate={rate && rateVisible ? rate.nightly : undefined}
         onClick={() => onChoose(info)}
         onKeyDown={(e) => onKeyDown(e, info.iso)}
-        className={`flex h-11 w-full items-center justify-center font-serif text-[1rem] tabular transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-1 lg:h-12 ${tone} ${hover} ${info.selectable ? "cursor-pointer" : "cursor-default"}`}
+        className={`relative flex w-full flex-col items-center justify-center font-serif text-[1rem] tabular transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-1 ${
+          showRates ? "h-[3.25rem] lg:h-14" : "h-11 lg:h-12"
+        } ${tone} ${hover} ${info.selectable ? "cursor-pointer" : "cursor-default"}`}
       >
+        {seasonStart && <span aria-hidden="true" className={`absolute top-1.5 bottom-1.5 left-0 w-0.5 ${kind === "arrival" || kind === "departure" ? "bg-brass-light" : "bg-brass"}`} />}
         <span
           aria-hidden="true"
-          className={`flex size-7 items-center justify-center ${info.struck ? STRIKE : ""} ${info.isToday ? "underline decoration-1 underline-offset-[3px]" : ""}`}
+          className={`flex items-center justify-center ${showRates ? "size-6" : "size-7"} ${info.struck ? STRIKE : ""} ${info.isToday ? "underline decoration-1 underline-offset-[3px]" : ""}`}
         >
           {Number(info.iso.slice(8, 10))}
         </span>
+        {showRates && (
+          <span
+            aria-hidden="true"
+            className={`mt-0.5 font-sans text-[0.6875rem] leading-none tracking-[0.01em] tabular ${
+              rateVisible
+                ? kind === "arrival"
+                  ? "text-sheet"
+                  : kind === "in-range"
+                    ? "text-ink"
+                    : info.selectable
+                      ? "text-ink-muted"
+                      : "text-ink-faint"
+                : "invisible"
+            }`}
+          >
+            {rate ? shortMoney(rate.nightly) : ""}
+          </span>
+        )}
       </button>
     </td>
   );

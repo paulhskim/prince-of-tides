@@ -69,9 +69,9 @@ export const areaGuide: AreaGuide = {
     "Distances and drive times are approximate and measured from Hilton Head Resort. Hours and prices change with the seasons, so check each website before you go.",
 
   intro: {
-    heading: "Mid-island, in the middle of it all",
+    heading: "The island, from the middle",
     body:
-      "Hilton Head Resort sits mid-island, a short drive from Shelter Cove, Palmetto Dunes and the town beach parks. Walk the marsh boardwalk to the sand in the morning, then pick a dinner spot within about 10 minutes of the gate. Here is our short list, checked for 2026.",
+      "Hilton Head Resort sits mid-island. The beach is a walk over the salt marsh, Shelter Cove is about 10 minutes away, and Harbour Town and the Pinckney Island refuge are 20 to 25. What follows is a short list, checked for 2026.",
   },
 
   categories: [

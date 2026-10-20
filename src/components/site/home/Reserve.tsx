@@ -15,13 +15,18 @@ export function Reserve() {
     <section id="reserve" aria-labelledby="reserve-title" className="pb-section pt-section">
       <Grid>
         <div className="col-span-4 md:col-span-8 lg:col-span-12">
-          <RunningHead left="Reservations" right="Nothing is charged today" />
+          <RunningHead left="Reservations, by request" right="Nothing is charged today" />
         </div>
         <div className="col-span-4 mt-10 md:col-span-8 lg:col-span-12 lg:mt-14 lg:grid lg:grid-cols-12 lg:gap-x-col">
           <h2 id="reserve-title" className="display-cut text-h1 lg:col-span-6">
             {bookingCta.heading}
           </h2>
-          <p className="mt-6 max-w-measure font-serif text-lead lg:col-span-5 lg:col-start-8 lg:mt-3">{bookingCta.body}</p>
+          <div className="mt-6 lg:col-span-5 lg:col-start-8 lg:mt-3">
+            <p className="max-w-measure font-serif text-lead">{bookingCta.body}</p>
+            <Link href={bookingCta.button.href} className="link-caps mt-3">
+              The full reservation page, with rates by night
+            </Link>
+          </div>
         </div>
 
         <div className="col-span-4 mt-10 md:col-span-8 lg:col-span-12 lg:mt-14">

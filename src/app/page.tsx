@@ -5,17 +5,25 @@ import { getPhotos } from "@/lib/photos";
 import { Amenities } from "@/components/site/home/Amenities";
 import { Arrival } from "@/components/site/home/Arrival";
 import { Beach } from "@/components/site/home/Beach";
-import { ContactSheet } from "@/components/site/home/ContactSheet";
 import { Cover } from "@/components/site/home/Cover";
+import { Day } from "@/components/site/home/Day";
 import { Host } from "@/components/site/home/Host";
+import { Island } from "@/components/site/home/Island";
+import { Privileges } from "@/components/site/home/Privileges";
+import { Rates } from "@/components/site/home/Rates";
 import { Reserve } from "@/components/site/home/Reserve";
 import { Residence } from "@/components/site/home/Residence";
-import { Resort } from "@/components/site/home/Resort";
-import { TheSpace } from "@/components/site/home/TheSpace";
+import { Rooms } from "@/components/site/home/Rooms";
+import { Seasons } from "@/components/site/home/Seasons";
 import { Testimony } from "@/components/site/home/Testimony";
 
 export const metadata = pageMetadata("home");
 
+/*
+ * The home page, in the order of the masthead: I residence, II rooms, III privileges, IV the beach,
+ * V the island (with a day and the seasons), the guests' words, VI rates, VII the arrival dossier,
+ * then the reservation itself. Night passages: the cover, the island, the arrival dossier, the footer.
+ */
 export default function Home() {
   return (
     <>
@@ -23,12 +31,15 @@ export default function Home() {
       {/* The cover carries the reservation bar (desktop) and mounts the fixed mobile bar. */}
       <Cover />
       <Residence />
-      <TheSpace />
-      <ContactSheet />
+      <Rooms />
       <Amenities />
-      <Resort />
+      <Privileges />
       <Beach />
+      <Island />
+      <Day />
+      <Seasons />
       <Testimony />
+      <Rates />
       <Host />
       <Arrival />
       <Reserve />

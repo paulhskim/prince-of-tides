@@ -9,8 +9,8 @@
  * scrolls away).
  *
  * Mobile (below lg): renders the fixed bottom bar (design-system 8.6) and the reservation sheet. It
- * appears after the first screen of scrolling and hides while #reserve, the footer, or /book and
- * /booking pages are on screen. Being position: fixed, it works wherever ReservationBar is mounted, as
+ * appears after the first screen of scrolling and hides while #reserve or the footer is on screen, and
+ * on /reserve, /book and /booking pages. Being position: fixed, it works wherever ReservationBar is mounted, as
  * long as no ancestor sets transform/filter.
  */
 import { useCallback, useEffect, useId, useRef, useState } from "react";
@@ -80,7 +80,7 @@ function DesktopBar() {
 
   function requestToBook() {
     if (ready) {
-      router.push(`/book?${stayToQuery(stay)}`);
+      router.push(`/reserve?${stayToQuery(stay)}`);
       return;
     }
     const reserve = document.getElementById("reserve");
@@ -88,7 +88,7 @@ function DesktopBar() {
       reserve.scrollIntoView({ block: "start" });
       reserve.querySelector<HTMLElement>('button[data-iso][tabindex="0"]')?.focus({ preventScroll: true });
     } else {
-      router.push(`/book?${stayToQuery(stay)}`);
+      router.push(`/reserve?${stayToQuery(stay)}`);
     }
   }
 
@@ -168,7 +168,8 @@ export function MobileReservationBar() {
   const [visible, setVisible] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const onBookingRoute = pathname?.startsWith("/book") ?? false; // covers /book and /booking/*
+  // Hidden on the reservation routes: /reserve, /book (redirects there) and /booking/*.
+  const onBookingRoute = (pathname?.startsWith("/book") || pathname?.startsWith("/reserve")) ?? false;
 
   useEffect(() => {
     if (onBookingRoute) return;

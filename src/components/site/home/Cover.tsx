@@ -2,6 +2,7 @@ import { ReservationBar } from "@/components/booking/ReservationBar";
 import { hero, particulars, reviewsSection } from "@/content/copy";
 import { getGalleryPhotos, photoFor } from "@/lib/photos";
 import { NameSet, RunningHead } from "../layout";
+import { Crest } from "../Monogram";
 import { Photo } from "../Photo";
 
 /**
@@ -19,7 +20,7 @@ export function Cover() {
     <section aria-labelledby="cover-title" className="relative pb-section-sm">
       <div data-surface="dark" className="bg-pluff text-on-dark">
         <div className="mx-auto max-w-page px-gutter pt-2 lg:pt-4">
-          <RunningHead tone="dark" left={hero.eyebrow} right="Building 3, Hilton Head Island, South Carolina" />
+          <RunningHead tone="dark" left="A privately kept residence at Hilton Head Resort" right="Building 3, Hilton Head Island, South Carolina" />
 
           <h1
             id="cover-title"
@@ -28,13 +29,18 @@ export function Cover() {
             <NameSet name="Prince of Tides" />
           </h1>
 
-          <div className="cover-reveal-late mt-6 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3 pb-8 lg:mt-9 lg:pb-14">
+          <div className="cover-reveal-late mt-6 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 pb-8 lg:mt-9 lg:pb-14">
             <p className="font-serif text-[clamp(1.375rem,1.1rem+1.1vw,2rem)] font-light italic leading-tight tracking-[-0.01em]">
               {hero.headline}
             </p>
-            <p className="smallcaps text-on-dark-muted">
-              Two bedrooms, two baths, sleeps {sleeps}
-            </p>
+            <div className="flex items-center gap-5">
+              <p className="smallcaps text-right leading-[1.9] text-on-dark-muted">
+                Two bedrooms, two baths
+                <br />
+                Sleeps {sleeps}, approx. 831 sq ft
+              </p>
+              <Crest size={96} id="cover-crest" className="hidden text-brass-light sm:block" />
+            </div>
           </div>
         </div>
       </div>
@@ -78,10 +84,10 @@ export function Cover() {
 
           {/* Below lg the reservation bar is a fixed bottom bar, so the cover carries the action. */}
           <div className="order-first col-span-4 md:col-span-8 lg:hidden">
-            <a href="#reserve" className="btn btn-primary h-14 w-full sm:w-auto">
+            <a href={hero.primaryCta.href} className="btn btn-primary h-14 w-full sm:w-auto">
               {hero.primaryCta.label}
             </a>
-            <p className="mt-3 text-caption text-ink-muted">Nothing is charged. We confirm the dates and send a quote.</p>
+            <p className="mt-3 text-caption text-ink-muted">By request. Nothing is charged; your host confirms the dates and the quote.</p>
           </div>
         </div>
 

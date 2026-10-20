@@ -42,7 +42,7 @@ export function ReservationSheet({
             onClick={() => {
               // Release the modal (and its scroll lock) before leaving the page.
               onClose();
-              router.push(`/book?${stayToQuery(stay)}`);
+              router.push(`/reserve?${stayToQuery(stay)}`);
             }}
             className="btn btn-primary flex h-14 w-full disabled:cursor-not-allowed disabled:bg-stone disabled:text-ink-faint"
           >

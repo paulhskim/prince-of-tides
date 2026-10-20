@@ -239,7 +239,7 @@ describe("hard rules in source", () => {
   const files = ["src", "public", "docs"].flatMap((d) => walk(path.join(ROOT, d)));
 
   test("no em dash anywhere in src, public, docs", () => {
-    const bad = files.filter((f) => readFileSync(f, "utf8").includes("—"));
+    const bad = files.filter((f) => readFileSync(f, "utf8").includes("\u2014"));
     assert.deepEqual(bad, []);
   });
 

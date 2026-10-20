@@ -11,7 +11,7 @@ import { formatMoney } from "../../src/lib/booking/dates";
 import { reviewsSection } from "../../src/content/copy";
 
 const today = todayISO("America/New_York");
-const PAGES = ["/", "/book", "/gallery", "/area", "/faq", "/policies", "/booking/success", "/does-not-exist"];
+const PAGES = ["/", "/reserve", "/gallery", "/area", "/faq", "/policies", "/booking/success", "/does-not-exist"];
 const WIDTHS = [360, 390, 768, 1024, 1440, 1920];
 
 test.beforeEach(async ({ page }) => {
@@ -71,7 +71,7 @@ test.describe("accessibility", () => {
     await page.getByTestId("mobile-reservation-bar").getByRole("button").click();
     await expect(page.getByRole("dialog", { name: "Your stay" })).toBeVisible();
     await check("sheet");
-    await page.goto("/book");
+    await page.goto("/reserve");
     await page.getByRole("link", { name: "house rules" }).click();
     await expect(page.getByRole("dialog", { name: "House rules" })).toBeVisible();
     await check("house rules");
@@ -122,7 +122,7 @@ test.describe("accessibility", () => {
   });
 
   test("focus is visible on interactive elements (keyboard)", async ({ page }) => {
-    await page.goto("/book");
+    await page.goto("/reserve");
     let checked = 0;
     for (let i = 0; i < 40; i++) {
       await page.keyboard.press("Tab");
@@ -170,11 +170,11 @@ test.describe("responsive", () => {
     expect(bad).toEqual([]);
   });
 
-  test("mobile: submit button on /book is not covered by fixed bars", async ({ page }) => {
+  test("mobile: submit button on /reserve is not covered by fixed bars", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 640 });
     const a = addDays(today, 70);
-    await page.goto(`/book?checkIn=${a}&checkOut=${addDays(a, 5)}`);
-    const submit = page.getByRole("button", { name: "Send request" });
+    await page.goto(`/reserve?checkIn=${a}&checkOut=${addDays(a, 5)}`);
+    const submit = page.getByRole("button", { name: "Request this reservation" });
     await submit.scrollIntoViewIfNeeded();
     const hit = await submit.evaluate((el) => {
       const r = el.getBoundingClientRect();
@@ -262,7 +262,7 @@ test.describe("navigation and links", () => {
   });
 
   test("house rules dialog returns focus to its link", async ({ page }) => {
-    await page.goto("/book");
+    await page.goto("/reserve");
     const link = page.getByRole("link", { name: "house rules" });
     await link.focus();
     await page.keyboard.press("Enter");
@@ -275,14 +275,14 @@ test.describe("navigation and links", () => {
 });
 
 test.describe("booking regressions", () => {
-  test("sheet -> /book releases the scroll lock (regression: /book could not scroll on mobile)", async ({ page }) => {
+  test("sheet -> /reserve releases the scroll lock (regression: /book could not scroll on mobile)", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const a = addDays(today, 70);
     await page.goto(`/?checkIn=${a}&checkOut=${addDays(a, 6)}&adults=2`);
     await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
     await page.getByTestId("mobile-reservation-bar").getByRole("button", { name: "Request these dates" }).click();
     await page.getByRole("dialog", { name: "Your stay" }).getByRole("button", { name: "Request these dates" }).click();
-    await page.waitForURL(/\/book\?/);
+    await page.waitForURL(/\/reserve\?/);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("");
     await page.mouse.wheel(0, 800);
@@ -293,17 +293,17 @@ test.describe("booking regressions", () => {
   });
 
   test("invalid prefill params are ignored, not quoted", async ({ page }) => {
-    await page.goto("/book?checkIn=2020-01-01&checkOut=2020-01-05&adults=999&children=-3&infants=abc");
+    await page.goto("/reserve?checkIn=2020-01-01&checkOut=2020-01-05&adults=999&children=-3&infants=abc");
     await expect(page.getByTestId("request-form").getByTestId("date-range-calendar")).toBeVisible();
-    await expect(page.locator("aside")).toContainText("Not set");
+    await expect(page.getByTestId("reserve-summary")).toContainText("Not set");
     await expect(page.getByTestId("adults-count").first()).toHaveText("6");
     await expect(page.getByTestId("infants-count").first()).toHaveText("0");
-    await page.goto("/book?checkIn=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E");
-    await expect(page.locator("aside")).toContainText("Not set");
+    await page.goto("/reserve?checkIn=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E");
+    await expect(page.getByTestId("reserve-summary")).toContainText("Not set");
   });
 
   test("guest limits: 6 counted guests, infants not counted, at most 2", async ({ page }) => {
-    await page.goto("/book");
+    await page.goto("/reserve");
     const form = page.getByTestId("request-form");
     for (let i = 0; i < 4; i++) await form.getByRole("button", { name: "Add adult" }).click(); // default is 2 adults
     await expect(form.getByTestId("adults-count")).toHaveText("6");
@@ -317,7 +317,7 @@ test.describe("booking regressions", () => {
 
   test("seasonal minimum nights: summer arrival cannot depart before 5 nights", async ({ page }) => {
     const a = arrivalWithMin(5);
-    await page.goto(`/book?checkIn=${a}`);
+    await page.goto(`/reserve?checkIn=${a}`);
     const cal = page.getByTestId("request-form").getByTestId("date-range-calendar");
     await expect(cal).toHaveAttribute("data-availability", "ready");
     await expect(page.getByTestId("calendar-hint")).toContainText("Choose a departure date");
@@ -327,16 +327,19 @@ test.describe("booking regressions", () => {
     await expect(ok).not.toHaveAttribute("aria-disabled", "true");
   });
 
-  test("quote in the ledger equals computeQuote", async ({ page }) => {
+  test("quote in the folio and summary equals computeQuote", async ({ page }) => {
     const a = arrivalWithMin(3, addDays(today, 60));
     const d = addDays(a, 8); // crosses the weekly discount
-    await page.goto(`/book?checkIn=${a}&checkOut=${d}&adults=2`);
-    await expect(page.locator("aside").getByTestId("quote-total")).toHaveText(formatMoney(computeQuote(a, d, 2).total));
+    await page.goto(`/reserve?checkIn=${a}&checkOut=${d}&adults=2`);
+    const q = computeQuote(a, d, 2);
+    await expect(page.getByTestId("summary-total")).toHaveText(formatMoney(q.total));
+    await expect(page.getByTestId("folio-total")).toHaveText(formatMoney(q.total));
+    await expect(page.getByTestId("folio-discount")).toContainText(formatMoney(q.discounts));
   });
 
-  test("keyboard-only request: fields, checkboxes, Enter to submit; success page has no PII for others", async ({ page, browser }) => {
+  test("keyboard-only request: fields, checkboxes, Enter to submit; confirmation has no PII for others", async ({ page, browser }) => {
     const a = arrivalWithMin(3, addDays(today, 90));
-    await page.goto(`/book?checkIn=${a}&checkOut=${addDays(a, 4)}`);
+    await page.goto(`/reserve?checkIn=${a}&checkOut=${addDays(a, 4)}`);
     await page.getByLabel("Full name").focus();
     await page.keyboard.type("Grace Hopper");
     await page.keyboard.press("Tab");
@@ -352,31 +355,32 @@ test.describe("booking regressions", () => {
     await expect(page.getByRole("checkbox", { name: /21 or older/ })).toBeChecked();
     await page.getByLabel("Phone").focus();
     await page.keyboard.press("Enter");
-    await page.waitForURL(/\/booking\/success\?id=/);
-    await expect(page.getByTestId("booking-success")).toContainText("grace@example.com");
+    await page.waitForURL(/\/reserve\?confirmed=/);
+    await expect(page.getByTestId("reserve-confirmation")).toContainText("grace@example.com");
     const url = page.url();
 
-    // Back: returns to the form; nothing is resubmitted.
+    // Back: returns to the filled form; nothing is resubmitted.
     await page.goBack();
-    await page.waitForURL(/\/book/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Request a stay");
+    await expect(page.getByTestId("reserve-confirmation")).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 1, name: "Reserve your stay" })).toBeVisible();
+    await expect(page.getByLabel("Full name")).toHaveValue("Grace Hopper");
 
-    // Someone else with the link (no sessionStorage) sees no name or email.
+    // Someone else with the link (no sessionStorage) sees no name or email, only the empty form.
     const ctx = await browser.newContext();
     const other = await ctx.newPage();
     const html = await (await other.request.get(url)).text();
     expect(html).not.toContain("grace@example.com");
     expect(html).not.toContain("Grace");
     await other.goto(url);
-    await expect(other.getByTestId("booking-success")).not.toContainText("grace@example.com");
-    await expect(other.getByTestId("success-ref")).toHaveText(new URL(url).searchParams.get("id")!);
+    await expect(other.getByTestId("reserve-confirmation")).toHaveCount(0);
+    await expect(other.locator("body")).not.toContainText("grace@example.com");
     await ctx.close();
   });
 
   test("error summary is announced and fields reference their errors", async ({ page }) => {
     const a = arrivalWithMin(3, addDays(today, 90));
-    await page.goto(`/book?checkIn=${a}&checkOut=${addDays(a, 4)}`);
-    await page.getByRole("button", { name: "Send request" }).click();
+    await page.goto(`/reserve?checkIn=${a}&checkOut=${addDays(a, 4)}`);
+    await page.getByRole("button", { name: "Request this reservation" }).click();
     const alert = page.getByTestId("request-form").getByRole("alert");
     await expect(alert).toBeFocused();
     const name = page.getByLabel("Full name");
@@ -401,7 +405,7 @@ test.describe("content hard rules (rendered)", () => {
       await expect(page.locator("footer")).toContainText("029008");
       const html = await (await request.get(p)).text();
       expect(html, p).not.toContain("3206");
-      expect(html, p).not.toContain("—");
+      expect(html, p).not.toContain("\u2014");
       const text = await page.locator("body").innerText();
       expect(text, p).not.toContain("TODO_OWNER");
       const claims = text.match(/[^.]*\b(ocean ?view|oceanfront|beachfront|ocean-front|beach-front)\b[^.]*\./gi) ?? [];
@@ -427,7 +431,7 @@ test.describe("content hard rules (rendered)", () => {
 
   test("SEO: title, description, canonical per indexable page; valid JSON-LD without ratings", async ({ page }) => {
     const titles = new Set<string>();
-    for (const p of ["/", "/book", "/gallery", "/area", "/faq", "/policies"]) {
+    for (const p of ["/", "/reserve", "/gallery", "/area", "/faq", "/policies"]) {
       await page.goto(p);
       const title = await page.title();
       expect(title.length, p).toBeGreaterThan(10);
