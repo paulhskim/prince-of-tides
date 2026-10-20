@@ -1,0 +1,44 @@
+[
+  {
+    "file": "living-wide.jpg",
+    "alt": "Living room with a grey sectional and tufted ottoman, the dining table and chandelier beyond, tiled floors throughout",
+    "caption": "The living room, with the dining table beyond",
+    "slot": "living",
+    "order": 1
+  },
+  {
+    "file": "dining.jpg",
+    "alt": "White dining table seating six under a small chandelier, with the hall to the bedrooms on the right",
+    "caption": "Dining for six",
+    "slot": "dining",
+    "order": 2
+  },
+  {
+    "file": "kitchen.jpg",
+    "alt": "Kitchen with white cabinets, stainless steel refrigerator, range, microwave and dishwasher, and a coffee maker on the counter",
+    "caption": "The kitchen, fully equipped",
+    "slot": "kitchen",
+    "order": 3
+  },
+  {
+    "file": "living-lounge.jpg",
+    "alt": "Sectional sofa facing a television on a black media stand, with a floor lamp and armchair by the window",
+    "caption": "The sitting area",
+    "slot": "living",
+    "order": 4
+  },
+  {
+    "file": "living-entry.jpg",
+    "alt": "The living room seen from the front door, with the hall to the bathroom and bedrooms",
+    "caption": "Arriving through the front door",
+    "slot": "living",
+    "order": 5
+  },
+  {
+    "file": "living-corner.jpg",
+    "alt": "Corner of the living room with the sectional, television and front door",
+    "caption": "The sitting area, toward the front door",
+    "slot": "living",
+    "order": 6
+  }
+]
