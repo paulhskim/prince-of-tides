@@ -2,8 +2,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { pageBreadcrumb } from "@/lib/seo/schema";
 import { ArrowUpRight } from "lucide-react";
-import { Grid } from "@/components/site/layout";
-import { frame, sentenceCase } from "@/components/site/text";
+import { Grid, PageHeader } from "@/components/site/layout";
+import { roman, sentenceCase } from "@/components/site/text";
 import { areaGuide, type AreaPlace } from "@/content/area-guide";
 
 export const metadata = pageMetadata("area");
@@ -40,28 +40,23 @@ export default function AreaPage() {
   return (
     <>
       <JsonLd data={pageBreadcrumb("area")} />
-      <header className="pb-section-sm pt-10 lg:pt-16">
-        <Grid>
-          <p className="col-span-4 mb-3 text-label text-ink-muted md:col-span-8 lg:col-span-3 lg:mb-0">Area guide</p>
-          <div className="col-span-4 md:col-span-8 lg:col-span-8 lg:col-start-4">
-            <h1 className="text-h1">{sentenceCase(areaGuide.intro.heading)}</h1>
-            <p className="mt-6 max-w-measure font-serif text-lead">{areaGuide.intro.body}</p>
-            <p className="mt-6 max-w-measure border-t border-rule pt-3 text-caption text-ink-muted">
-              {areaGuide.distanceDisclaimer} Last checked {verified(areaGuide.lastVerified)}.
-            </p>
-          </div>
-        </Grid>
-      </header>
+      <PageHeader
+        eyebrow="Area guide"
+        folio={`Last checked ${verified(areaGuide.lastVerified)}`}
+        title={sentenceCase(areaGuide.intro.heading)}
+        lead={areaGuide.intro.body}
+        aside={<p className="border-t border-ink pt-3 text-caption text-ink-muted">{areaGuide.distanceDisclaimer} Last checked {verified(areaGuide.lastVerified)}.</p>}
+      />
 
       <Grid className="pb-section">
         {/* Index */}
         <nav aria-label="Area guide contents" className="col-span-4 mb-10 md:col-span-8 lg:sticky lg:top-36 lg:col-span-3 lg:mb-0 lg:self-start">
-          <p className="border-t border-ink pt-2 text-label font-medium">Contents</p>
+          <p className="smallcaps border-t border-ink pt-3">Contents</p>
           <ol className="mt-1 text-small">
             {categories.map((c, i) => (
               <li key={c.id} className="border-b border-rule">
                 <a href={`#${c.id}`} className="grid min-h-11 grid-cols-[2.25rem_1fr_auto] items-center no-underline hover:underline">
-                  <span className="text-caption text-ink-muted tabular">{frame(i + 1)}</span>
+                  <span className="font-serif text-small italic text-brass">{roman(i + 1)}</span>
                   <span>{sentenceCase(c.title)}</span>
                   <span className="text-caption text-ink-muted tabular">{c.places.length}</span>
                 </a>
@@ -69,7 +64,7 @@ export default function AreaPage() {
             ))}
             <li className="border-b border-rule">
               <a href="#seasons" className="grid min-h-11 grid-cols-[2.25rem_1fr] items-center no-underline hover:underline">
-                <span className="text-caption text-ink-muted tabular">{frame(categories.length + 1)}</span>
+                <span className="font-serif text-small italic text-brass">{roman(categories.length + 1)}</span>
                 <span>Through the year</span>
               </a>
             </li>
@@ -80,16 +75,16 @@ export default function AreaPage() {
           {categories.map((c, i) => (
             <section key={c.id} id={c.id} aria-labelledby={`${c.id}-title`} className="mb-16 scroll-mt-36 lg:mb-20">
               <div className="border-t border-ink pt-3">
-                <p className="text-caption text-ink-muted tabular">{frame(i + 1)}</p>
+                <p className="font-serif text-body italic text-brass">{roman(i + 1)}</p>
                 <div className="mt-3">
-                  <h2 id={`${c.id}-title`} className="text-h2">
+                  <h2 id={`${c.id}-title`} className="text-h2 font-light">
                     {sentenceCase(c.title)}
                   </h2>
                   <p className="mt-3 max-w-measure font-serif text-prose text-ink-muted">{c.blurb}</p>
                 </div>
               </div>
 
-              <div className="mt-8 hidden grid-cols-9 gap-x-col border-b border-ink pb-2 text-label text-ink-muted md:grid" aria-hidden="true">
+              <div className="smallcaps mt-8 hidden grid-cols-9 gap-x-col border-b border-ink pb-2.5 text-ink-muted md:grid" aria-hidden="true">
                 <span className="col-span-5">Place</span>
                 <span className="col-span-2 text-right">Approx.</span>
                 <span className="col-span-2">Website</span>
@@ -130,18 +125,18 @@ export default function AreaPage() {
             </section>
           ))}
 
-          <section id="seasons" aria-labelledby="seasons-title" className="scroll-mt-36 bg-stone px-6 py-10 md:px-10">
-            <h2 id="seasons-title" className="text-h2">
+          <section id="seasons" aria-labelledby="seasons-title" data-surface="dark" className="scroll-mt-36 bg-pluff px-6 py-12 text-on-dark md:px-12 md:py-14">
+            <h2 id="seasons-title" className="text-h2 font-light">
               Through the year
             </h2>
             <dl className="mt-8 grid gap-x-col gap-y-10 md:grid-cols-2">
               {seasonalNotes.map((s) => (
-                <div key={s.id} className="border-t border-rule-strong pt-3">
+                <div key={s.id} className="border-t border-on-dark/25 pt-4">
                   <dt>
-                    <span className="block text-label text-ink-muted">{s.months}</span>
-                    <span className="mt-2 block font-serif text-h3">{s.title}</span>
+                    <span className="smallcaps block text-brass-light">{s.months}</span>
+                    <span className="mt-2 block font-serif text-h3 font-light">{s.title}</span>
                   </dt>
-                  <dd className="mt-3 text-small">{s.body}</dd>
+                  <dd className="mt-3 text-small text-on-dark-muted">{s.body}</dd>
                 </div>
               ))}
             </dl>

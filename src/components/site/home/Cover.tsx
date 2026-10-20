@@ -1,80 +1,84 @@
 import { ReservationBar } from "@/components/booking/ReservationBar";
-import { hero, reviewsSection } from "@/content/copy";
-import { photoFor } from "@/lib/photos";
+import { hero, particulars, reviewsSection } from "@/content/copy";
+import { getGalleryPhotos, photoFor } from "@/lib/photos";
+import { NameSet, RunningHead } from "../layout";
 import { Photo } from "../Photo";
 
 /**
- * The cover is a title page: a running head between rules, the name set large on one line, the
- * tagline, then a base of standfirst, record and action. The reservation bar is the cover's lower
- * edge on large screens. With a cover photograph, a wide plate sits between the name and the base;
- * without one, nothing stands in for it.
+ * The cover: arriving at night. A running head between hairlines, the name set very large in the
+ * display cut with its connective in italic, the tagline, then Plate I: the first owner photograph,
+ * shown whole at its own 3:2 ratio, straddling the change from night to paper. The standfirst,
+ * the record and the reservation bar sit on the paper below.
  */
 export function Cover() {
-  const photo = photoFor("hero");
+  const photo = photoFor("hero") ?? getGalleryPhotos()[0];
   const r = reviewsSection.ratingSummary;
+  const sleeps = particulars.items.find((p) => p.label === "Sleeps")?.value ?? "6";
 
   return (
-    <section aria-labelledby="cover-title" className="pb-section-sm pt-3 lg:pt-6">
-      <div className="mx-auto max-w-page px-gutter">
-        {/* Running head */}
-        <div className="flex items-baseline justify-between gap-4 border-y border-ink py-2.5">
-          <p className="apparatus">{hero.eyebrow}</p>
-          <p className="apparatus hidden text-ink-muted sm:block">Building 3, Hilton Head Island, South Carolina</p>
-        </div>
+    <section aria-labelledby="cover-title" className="relative pb-section-sm">
+      <div data-surface="dark" className="bg-pluff text-on-dark">
+        <div className="mx-auto max-w-page px-gutter pt-2 lg:pt-4">
+          <RunningHead tone="dark" left={hero.eyebrow} right="Building 3, Hilton Head Island, South Carolina" />
 
-        <h1
-          id="cover-title"
-          className="cover-reveal-late display-cut mt-[clamp(2.5rem,1rem+6vw,6.5rem)] text-display text-balance"
-        >
-          Prince of Tides
-        </h1>
-        <p className="cover-reveal-late mt-4 font-serif text-h3 lg:mt-6">{hero.headline}</p>
+          <h1
+            id="cover-title"
+            className="cover-reveal-late display-cut mt-[clamp(2.75rem,1rem+5vw,5.5rem)] text-display whitespace-nowrap"
+          >
+            <NameSet name="Prince of Tides" />
+          </h1>
+
+          <div className="cover-reveal-late mt-6 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3 pb-8 lg:mt-9 lg:pb-14">
+            <p className="font-serif text-[clamp(1.375rem,1.1rem+1.1vw,2rem)] font-light italic leading-tight tracking-[-0.01em]">
+              {hero.headline}
+            </p>
+            <p className="smallcaps text-on-dark-muted">
+              Two bedrooms, two baths, sleeps {sleeps}
+            </p>
+          </div>
+        </div>
       </div>
 
       {photo ? (
-        <figure className="cover-reveal mx-auto mt-10 max-w-bleed lg:mt-14">
-          <Photo
-            photo={photo}
-            slot="hero"
-            ratioClass="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[21/9]"
-            sizes="100vw"
-            priority
-          />
-          <figcaption className="mx-auto mt-2 max-w-page px-gutter text-caption text-ink-muted">{photo.caption}</figcaption>
-        </figure>
+        <div className="relative">
+          {/* The night continues behind the upper part of the plate, so the photograph bridges the two. */}
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[56%] bg-pluff" />
+          <figure className="relative mx-auto grid max-w-page grid-cols-4 gap-x-col md:grid-cols-8 md:px-gutter lg:grid-cols-12">
+            <div className="cover-reveal col-span-4 md:col-span-8 lg:col-span-10 lg:col-start-3">
+              <Photo photo={photo} slot="hero" ratio="3/2" sizes="(min-width:1280px) 1060px, (min-width:1024px) 82vw, 100vw" priority />
+            </div>
+            <figcaption className="col-span-4 mt-3 px-gutter md:col-span-8 md:px-0 lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mt-0 lg:self-end">
+              <span className="smallcaps block text-brass">Plate I</span>
+              <span className="mt-1.5 block font-serif text-small italic leading-snug text-ink-muted">{photo.caption}</span>
+            </figcaption>
+          </figure>
+        </div>
       ) : null}
 
       <div className="mx-auto max-w-page px-gutter">
-        <div className="cover-reveal-late mt-10 grid grid-cols-4 gap-x-col gap-y-8 md:grid-cols-8 lg:mt-[clamp(3rem,1rem+4vw,5.5rem)] lg:grid-cols-12">
-          <p className="col-span-4 max-w-[34rem] font-serif text-lead oldstyle md:col-span-5 lg:col-span-6">{hero.subhead}</p>
+        <div className="mt-8 grid grid-cols-4 gap-x-col gap-y-8 md:grid-cols-8 lg:mt-[clamp(3rem,1rem+4vw,5rem)] lg:grid-cols-12">
+          <p className="col-span-4 max-w-[34rem] font-serif text-lead oldstyle md:col-span-5 lg:col-span-6 lg:col-start-3">{hero.subhead}</p>
 
           <div className="col-span-4 md:col-span-3 lg:col-span-3 lg:col-start-10">
-            <a
-              href="#reviews"
-              className="group block border-t border-ink pt-2.5 no-underline"
-            >
+            <a href="#reviews" className="group block border-t border-ink pt-3 no-underline">
               {/* No aria-label: the visible text is the accessible name (WCAG 2.5.3 label in name). */}
-              <span className="apparatus block text-ink-muted">Guest rating</span>
-              <span className="mt-1 block font-serif text-h3 tabular">
+              <span className="smallcaps block text-ink-muted">Guest rating</span>
+              <span className="mt-2 block font-serif text-[1.75rem] font-light leading-none tabular">
                 {r.overall}
                 <span className="text-ink-muted">
-                  <span aria-hidden="true"> / </span>
-                  <span className="sr-only"> of </span>
+                  <span className="italic"> of </span>
                   {r.outOf}
                 </span>
               </span>
-              <span className="mt-1 block text-small text-ink-muted underline decoration-rule-strong underline-offset-[0.22em] group-hover:decoration-ink">
+              <span className="mt-2 block text-small text-ink-muted underline decoration-rule-strong underline-offset-[0.26em] transition-[text-decoration-color] duration-200 group-hover:decoration-ink">
                 {r.count} reviews on {r.source}
               </span>
             </a>
           </div>
 
           {/* Below lg the reservation bar is a fixed bottom bar, so the cover carries the action. */}
-          <div className="col-span-4 md:col-span-8 lg:hidden">
-            <a
-              href="#reserve"
-              className="flex h-12 items-center justify-center bg-marsh px-6 font-medium tracking-[0.01em] text-sheet no-underline transition-colors duration-100 hover:bg-marsh-hover sm:inline-flex"
-            >
+          <div className="order-first col-span-4 md:col-span-8 lg:hidden">
+            <a href="#reserve" className="btn btn-primary h-14 w-full sm:w-auto">
               {hero.primaryCta.label}
             </a>
             <p className="mt-3 text-caption text-ink-muted">Nothing is charged. We confirm the dates and send a quote.</p>
@@ -82,7 +86,7 @@ export function Cover() {
         </div>
 
         {/* Desktop: the bar is the lower edge of the cover. Below lg it renders the fixed bottom bar. */}
-        <div className="lg:mt-12">
+        <div className="lg:mt-14">
           <ReservationBar />
         </div>
       </div>

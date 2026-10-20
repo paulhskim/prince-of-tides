@@ -44,7 +44,7 @@ export function ReservationSheet({
               onClose();
               router.push(`/book?${stayToQuery(stay)}`);
             }}
-            className="flex h-12 w-full items-center justify-center bg-marsh px-6 text-body font-medium tracking-[0.01em] text-sheet transition-colors duration-[var(--duration-fast)] hover:bg-marsh-hover disabled:cursor-not-allowed disabled:bg-stone disabled:text-ink-faint"
+            className="btn btn-primary flex h-14 w-full disabled:cursor-not-allowed disabled:bg-stone disabled:text-ink-faint"
           >
             {ready ? "Request these dates" : "Choose your dates"}
           </button>
@@ -53,7 +53,7 @@ export function ReservationSheet({
       }
     >
       <section aria-labelledby="sheet-dates">
-        <h3 id="sheet-dates" className="text-label font-medium text-ink-muted">
+        <h3 id="sheet-dates" className="smallcaps text-ink-muted">
           Dates
         </h3>
         <p className="mt-1 text-small text-ink-muted">
@@ -71,13 +71,13 @@ export function ReservationSheet({
         />
       </section>
       <section aria-labelledby="sheet-guests" className="mt-8">
-        <h3 id="sheet-guests" className="mb-3 text-label font-medium text-ink-muted">
+        <h3 id="sheet-guests" className="smallcaps mb-3 text-ink-muted">
           Guests
         </h3>
         <GuestFields idPrefix="sheet" value={stay} onChange={setStay} />
       </section>
       <section aria-labelledby="sheet-quote" className="mt-8">
-        <h3 id="sheet-quote" className="mb-3 text-label font-medium text-ink-muted">
+        <h3 id="sheet-quote" className="smallcaps mb-3 text-ink-muted">
           Estimate{stay.checkIn && stay.checkOut ? `, ${diffDays(stay.checkIn, stay.checkOut)} nights` : ""}
         </h3>
         <QuoteLedger quote={quote} compact />

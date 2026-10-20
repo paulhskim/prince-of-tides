@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { footer, hero } from "@/content/copy";
 import { siteConfig } from "@/content/site.config";
-import { Grid } from "./layout";
+import { Grid, NameSet } from "./layout";
+import { Monogram } from "./Monogram";
 import { isSet } from "./text";
 
 const STAY = [
@@ -24,11 +25,11 @@ const PLAN = [
 function Column({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
     <div>
-      <h2 className="font-sans text-label font-medium text-ink-muted">{title}</h2>
-      <ul className="mt-3">
+      <h2 className="smallcaps text-brass-light">{title}</h2>
+      <ul className="mt-4">
         {links.map((l) => (
           <li key={l.href}>
-            <Link href={l.href} className="inline-flex min-h-9 items-center text-small no-underline hover:underline">
+            <Link href={l.href} className="inline-flex min-h-9 items-center font-serif text-[1.0625rem] no-underline decoration-on-dark-muted hover:underline">
               {l.label}
             </Link>
           </li>
@@ -47,14 +48,17 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-ink bg-paper py-section-sm">
-      <Grid className="gap-y-10">
+    <footer data-surface="dark" className="bg-pluff pb-10 pt-section text-on-dark [&_a]:decoration-on-dark-muted">
+      <Grid className="gap-y-12">
         <div className="col-span-4 md:col-span-8 lg:col-span-4">
-          <p className="font-serif text-[1.75rem] leading-tight">{brand.name}</p>
-          <p className="mt-3 max-w-[22rem] text-small text-ink-muted">
+          <Monogram size={56} className="text-brass-light" />
+          <p className="mt-6 font-serif text-[2.25rem] font-light leading-none tracking-[-0.02em]">
+            <NameSet name={brand.name} />
+          </p>
+          <p className="mt-4 max-w-[22rem] text-small text-on-dark-muted">
             {hero.eyebrow}, Hilton Head Island, South Carolina
           </p>
-          <p className="mt-6 font-serif text-lead">{footer.tagline}</p>
+          <p className="mt-8 font-serif text-lead font-light italic">{footer.tagline}</p>
         </div>
         <div className="col-span-2 md:col-span-2 lg:col-span-2 lg:col-start-6">
           <Column title="The stay" links={STAY} />
@@ -63,8 +67,8 @@ export function Footer() {
           <Column title="Plan" links={PLAN} />
         </div>
         <div className="col-span-4 md:col-span-4 lg:col-span-3 lg:col-start-10">
-          <h2 className="font-sans text-label font-medium text-ink-muted">Contact</h2>
-          <ul className="mt-3 space-y-1 text-small">
+          <h2 className="smallcaps text-brass-light">Contact</h2>
+          <ul className="mt-4 space-y-1 text-small">
             {isSet(contact.hostName) ? <li>{contact.hostName}</li> : null}
             {isSet(contact.email) ? (
               <li>
@@ -82,7 +86,7 @@ export function Footer() {
           </ul>
           {listings.length ? (
             <div className="mt-6">
-              <p className="text-small text-ink-muted">Also listed on</p>
+              <p className="text-small text-on-dark-muted">Also listed on</p>
               <ul className="mt-1 flex gap-5 text-small">
                 {listings.map((l) => (
                   <li key={l.label}>
@@ -98,8 +102,8 @@ export function Footer() {
           ) : null}
         </div>
 
-        <div className="col-span-4 border-t border-rule pt-5 md:col-span-8 lg:col-span-12">
-          <div className="grid gap-x-col gap-y-2 text-caption text-ink-muted lg:grid-cols-12">
+        <div className="col-span-4 mt-6 border-t border-on-dark/20 pt-6 md:col-span-8 lg:col-span-12">
+          <div className="grid gap-x-col gap-y-3 text-caption text-on-dark-muted lg:grid-cols-12">
             <p className="lg:col-span-5">
               {footer.smallPrint[1]}
               <br />
@@ -108,11 +112,11 @@ export function Footer() {
             <p className="lg:col-span-4 lg:col-start-6">{footer.smallPrint[3]}</p>
             <p className="lg:col-span-3 lg:col-start-10">
               &copy; {year} {brand.name}.{" "}
-              <Link href="/policies" className="text-ink-muted">
+              <Link href="/policies" className="text-on-dark-muted">
                 Policies
               </Link>
               <br />
-              Set in Newsreader and Hanken Grotesk.
+              <span className="font-serif text-small italic">Set in Newsreader and Hanken Grotesk.</span>
             </p>
           </div>
         </div>

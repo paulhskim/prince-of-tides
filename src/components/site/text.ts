@@ -92,3 +92,32 @@ export function miles(d: number | null): string | null {
   if (d === 0) return "On site";
   return `approx. ${d} mi`;
 }
+
+/**
+ * Typographic apostrophes and quotation marks for display (the content files keep plain ASCII).
+ * "Coco's" becomes "Coco’s"; "Pack 'n play" becomes "Pack ’n play"; "a 'quote'" becomes "a ‘quote’".
+ * Never applied to guest reviews, which are shown exactly as written.
+ */
+export function smart(text: string): string {
+  return text
+    .replace(/(\w)'(\w)/g, "$1’$2")
+    .replace(/(^|\s)'(n)\b/g, "$1’$2")
+    .replace(/(^|[\s(])'/g, "$1‘")
+    .replace(/'/g, "’")
+    .replace(/(^|[\s(])"/g, "$1“")
+    .replace(/"/g, "”");
+}
+
+/** Plate numbers in roman numerals, 1 to 39 ("XII"). */
+export function roman(n: number): string {
+  const table: [number, string][] = [[10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  let out = "";
+  let rest = n;
+  for (const [v, s] of table) {
+    while (rest >= v) {
+      out += s;
+      rest -= v;
+    }
+  }
+  return out;
+}

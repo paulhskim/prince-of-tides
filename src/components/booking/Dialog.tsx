@@ -78,13 +78,13 @@ export function Dialog({
     >
       {sheet && <div aria-hidden="true" className="mx-auto mt-2 h-[3px] w-8 bg-rule-strong" />}
       <div className="flex items-center justify-between gap-4 border-b border-rule px-5 py-3 sm:px-6">
-        <h2 ref={headingRef} id={titleId} tabIndex={-1} className="font-serif text-h3 focus:outline-none">
+        <h2 ref={headingRef} id={titleId} tabIndex={-1} className="font-serif text-[1.5rem] font-light tracking-[-0.015em] focus:outline-none">
           {title}
         </h2>
         <button
           type="button"
           onClick={() => ref.current?.close()}
-          className="-mr-2 inline-flex min-h-11 items-center gap-1.5 px-2 text-small text-ink underline decoration-rule-strong underline-offset-[0.22em] hover:decoration-ink"
+          className="smallcaps -mr-2 inline-flex min-h-11 items-center gap-1.5 px-2 text-ink underline decoration-rule-strong underline-offset-[0.6em] hover:decoration-ink"
         >
           <X size={16} />
           Close

@@ -3,8 +3,13 @@
 /** Form field primitives (design-system 8.11): label above, helper and error linked by aria-describedby. */
 import { Check } from "./icons";
 
+/*
+ * Ledger fields: no box, a single hairline to write on, the entry set in the serif. Focus firms the
+ * line to a 2px ink rule (drawn as border plus shadow so nothing shifts).
+ */
 const control =
-  "block w-full bg-sheet border text-body text-ink placeholder:text-ink-muted px-3.5 py-3 rounded-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ink";
+  "block w-full rounded-none bg-transparent font-serif text-[1.1875rem] leading-snug text-ink placeholder:italic placeholder:text-ink-muted transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:border-ink";
+const lined = `${control} border-0 border-b px-0 py-2.5 focus-visible:shadow-[0_1px_0_0_var(--color-ink)]`;
 
 function describedBy(id: string, help?: React.ReactNode, error?: string) {
   return [help ? `${id}-help` : null, error ? `${id}-error` : null].filter(Boolean).join(" ") || undefined;
@@ -29,9 +34,9 @@ function Meta({ id, help, error }: { id: string; help?: React.ReactNode; error?:
 
 function Label({ id, children, optional }: { id: string; children: React.ReactNode; optional?: boolean }) {
   return (
-    <label htmlFor={id} className="mb-2 block text-label font-medium text-ink">
+    <label htmlFor={id} className="smallcaps mb-1 block text-ink">
       {children}
-      {optional && <span className="font-normal text-ink-muted"> (optional)</span>}
+      {optional && <span className="font-serif text-small font-normal normal-case italic tracking-normal text-ink-muted"> (optional)</span>}
     </label>
   );
 }
@@ -56,7 +61,7 @@ export function TextField({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, help, error)}
         required={!optional}
-        className={`${control} h-12 ${error ? "border-danger" : "border-rule-strong"}`}
+        className={`${lined} h-12 ${error ? "border-danger" : "border-rule-strong"}`}
         {...input}
       />
       <Meta id={id} help={help} error={error} />
@@ -82,7 +87,7 @@ export function SelectField({
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, help, error)}
-        className={`${control} h-12 appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='18'%20height='18'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2322241f'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='m6%209%206%206%206-6'/%3E%3C/svg%3E")] bg-[position:right_0.875rem_center] bg-no-repeat pr-10 ${error ? "border-danger" : "border-rule-strong"}`}
+        className={`${lined} h-12 cursor-pointer appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='18'%20height='18'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%231e201b'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='m6%209%206%206%206-6'/%3E%3C/svg%3E")] bg-[position:right_0.125rem_center] bg-no-repeat pr-8 ${error ? "border-danger" : "border-rule-strong"}`}
         {...select}
       >
         <option value="">Choose one</option>
@@ -119,7 +124,7 @@ export function TextareaField({
         maxLength={maxLength}
         aria-invalid={error ? true : undefined}
         aria-describedby={[describedBy(id, help, error), `${id}-count`].filter(Boolean).join(" ")}
-        className={`${control} min-h-30 resize-y ${error ? "border-danger" : "border-rule-strong"}`}
+        className={`${control} mt-1 min-h-32 resize-y border bg-sheet/60 px-4 py-3 focus-visible:shadow-[inset_0_0_0_1px_var(--color-ink)] ${error ? "border-danger" : "border-rule-strong"}`}
         {...rest}
       />
       <div className="flex items-start justify-between gap-4">
@@ -162,9 +167,9 @@ export function Checkbox({
             onBlur={onBlur}
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? `${id}-error` : undefined}
-            className={`peer size-5 cursor-pointer appearance-none rounded-hair border bg-sheet checked:border-marsh checked:bg-marsh ${error ? "border-danger" : "border-rule-strong"}`}
+            className={`peer size-5 cursor-pointer appearance-none rounded-none border bg-transparent transition-colors duration-200 checked:border-marsh checked:bg-marsh ${error ? "border-danger" : "border-rule-strong hover:border-ink"}`}
           />
-          <Check size={16} className="pointer-events-none absolute inset-0.5 hidden text-sheet peer-checked:block" />
+          <Check size={14} className="pointer-events-none absolute left-[3px] top-[3px] hidden text-sheet peer-checked:block" />
         </span>
         <label htmlFor={id} className="cursor-pointer text-body text-ink">
           {children}

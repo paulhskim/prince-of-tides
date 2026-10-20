@@ -2,8 +2,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { pageBreadcrumb } from "@/lib/seo/schema";
 import type { ReactNode } from "react";
-import { Grid } from "@/components/site/layout";
-import { frame, isSet } from "@/components/site/text";
+import { Grid, PageHeader } from "@/components/site/layout";
+import { isSet, roman } from "@/components/site/text";
 import { booking } from "@/content/copy";
 import { policies } from "@/content/policies";
 import { siteConfig } from "@/content/site.config";
@@ -25,9 +25,9 @@ const SECTIONS = [
 function Part({ id, n, title, children }: { id: string; n: number; title: string; children: ReactNode }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-36 border-t border-ink pb-14 pt-3">
-      <p className="text-caption text-ink-muted tabular">{frame(n)}</p>
+      <p className="font-serif text-body italic text-brass">{roman(n)}</p>
       <div className="mt-3">
-        <h2 id={`${id}-title`} className="text-h2">
+        <h2 id={`${id}-title`} className="text-h2 font-light">
           {title}
         </h2>
         <div className="mt-6">{children}</div>
@@ -44,26 +44,21 @@ export default function PoliciesPage() {
   return (
     <>
       <JsonLd data={pageBreadcrumb("policies")} />
-      <header className="pb-section-sm pt-10 lg:pt-16">
-        <Grid>
-          <p className="col-span-4 mb-3 text-label text-ink-muted md:col-span-8 lg:col-span-3 lg:mb-0">
-            Permit {siteConfig.permit.townStrPermit}
-          </p>
-          <div className="col-span-4 md:col-span-8 lg:col-span-8 lg:col-start-4">
-            <h1 className="text-h1">Policies</h1>
-            <p className="mt-6 max-w-measure font-serif text-lead">{policies.rentalAgreementNote.split(". ")[0]}.</p>
-          </div>
-        </Grid>
-      </header>
+      <PageHeader
+        eyebrow="Policies and house rules"
+        folio={`Town STR permit ${siteConfig.permit.townStrPermit}`}
+        title="Policies"
+        lead={`${policies.rentalAgreementNote.split(". ")[0]}.`}
+      />
 
       <Grid className="pb-section">
         <nav aria-label="Policies contents" className="col-span-4 mb-10 md:col-span-8 lg:sticky lg:top-36 lg:col-span-3 lg:mb-0 lg:self-start">
-          <p className="border-t border-ink pt-2 text-label font-medium">Contents</p>
+          <p className="smallcaps border-t border-ink pt-3">Contents</p>
           <ol className="mt-1 text-small">
             {SECTIONS.map((s, i) => (
               <li key={s.id} className="border-b border-rule">
                 <a href={`#${s.id}`} className="grid min-h-11 grid-cols-[2.25rem_1fr] items-center no-underline hover:underline">
-                  <span className="text-caption text-ink-muted tabular">{frame(i + 1)}</span>
+                  <span className="font-serif text-small italic text-brass">{roman(i + 1)}</span>
                   <span>{s.title}</span>
                 </a>
               </li>
@@ -84,7 +79,7 @@ export default function PoliciesPage() {
           </Part>
 
           <Part id="cancellation" n={n("cancellation")} title="Cancellation">
-            <h3 className="font-sans text-label font-medium text-ink-muted">{cancellation.title}</h3>
+            <h3 className="smallcaps text-ink-muted">{cancellation.title}</h3>
             <p className="mt-2 max-w-measure font-serif text-prose">{cancellation.summary}</p>
             <table className="mt-8 w-full max-w-[44rem] text-left text-small">
               <caption className="sr-only">Refund by notice period</caption>

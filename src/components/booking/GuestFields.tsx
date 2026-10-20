@@ -45,14 +45,15 @@ export function GuestFields({
           const labelId = `${idPrefix}-${row.key}-label`;
           const plural = row.key === "children" ? "children" : `${row.singular}s`;
           return (
-            <li key={row.key} className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-rule py-3">
+            <li key={row.key} className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-rule py-3.5">
               <div>
-                <span id={labelId} className="block text-body font-medium text-ink">
+                <span id={labelId} className="block font-serif text-[1.1875rem] leading-snug text-ink">
                   {row.label}
                 </span>
-                <span className="block text-small text-ink-muted">{row.help}</span>
+                <span className="mt-0.5 block text-small text-ink-muted">{row.help}</span>
               </div>
-              <div role="group" aria-labelledby={labelId} className="flex items-center gap-1">
+              {/* A segmented hairline control: minus, the count in serif figures, plus. */}
+              <div role="group" aria-labelledby={labelId} className="flex items-stretch border border-rule-strong">
                 <StepButton
                   label={`Remove ${row.singular}`}
                   disabled={count <= min}
@@ -63,7 +64,7 @@ export function GuestFields({
                 <output
                   aria-live="polite"
                   aria-label={`${count} ${count === 1 ? row.singular : plural}`}
-                  className="w-8 text-center text-body tabular"
+                  className="flex w-11 items-center justify-center border-x border-rule font-serif text-[1.1875rem] tabular"
                   data-testid={`${row.key}-count`}
                 >
                   {count}
@@ -106,15 +107,11 @@ function StepButton({
       onClick={() => {
         if (!disabled) onClick();
       }}
-      className={`flex size-11 items-center justify-center`}
+      className={`flex size-11 items-center justify-center transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-2 ${
+        disabled ? "cursor-default text-ink-faint" : "text-ink hover:bg-stone"
+      }`}
     >
-      <span
-        className={`flex size-10 items-center justify-center rounded-round border transition-colors duration-[var(--duration-fast)] ${
-          disabled ? "border-ink-faint text-ink-faint" : "border-rule-strong text-ink hover:border-ink"
-        }`}
-      >
-        {children}
-      </span>
+      {children}
     </button>
   );
 }

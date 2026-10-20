@@ -2,7 +2,7 @@ import { resort } from "@/content/copy";
 import { photoFor } from "@/lib/photos";
 import { Grid, SectionTitle } from "../layout";
 import { Photo } from "../Photo";
-import { splitHeading } from "../text";
+import { smart, splitHeading } from "../text";
 
 const SEASONAL = /seasonal|in season/i;
 
@@ -20,27 +20,25 @@ export function Resort() {
           <SectionTitle id="resort-title" numeral={numeral}>
             {title}
           </SectionTitle>
-          <p className="mt-6 max-w-measure font-serif text-lead oldstyle">{resort.intro}</p>
+          <p className="mt-8 max-w-measure font-serif text-lead oldstyle">{smart(resort.intro)}</p>
           {pool ? (
             <figure className="mt-10">
               <Photo photo={pool} slot="pool" ratio="4/5" sizes="(min-width:1024px) 34vw, 100vw" />
               <figcaption className="mt-2 text-caption text-ink-muted">{pool.caption}</figcaption>
             </figure>
           ) : null}
-          <p className="mt-8 max-w-[22rem] text-caption text-ink-muted">{resort.footnote}</p>
+          <p className="mt-8 max-w-[22rem] text-caption text-ink-muted">{smart(resort.footnote)}</p>
         </div>
 
         <div className="col-span-4 md:col-span-8 lg:col-span-6 lg:col-start-7 lg:pt-3">
-          <dl className="grid gap-x-col border-t border-ink sm:grid-cols-2" aria-label="Hilton Head Resort amenities directory">
+          <dl data-reveal className="grid gap-x-col border-t border-ink sm:grid-cols-2" aria-label="Hilton Head Resort amenities directory">
             {resort.features.map((f) => (
-              <div key={f.title} className="border-b border-rule-strong/40 py-4">
-                <dt className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-medium">
-                  {f.title}
-                  {SEASONAL.test(f.body) ? (
-                    <span className="border border-rule-strong px-1.5 py-px text-caption font-medium text-ink-muted">Seasonal</span>
-                  ) : null}
+              <div key={f.title} className="border-b border-rule-strong/40 py-5">
+                <dt className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <span className="font-serif text-[1.25rem] leading-snug">{f.title}</span>
+                  {SEASONAL.test(f.body) ? <span className="font-serif text-small italic text-ink-muted">in season</span> : null}
                 </dt>
-                <dd className="mt-1 text-small">{f.body}</dd>
+                <dd className="mt-1.5 text-small">{smart(f.body)}</dd>
               </div>
             ))}
           </dl>

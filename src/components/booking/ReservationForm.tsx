@@ -30,9 +30,8 @@ import { stayToQuery, useAvailability, useStay, type Stay } from "./state";
 const INSTANT = siteConfig.booking.mode === "instant" && siteConfig.features.stripeCheckout;
 
 const primaryBtn =
-  "flex w-full items-center justify-center bg-marsh px-6 text-body font-medium tracking-[0.01em] text-sheet transition-colors duration-[var(--duration-fast)] hover:bg-marsh-hover aria-disabled:cursor-not-allowed aria-disabled:bg-stone aria-disabled:text-ink-faint";
-const textBtn =
-  "min-h-11 text-small text-ink underline decoration-rule-strong underline-offset-[0.22em] transition-colors duration-[var(--duration-fast)] hover:decoration-ink";
+  "btn btn-primary flex w-full aria-disabled:cursor-not-allowed aria-disabled:bg-stone aria-disabled:text-ink-faint";
+const textBtn = "link-caps text-ink";
 
 export function ReservationForm({ variant = "inline" }: { variant?: "inline" | "page" }) {
   return variant === "page" ? <RequestPage /> : <InlineReservation />;
@@ -45,9 +44,13 @@ export function ReservationForm({ variant = "inline" }: { variant?: "inline" | "
 function LedgerHead({ headingId }: { headingId: string }) {
   return (
     <>
-      <p className="text-label text-ink-muted">Reservation</p>
-      <h3 id={headingId} className="mt-1 font-serif text-h3">
-        {siteConfig.brand.name}, Hilton Head Resort
+      <p className="smallcaps flex items-center justify-between text-ink-muted">
+        <span>Reservation</span>
+        <span className="text-brass">Hilton Head Resort</span>
+      </p>
+      <h3 id={headingId} className="mt-4 font-serif text-[1.875rem] font-light leading-none tracking-[-0.02em]">
+        {siteConfig.brand.name}
+        <span className="sr-only">, Hilton Head Resort</span>
       </h3>
     </>
   );
@@ -75,10 +78,10 @@ function Cell({
       aria-expanded={expanded}
       aria-controls={controls}
       data-testid={testId}
-      className="flex min-h-16 flex-col items-start justify-center px-3 py-2 text-left transition-colors duration-[var(--duration-fast)] first:pl-0 hover:bg-stone/60 focus-visible:outline-offset-[-2px]"
+      className="flex min-h-18 flex-col items-start justify-center px-3 py-3 text-left transition-colors duration-[var(--duration-fast)] first:pl-0 hover:bg-stone/60 focus-visible:outline-offset-[-2px]"
     >
-      <span className="text-label text-ink-muted">{label}</span>
-      <span className="mt-0.5 text-body text-ink tabular">{value}</span>
+      <span className="smallcaps text-ink-muted">{label}</span>
+      <span className="mt-1.5 font-serif text-[1.125rem] leading-tight text-ink tabular">{value}</span>
     </button>
   );
 }
@@ -135,9 +138,9 @@ function InlineReservation() {
         />
       </div>
       <div className="col-span-4 md:col-span-6 lg:col-span-4 lg:col-start-9">
-        <section aria-labelledby={headingId} className="border border-rule-strong bg-sheet p-6 lg:sticky lg:top-32 lg:p-8">
+        <section aria-labelledby={headingId} className="border-t-2 border-ink bg-sheet p-6 shadow-[inset_0_0_0_1px_var(--color-rule)] lg:sticky lg:top-28 lg:p-9">
           <LedgerHead headingId={headingId} />
-          <div className="mt-5 grid grid-cols-3 divide-x divide-rule border-y border-rule">
+          <div className="mt-6 grid grid-cols-3 divide-x divide-rule border-y border-ink">
             <Cell label={bookingCopy.labels.checkIn} value={stay.checkIn ? formatShort(stay.checkIn) : bookingCopy.placeholders.selectDate} onClick={openDates} />
             <Cell label={bookingCopy.labels.checkOut} value={stay.checkOut ? formatShort(stay.checkOut) : bookingCopy.placeholders.selectDate} onClick={openDates} />
             <Cell
@@ -164,12 +167,12 @@ function InlineReservation() {
             className={
               ready
                 ? `${primaryBtn} mt-6 h-14`
-                : "mt-6 flex h-14 w-full items-center justify-center border border-ink px-6 text-body font-medium text-ink transition-colors duration-[var(--duration-fast)] hover:bg-ink hover:text-paper"
+                : "btn btn-secondary mt-6 flex h-14 w-full"
             }
           >
             {ready ? "Request these dates" : bookingCopy.buttons.checkDates}
           </button>
-          <p className="mt-3 text-caption text-ink-muted">No payment is taken now. The host confirms availability and sends an invoice.</p>
+          <p className="mt-4 font-serif text-small italic leading-snug text-ink-muted">No payment is taken now. The host confirms availability and sends an invoice.</p>
         </section>
       </div>
       <ReservationSheet open={sheetOpen} onClose={() => setSheetOpen(false)} returnFocusTo={triggerRef} />
@@ -468,8 +471,8 @@ function RequestPage() {
         </p>
 
         {/* 1. Dates */}
-        <fieldset ref={datesRef} id={`${uid}-dates`} className="mt-8 border-t border-ink pt-5" aria-describedby={errors.dates ? `${uid}-dates-error` : undefined}>
-          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">1</span>Your dates</h2></legend>
+        <fieldset ref={datesRef} id={`${uid}-dates`} className="mt-10 border-t border-ink pt-6" aria-describedby={errors.dates ? `${uid}-dates-error` : undefined}>
+          <legend className="float-left w-full"><h2 className="font-serif text-[clamp(1.625rem,1.3rem+1vw,2.125rem)] font-light leading-tight tracking-[-0.018em]"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.5em] font-serif text-[0.9375rem] italic leading-none text-brass">1</span>Your dates</h2></legend>
           <p className="clear-both pt-1 text-small text-ink-muted">
             Check-in {formatClock(siteConfig.times.checkIn)}. Check-out {formatClock(siteConfig.times.checkOut)}.
           </p>
@@ -495,9 +498,9 @@ function RequestPage() {
                   [bookingCopy.labels.checkOut, formatShort(stay.checkOut!)],
                   ["Nights", String(nights)],
                 ].map(([k, v]) => (
-                  <div key={k} className="px-3 py-3 first:pl-0">
-                    <dt className="text-label text-ink-muted">{k}</dt>
-                    <dd className="mt-0.5 text-body tabular">{v}</dd>
+                  <div key={k} className="px-3 py-3.5 first:pl-0">
+                    <dt className="smallcaps text-ink-muted">{k}</dt>
+                    <dd className="mt-1.5 font-serif text-[1.125rem] leading-tight tabular">{v}</dd>
                   </div>
                 ))}
               </dl>
@@ -526,8 +529,8 @@ function RequestPage() {
         </fieldset>
 
         {/* 2. Guests */}
-        <fieldset id={`${uid}-guests`} className="mt-12 border-t border-ink pt-5" aria-describedby={errors.children ? `${uid}-guests-error` : undefined}>
-          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">2</span>Guests</h2></legend>
+        <fieldset id={`${uid}-guests`} className="mt-16 border-t border-ink pt-6" aria-describedby={errors.children ? `${uid}-guests-error` : undefined}>
+          <legend className="float-left w-full"><h2 className="font-serif text-[clamp(1.625rem,1.3rem+1vw,2.125rem)] font-light leading-tight tracking-[-0.018em]"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.5em] font-serif text-[0.9375rem] italic leading-none text-brass">2</span>Guests</h2></legend>
           <div className="clear-both pt-4">
             <GuestFields idPrefix={`${uid}-g`} value={stay} onChange={setStay} />
           </div>
@@ -539,8 +542,8 @@ function RequestPage() {
         </fieldset>
 
         {/* 3. Contact */}
-        <fieldset className="mt-12 border-t border-ink pt-5">
-          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">3</span>Your details</h2></legend>
+        <fieldset className="mt-16 border-t border-ink pt-6">
+          <legend className="float-left w-full"><h2 className="font-serif text-[clamp(1.625rem,1.3rem+1vw,2.125rem)] font-light leading-tight tracking-[-0.018em]"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.5em] font-serif text-[0.9375rem] italic leading-none text-brass">3</span>Your details</h2></legend>
           <div className="clear-both max-w-measure space-y-6 pt-5">
             <TextField
               id={`${uid}-name`}
@@ -579,8 +582,8 @@ function RequestPage() {
         </fieldset>
 
         {/* 4. Arrival and note */}
-        <fieldset className="mt-12 border-t border-ink pt-5">
-          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">4</span>Arrival and a note</h2></legend>
+        <fieldset className="mt-16 border-t border-ink pt-6">
+          <legend className="float-left w-full"><h2 className="font-serif text-[clamp(1.625rem,1.3rem+1vw,2.125rem)] font-light leading-tight tracking-[-0.018em]"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.5em] font-serif text-[0.9375rem] italic leading-none text-brass">4</span>Arrival and a note</h2></legend>
           <div className="clear-both max-w-measure space-y-6 pt-5">
             <SelectField
               id={`${uid}-arrivalTime`}
@@ -610,7 +613,7 @@ function RequestPage() {
         </fieldset>
 
         {/* 5. Consent */}
-        <fieldset className="mt-12 border-t border-ink pt-5">
+        <fieldset className="mt-16 border-t border-ink pt-6">
           <legend className="sr-only">Agreements</legend>
           <div className="max-w-measure space-y-2">
             <Checkbox id={`${uid}-agreeRules`} checked={contact.agreeRules} onChange={set("agreeRules")} onBlur={blur("agreeRules")} error={errors.agreeRules}>
@@ -647,30 +650,30 @@ function RequestPage() {
         </div>
 
         <div className="mt-10 max-w-measure">
-          <button type="submit" aria-busy={submitting || undefined} aria-disabled={submitting || undefined} className={`${primaryBtn} h-14 sm:w-auto sm:px-8`}>
+          <button type="submit" aria-busy={submitting || undefined} aria-disabled={submitting || undefined} className={`${primaryBtn} h-14 sm:w-auto sm:px-12`}>
             {submitting ? (INSTANT ? "Opening payment" : "Sending request") : INSTANT ? "Continue to payment" : bookingCopy.buttons.submit}
           </button>
-          <p className="mt-3 text-small text-ink-muted">{INSTANT ? "You pay on the next page. Nothing is charged until you confirm there." : responseLine()}</p>
+          <p className="mt-4 font-serif text-small italic text-ink-muted">{INSTANT ? "You pay on the next page. Nothing is charged until you confirm there." : responseLine()}</p>
         </div>
       </form>
 
       {/* Ledger summary (desktop) */}
       <aside className="hidden lg:col-span-4 lg:col-start-9 lg:block" aria-labelledby={`${uid}-ledger`}>
-        <div className="sticky top-24 border border-rule-strong bg-sheet p-8">
+        <div className="sticky top-28 border-t-2 border-ink bg-sheet p-9 shadow-[inset_0_0_0_1px_var(--color-rule)]">
           <LedgerHead headingId={`${uid}-ledger`} />
-          <dl className="mt-5 grid grid-cols-3 divide-x divide-rule border-y border-rule">
+          <dl className="mt-6 grid grid-cols-3 divide-x divide-rule border-y border-ink">
             {[
               [bookingCopy.labels.checkIn, stay.checkIn ? formatShort(stay.checkIn) : "Not set"],
               [bookingCopy.labels.checkOut, stay.checkOut ? formatShort(stay.checkOut) : "Not set"],
               [bookingCopy.labels.guests, guestLine(stay).replace(/, \d+ infants?$/, "")],
             ].map(([k, v]) => (
-              <div key={k} className="px-3 py-3 first:pl-0">
-                <dt className="text-label text-ink-muted">{k}</dt>
-                <dd className="mt-0.5 text-body tabular">{v}</dd>
+              <div key={k} className="px-3 py-3.5 first:pl-0">
+                <dt className="smallcaps text-ink-muted">{k}</dt>
+                <dd className="mt-1.5 font-serif text-[1.125rem] leading-tight tabular">{v}</dd>
               </div>
             ))}
           </dl>
-          <div className="mt-5">
+          <div className="mt-6">
             <QuoteLedger quote={quote} />
           </div>
           <button type="button" className={`${textBtn} mt-2`} onClick={() => focusField("dates")}>

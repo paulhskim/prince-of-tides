@@ -5,7 +5,7 @@
  * Site-level additions (kept minimal). Tokens and base rules live in tokens.css.
  */
 
-/* The single orchestrated moment: the cover fades in, no translate. */
+/* The cover: the plate fades in; the name and tagline settle a few pixels after it. */
 @keyframes cover-in {
   from {
     opacity: 0;
@@ -15,12 +15,46 @@
   }
 }
 
+@keyframes cover-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @utility cover-reveal {
-  animation: cover-in 420ms var(--ease-quiet) both;
+  animation: cover-in 1400ms var(--ease-quiet) 120ms both;
 }
 
 @utility cover-reveal-late {
-  animation: cover-in 420ms var(--ease-quiet) 80ms both;
+  animation: cover-rise 1100ms var(--ease-settle) 60ms both;
+}
+
+/*
+ * Scroll reveals. Elements marked data-reveal settle into place once as they enter the viewport
+ * (opacity and a 12px rise). Hidden only when JavaScript has marked the document ready and the
+ * reader has not asked for reduced motion, so nothing is ever lost without script.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-ready [data-reveal]:not([data-shown]) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  html.reveal-ready [data-reveal] {
+    transition:
+      opacity 1000ms var(--ease-quiet),
+      transform 1100ms var(--ease-settle);
+  }
+  html.reveal-ready [data-reveal="plate"]:not([data-shown]) {
+    transform: none;
+  }
+  html.reveal-ready [data-reveal="plate"] {
+    transition: opacity 1400ms var(--ease-quiet);
+  }
 }
 
 /* Amenity index: numbering continues across groups. */

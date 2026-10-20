@@ -45,8 +45,8 @@ export function Arrival() {
         <ol className="col-span-4 grid gap-x-col border-t border-on-dark/60 md:col-span-8 md:grid-cols-2 lg:col-span-12 lg:grid-cols-4">
           {sequence.map((it, i) => (
             <li key={it.title} className="border-b border-on-dark-muted/30 py-5 md:border-b-0 lg:pr-4">
-              <span aria-hidden="true" className="apparatus text-on-dark-muted">
-                {String(i + 1).padStart(2, "0")}
+              <span aria-hidden="true" className="font-serif text-body italic text-brass-light">
+                {i + 1}
               </span>
               <h3 className="mt-2 font-serif text-h3">{it.title}</h3>
               <p className="mt-2 text-small text-on-dark-muted">{it.body}</p>

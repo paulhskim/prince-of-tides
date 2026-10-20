@@ -27,8 +27,7 @@ import { stayToQuery, useAvailability, useStay } from "./state";
 const { overall, outOf, count } = reviewsSection.ratingSummary;
 const ratingLine = `${overall} of ${outOf} from ${count} Vrbo reviews`;
 
-const primarySm =
-  "inline-flex h-10 shrink-0 items-center justify-center bg-marsh px-4 text-small font-medium text-sheet transition-colors duration-[var(--duration-fast)] hover:bg-marsh-hover";
+const primarySm = "btn btn-primary min-h-11 shrink-0 px-5";
 
 export function ReservationBar() {
   return (
@@ -94,34 +93,34 @@ function DesktopBar() {
   }
 
   const cell =
-    "flex h-16 min-w-40 flex-col items-start justify-center border-r border-rule px-5 text-left transition-colors duration-[var(--duration-fast)] hover:bg-stone/60 focus-visible:outline-offset-[-2px]";
+    "flex h-[4.5rem] min-w-44 flex-col items-start justify-center border-r border-rule px-6 text-left transition-colors duration-[var(--duration-fast)] hover:bg-stone/60 focus-visible:outline-offset-[-2px]";
 
   return (
     <div ref={rootRef} className="relative hidden lg:block" data-testid="reservation-bar">
       <div className="flex items-stretch border-y border-ink bg-sheet">
         <button ref={datesBtn} type="button" className={cell} aria-expanded={open === "dates"} aria-controls={`${popId}-dates`} onClick={() => setOpen(open === "dates" ? null : "dates")}>
-          <span className="text-label text-ink-muted">{bookingCopy.labels.checkIn}</span>
-          <span className="text-small text-ink tabular">{stay.checkIn ? formatShort(stay.checkIn) : bookingCopy.placeholders.selectDate}</span>
+          <span className="smallcaps text-ink-muted">{bookingCopy.labels.checkIn}</span>
+          <span className="mt-1 font-serif text-[1.0625rem] text-ink tabular">{stay.checkIn ? formatShort(stay.checkIn) : bookingCopy.placeholders.selectDate}</span>
         </button>
         <button type="button" className={cell} aria-expanded={open === "dates"} aria-controls={`${popId}-dates`} onClick={() => setOpen(open === "dates" ? null : "dates")}>
-          <span className="text-label text-ink-muted">{bookingCopy.labels.checkOut}</span>
-          <span className="text-small text-ink tabular">{stay.checkOut ? formatShort(stay.checkOut) : bookingCopy.placeholders.selectDate}</span>
+          <span className="smallcaps text-ink-muted">{bookingCopy.labels.checkOut}</span>
+          <span className="mt-1 font-serif text-[1.0625rem] text-ink tabular">{stay.checkOut ? formatShort(stay.checkOut) : bookingCopy.placeholders.selectDate}</span>
         </button>
         <button ref={guestsBtn} type="button" className={cell} aria-expanded={open === "guests"} aria-controls={`${popId}-guests`} onClick={() => setOpen(open === "guests" ? null : "guests")}>
-          <span className="text-label text-ink-muted">{bookingCopy.labels.guests}</span>
-          <span className="text-small text-ink tabular">{guestLine(stay)}</span>
+          <span className="smallcaps text-ink-muted">{bookingCopy.labels.guests}</span>
+          <span className="mt-1 font-serif text-[1.0625rem] text-ink tabular">{guestLine(stay)}</span>
         </button>
         <div className="flex flex-1 items-center justify-end gap-6 pl-5 pr-2">
-          <p className="text-small text-ink-muted tabular" aria-live="polite">
+          <p className="font-serif text-body italic text-ink-muted tabular" aria-live="polite">
             {ready && quote ? (
               <>
-                {diffDays(stay.checkIn!, stay.checkOut!)} nights, estimated total <span className="font-medium text-ink">{formatMoney(quote.total)}</span>
+                {diffDays(stay.checkIn!, stay.checkOut!)} nights, estimated total <span className="not-italic text-ink">{formatMoney(quote.total)}</span>
               </>
             ) : (
               "Add dates for an estimate"
             )}
           </p>
-          <button type="button" onClick={requestToBook} className={`${primarySm} h-12 px-6 text-body`}>
+          <button type="button" onClick={requestToBook} className={`${primarySm} min-h-14 px-8`}>
             {ready ? "Request these dates" : "Request a stay"}
           </button>
         </div>
@@ -149,7 +148,7 @@ function DesktopBar() {
       {open === "guests" && (
         <div id={`${popId}-guests`} role="group" aria-label="Guests" className="absolute top-full left-72 z-40 mt-px w-96 bg-sheet p-6 shadow-overlay">
           <GuestFields idPrefix={`${popId}-g`} value={stay} onChange={setStay} />
-          <button type="button" onClick={() => close()} className="mt-4 min-h-11 text-small underline decoration-rule-strong underline-offset-[0.22em] hover:decoration-ink">
+          <button type="button" onClick={() => close()} className="link-caps mt-4">
             Done
           </button>
         </div>

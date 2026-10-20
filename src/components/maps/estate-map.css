@@ -1,0 +1,213 @@
+/*
+ * Estate map markers and MapLibre chrome. Loaded lazily with the map engine (src/components/maps/engine.ts).
+ * Colors come from the design tokens (src/styles/tokens.css); fallbacks keep the map legible if a
+ * token is ever renamed.
+ */
+
+.em-canvas {
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  background-color: var(--color-paper, #ecece5);
+}
+
+.em-canvas .maplibregl-canvas:focus-visible {
+  outline: 2px solid var(--color-focus, #22241f);
+  outline-offset: -2px;
+}
+
+/* Cooperative gestures notice (touch): pluff band, sentence case. */
+.em-canvas .maplibregl-cooperative-gesture-screen {
+  background: color-mix(in srgb, var(--color-pluff, #2b2d27) 70%, transparent);
+  color: var(--color-on-dark, #e7e8e0);
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  padding: 1.5rem;
+}
+
+/* ---------- Markers (the button is the mark; the label hangs off it) ---------- */
+
+.em-marker {
+  appearance: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--color-ink, #22241f);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Generous hit area without a bigger mark. */
+.em-marker::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+}
+
+.em-marker:focus-visible {
+  outline: 2px solid var(--color-focus, #22241f);
+  outline-offset: 3px;
+}
+
+.em-label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 6px);
+  transform: translateY(-50%);
+  padding: 1px 4px;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-muted, #585b52);
+  background: color-mix(in srgb, var(--color-paper, #ecece5) 84%, transparent);
+  pointer-events: none;
+}
+
+.em-side-left .em-label {
+  left: auto;
+  right: calc(100% + 6px);
+}
+
+.em-side-top .em-label {
+  top: auto;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%);
+}
+
+.em-side-bottom .em-label {
+  left: 50%;
+  top: calc(100% + 4px);
+  transform: translateX(-50%);
+}
+
+/* The resort: a small square marsh mark with a hairline leader and label. */
+.em-marker--resort {
+  width: 12px;
+  height: 12px;
+  background: var(--color-marsh, #475638);
+  box-shadow: 0 0 0 2px var(--color-paper, #ecece5);
+  z-index: 3;
+}
+
+.em-marker--resort .em-leader {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 3px);
+  width: 16px;
+  height: 1px;
+  background: var(--color-ink, #22241f);
+}
+
+.em-marker--resort .em-label {
+  left: calc(100% + 20px);
+  color: var(--color-ink, #22241f);
+  font-weight: 500;
+}
+
+.em-marker--resort.is-active {
+  box-shadow:
+    0 0 0 2px var(--color-paper, #ecece5),
+    0 0 0 3px var(--color-ink, #22241f);
+}
+
+/* Locator places: an 8px open square. */
+.em-marker--place {
+  width: 8px;
+  height: 8px;
+  background: var(--color-paper, #ecece5);
+  border: 1px solid var(--color-ink, #22241f);
+  z-index: 2;
+  transition: background-color var(--duration-fast, 120ms) linear;
+}
+
+.em-marker--place:hover,
+.em-marker--place.is-active {
+  background: var(--color-ink, #22241f);
+}
+
+.em-marker--place.is-active .em-label,
+.em-marker--place:hover .em-label {
+  color: var(--color-ink, #22241f);
+}
+
+[data-compact="true"] .em-marker--place:not(.is-active):not(:hover):not(:focus-visible) .em-label {
+  display: none;
+}
+
+/* Guide: numbered squares that match the list order on /area. */
+.em-marker--num {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-sheet, #f6f6f1);
+  border: 1px solid var(--color-ink, #22241f);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  z-index: 2;
+  transition:
+    background-color var(--duration-fast, 120ms) linear,
+    color var(--duration-fast, 120ms) linear;
+}
+
+.em-marker--num:hover,
+.em-marker--num.is-active {
+  background: var(--color-ink, #22241f);
+  color: var(--color-paper, #ecece5);
+  z-index: 4;
+}
+
+.em-marker--num .em-label {
+  visibility: hidden;
+  color: var(--color-ink, #22241f);
+  background: var(--color-sheet, #f6f6f1);
+  box-shadow: inset 0 0 0 1px var(--color-rule, #c6c8bc);
+  padding: 3px 6px;
+}
+
+.em-marker--num:hover .em-label,
+.em-marker--num:focus-visible .em-label,
+.em-marker--num.is-active .em-label {
+  visibility: visible;
+}
+
+/* ---------- Geographic labels ---------- */
+
+.em-geo {
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.em-geo[hidden] {
+  display: none;
+}
+
+.em-geo--water {
+  font-family: var(--font-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--color-ink-faint, #73766c) 75%, #7f9499);
+}
+
+.em-geo--land {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-faint, #73766c);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .em-marker--place,
+  .em-marker--num {
+    transition: none;
+  }
+}

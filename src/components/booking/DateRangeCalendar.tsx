@@ -238,14 +238,14 @@ export function DateRangeCalendar({
               key={month}
               className={i === 1 ? "hidden lg:block" : undefined}
             >
-              <h3 id={headingId} className="flex h-11 items-center pr-24 font-serif text-h3" aria-live={i === 0 ? "polite" : undefined}>
+              <h3 id={headingId} className="flex h-11 items-center pr-24 font-serif text-[1.5rem] font-light tracking-[-0.015em]" aria-live={i === 0 ? "polite" : undefined}>
                 {formatMonth(month)}
               </h3>
               <table role="grid" aria-labelledby={headingId} className="mt-3 w-full table-fixed border-collapse">
                 <thead>
                   <tr>
                     {WEEKDAYS.map(([short, long]) => (
-                      <th key={short} scope="col" className="pb-2 text-center text-caption font-normal text-ink-muted">
+                      <th key={short} scope="col" className="smallcaps pb-3 text-center text-ink-muted">
                         <abbr title={long} className="no-underline">
                           {short}
                         </abbr>
@@ -316,11 +316,11 @@ export function DateRangeCalendar({
             setFocusDate(today);
           }}
           disabled={!selection.checkIn}
-          className="min-h-11 text-small text-ink underline decoration-rule-strong underline-offset-[0.22em] transition-colors duration-[var(--duration-fast)] hover:decoration-ink disabled:text-ink-faint disabled:no-underline"
+          className="link-caps text-ink disabled:text-ink-faint disabled:no-underline"
         >
           {bookingCopy.calendar.clearDates}
         </button>
-        <span className="text-small text-ink-muted tabular">{nights ? `${nights} ${nights === 1 ? "night" : "nights"}` : ""}</span>
+        <span className="font-serif text-small italic text-ink-muted tabular">{nights ? `${nights} ${nights === 1 ? "night" : "nights"}` : ""}</span>
       </div>
     </div>
   );
@@ -360,7 +360,7 @@ function DayCell({
         aria-disabled={!info.selectable || undefined}
         onClick={() => onChoose(info)}
         onKeyDown={(e) => onKeyDown(e, info.iso)}
-        className={`flex h-11 w-full items-center justify-center text-small tabular transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-1 lg:h-12 ${tone} ${hover} ${info.selectable ? "cursor-pointer" : "cursor-default"}`}
+        className={`flex h-11 w-full items-center justify-center font-serif text-[1rem] tabular transition-colors duration-[var(--duration-fast)] focus-visible:outline-offset-1 lg:h-12 ${tone} ${hover} ${info.selectable ? "cursor-pointer" : "cursor-default"}`}
       >
         <span
           aria-hidden="true"

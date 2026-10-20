@@ -5,7 +5,7 @@ import { photoFor } from "@/lib/photos";
 import { Grid, SectionTitle } from "../layout";
 import { MapFacade } from "../MapFacade";
 import { Photo } from "../Photo";
-import { splitHeading } from "../text";
+import { smart, splitHeading } from "../text";
 
 /** Places for the "getting about" list, by their area-guide names. */
 const PICKS = [
@@ -57,21 +57,21 @@ export function Beach() {
             {title}
           </SectionTitle>
 
-          <p className="mt-10 flex flex-wrap items-baseline gap-x-5 gap-y-2 border-t border-ink pt-5">
-            <span className="display-cut text-figure tabular">
-              0.8<span className="text-ink-muted"> to </span>1.1
+          <p data-reveal className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-3 border-t border-ink pt-6">
+            <span className="display-cut text-figure">
+              0.8<span className="italic text-brass"> to </span>1.1
             </span>
-            <span className="max-w-[14rem] text-small">miles, by a private boardwalk raised over the salt marsh</span>
+            <span className="max-w-[14rem] font-serif text-body italic leading-snug">miles, by a private boardwalk raised over the salt marsh</span>
           </p>
 
-          <p className="mt-8 max-w-measure font-serif text-prose oldstyle">{beachAccess.body}</p>
+          <p className="mt-8 max-w-measure font-serif text-prose oldstyle">{smart(beachAccess.body)}</p>
 
           <h3 className="apparatus mt-12 border-b border-ink pb-2">An afternoon, in order</h3>
           <ol>
             {beachAccess.steps.map((s, i) => (
-              <li key={s} className="grid grid-cols-[2.25rem_1fr] border-b border-rule py-3">
-                <span className="font-serif text-body text-ink-muted tabular">{i + 1}</span>
-                <span className="font-serif text-prose leading-snug oldstyle">{s}</span>
+              <li key={s} className="grid grid-cols-[2.25rem_1fr] border-b border-rule py-3.5">
+                <span className="font-serif text-body italic text-brass">{i + 1}</span>
+                <span className="font-serif text-prose leading-snug oldstyle">{smart(s)}</span>
               </li>
             ))}
           </ol>
@@ -117,7 +117,7 @@ export function Beach() {
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
             <MapFacade caption="Map of Hilton Head Resort, mid-island" />
-            <Link href="/area" className="inline-flex min-h-11 items-center text-small font-medium">
+            <Link href="/area" className="link-caps">
               The area guide
             </Link>
           </div>

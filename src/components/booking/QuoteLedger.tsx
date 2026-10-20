@@ -119,16 +119,16 @@ export function QuoteLedger({ quote, compact = false }: { quote: Quote | null; c
         </tbody>
         <tfoot>
           <tr className="border-t border-ink">
-            <th scope="row" className="pt-3 pr-4 text-left align-baseline text-small font-semibold text-ink">
+            <th scope="row" className="smallcaps pt-4 pr-4 text-left align-baseline text-ink">
               {bookingCopy.quote.totalEstimate}
             </th>
-            <td className="pt-3 text-right align-baseline font-serif text-h3 text-ink" data-testid="quote-total">
+            <td className="pt-4 text-right align-baseline font-serif text-[1.875rem] font-light leading-none tracking-[-0.02em] text-ink" data-testid="quote-total">
               {formatMoney(quote.total)}
             </td>
           </tr>
         </tfoot>
       </table>
-      <p className="mt-3 text-caption text-ink-muted">{bookingCopy.quote.disclaimer}</p>
+      <p className="mt-4 text-caption text-ink-muted">{bookingCopy.quote.disclaimer}</p>
       <p className="mt-1 text-caption text-ink-muted">Booking direct means no platform service fee.</p>
       {quote.isPlaceholder && process.env.NODE_ENV !== "production" && (
         <p className="mt-3 border border-warning px-3 py-2 text-caption text-warning" role="note">

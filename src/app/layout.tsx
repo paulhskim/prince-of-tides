@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import { rootMetadata } from "@/lib/seo/metadata";
 import { Masthead } from "@/components/site/Masthead";
 import { Footer } from "@/components/site/Footer";
+import { RevealObserver } from "@/components/site/RevealObserver";
 import "./globals.css";
 
 /*
@@ -33,7 +34,7 @@ export const metadata = rootMetadata;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`} suppressHydrationWarning>
       <body className="min-w-[320px] overflow-x-clip">
         <a
           href="#main"
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
+        <RevealObserver />
       </body>
     </html>
   );

@@ -4,7 +4,8 @@ import { pageBreadcrumb } from "@/lib/seo/schema";
 import Link from "next/link";
 import { GalleryGroups, type FrameGroup } from "@/components/site/gallery/GalleryGroups";
 import { PLANNED_SHOTS } from "@/components/site/gallery/plan";
-import { Grid } from "@/components/site/layout";
+import { Grid, PageHeader } from "@/components/site/layout";
+import { roman } from "@/components/site/text";
 import { hero } from "@/content/copy";
 import { getGalleryPhotos, GROUP_LABELS, type PhotoGroup } from "@/lib/photos";
 
@@ -39,41 +40,45 @@ export default function GalleryPage() {
   return (
     <>
       <JsonLd data={pageBreadcrumb("gallery")} />
-      <header className="pb-section-sm pt-10 lg:pt-16">
-        <Grid>
-          <p className="col-span-4 mb-3 text-label text-ink-muted md:col-span-8 lg:col-span-3 lg:mb-0">{hero.eyebrow}</p>
-          <div className="col-span-4 md:col-span-8 lg:col-span-8 lg:col-start-4">
-            <h1 className="text-h1">Photographs</h1>
-            <p className="mt-5 max-w-measure font-serif text-lead">
-              {hasPhotos
-                ? `${photos.length} photographs of the residence, the resort and the way to the beach. Select any frame to view it larger.`
-                : "Photographs of the residence, the resort and the way to the beach are being made. Until they arrive, this is the list of plates: what each frame will show."}
-            </p>
-          </div>
-          <nav aria-label="Photograph sections" className="col-span-4 mt-8 md:col-span-8 lg:col-span-9 lg:col-start-4">
-            <ul className="flex flex-wrap gap-x-6 text-small">
-              {groups.map((g) => (
-                <li key={g.id}>
-                  <a href={`#${g.id}`} className="inline-flex min-h-11 items-center">
-                    {g.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </Grid>
-      </header>
+      <PageHeader
+        eyebrow={hero.eyebrow}
+        folio={hasPhotos ? `Plates I to ${roman(photos.length)}` : "The list of plates"}
+        title="Photographs"
+        lead={
+          hasPhotos
+            ? `${photos.length} photographs of the residence, the resort and the way to the beach. Select any plate to view it larger.`
+            : "Photographs of the residence, the resort and the way to the beach are being made. Until they arrive, this is the list of plates: what each frame will show."
+        }
+        aside={
+          groups.length > 1 ? (
+            <nav aria-label="Photograph sections">
+              <ul className="border-t border-ink">
+                {groups.map((g) => (
+                  <li key={g.id} className="border-b border-rule">
+                    <a href={`#${g.id}`} className="flex min-h-11 items-center font-serif text-body no-underline hover:underline">
+                      {g.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : (
+            <nav aria-label="Photograph sections">
+              <a href={`#${groups[0]?.id ?? "residence"}`} className="link-caps">
+                {groups[0]?.label ?? "The residence"}
+              </a>
+            </nav>
+          )
+        }
+      />
 
       <GalleryGroups groups={groups} />
 
       <div className="py-section-sm">
         <Grid>
           <div className="col-span-full flex flex-wrap items-center justify-between gap-4 border-t border-rule pt-5">
-            <p className="font-serif text-lead">{hero.headline}</p>
-            <Link
-              href="/#reserve"
-              className="inline-flex h-12 items-center bg-marsh px-6 font-medium text-sheet no-underline hover:bg-marsh-hover"
-            >
+            <p className="font-serif text-lead font-light italic">{hero.headline}</p>
+            <Link href="/#reserve" className="btn btn-primary min-h-13">
               {hero.primaryCta.label}
             </Link>
           </div>

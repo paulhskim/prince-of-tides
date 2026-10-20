@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
-import { frame } from "../text";
+import { frame, roman } from "../text";
 
 export type Frame = {
   n: number;
@@ -18,17 +18,18 @@ export type FrameGroup = { id: string; label: string; frames: Frame[] };
 const Lightbox = dynamic(() => import("./Lightbox").then((m) => m.Lightbox), { ssr: false });
 
 /**
- * Editorial rhythm, repeating every six frames. Each entry: grid placement (lg 12 cols, md 8)
- * and aspect ratio. Wide landscapes alternate with offset portraits.
+ * Editorial rhythm, repeating every six frames (lg 12 cols, md 8). Every photograph is shown whole
+ * at its own 3:2 ratio; the rhythm comes from width and placement, never from cropping.
  */
 const RHYTHM = [
-  { cls: "md:col-span-8 lg:col-span-8", ratio: "aspect-[3/2]" },
-  { cls: "md:col-span-4 lg:col-span-4 lg:self-end", ratio: "aspect-[4/5]" },
-  { cls: "md:col-span-4 lg:col-span-4 lg:col-start-2", ratio: "aspect-[4/5]" },
-  { cls: "md:col-span-4 lg:col-span-6 lg:col-start-7 lg:mt-32", ratio: "aspect-[3/2]" },
-  { cls: "md:col-span-8 lg:col-span-12", ratio: "aspect-[16/9]" },
-  { cls: "md:col-span-4 lg:col-span-5 lg:col-start-4", ratio: "aspect-[4/5]" },
+  { cls: "md:col-span-8 lg:col-span-8" },
+  { cls: "md:col-span-5 md:col-start-4 lg:col-span-4 lg:col-start-9 lg:self-end" },
+  { cls: "md:col-span-5 lg:col-span-5 lg:col-start-2" },
+  { cls: "md:col-span-6 md:col-start-3 lg:col-span-6 lg:col-start-7 lg:mt-32" },
+  { cls: "md:col-span-8 lg:col-span-12" },
+  { cls: "md:col-span-6 lg:col-span-7 lg:col-start-4" },
 ];
+const RATIO = "aspect-[3/2]";
 
 export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
   const all = groups.flatMap((g) => g.frames).filter((f) => f.src);
@@ -56,23 +57,22 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
       {groups.map((g) => (
         <section key={g.id} id={g.id} aria-labelledby={`${g.id}-title`} className="py-section-sm">
           <div className="mx-auto grid max-w-page grid-cols-4 gap-x-col px-gutter md:grid-cols-8 lg:grid-cols-12">
-            <div aria-hidden="true" className="col-span-full mb-6 border-t border-ink" />
-            <div className="col-span-4 mb-8 flex items-baseline justify-between md:col-span-8 lg:col-span-12">
-              <h2 id={`${g.id}-title`} className="text-h3">
+            <div className="col-span-4 mb-10 flex items-baseline justify-between gap-4 border-t border-ink pt-5 md:col-span-8 lg:col-span-12 lg:mb-14">
+              <h2 id={`${g.id}-title`} className="font-serif text-h2 font-light">
                 {g.label}
               </h2>
-              <p className="text-caption text-ink-muted tabular">
-                {frame(g.frames[0].n)} to {frame(g.frames[g.frames.length - 1].n)}
+              <p className="smallcaps text-ink-muted">
+                Plates {roman(g.frames[0].n)} to {roman(g.frames[g.frames.length - 1].n)}
               </p>
             </div>
             {g.frames.some((f) => f.src) ? (
-            <ul className="col-span-4 grid grid-cols-4 gap-x-col gap-y-10 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:grid-cols-12 lg:gap-y-16">
+            <ul className="col-span-4 grid grid-cols-4 gap-x-col gap-y-12 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:grid-cols-12 lg:gap-y-20">
               {g.frames.map((f, i) => {
                 const r = RHYTHM[i % RHYTHM.length];
                 const label = `${frame(f.n)}`;
                 return (
                   <li key={f.n} id={`frame-${label}`} className={`col-span-4 ${r.cls} scroll-mt-36`}>
-                    <figure>
+                    <figure data-reveal="plate">
                       {f.src ? (
                         <button
                           type="button"
@@ -81,23 +81,23 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
                           }}
                           onClick={() => openAt(f.n)}
                           aria-label={`Open photograph ${label}: ${f.alt}`}
-                          className={`relative block w-full overflow-hidden bg-stone ${r.ratio}`}
+                          className={`relative block w-full overflow-hidden bg-stone ${RATIO}`}
                         >
                           <Image
                             src={f.src}
                             alt=""
                             fill
                             quality={70}
-                            sizes="(min-width:1024px) 60vw, 100vw"
+                            sizes="(min-width:1280px) 1200px, (min-width:1024px) 90vw, 100vw"
                             className="object-cover"
                           />
                         </button>
                       ) : (
-                        <Plate n={f.n} caption={f.caption} ratio={r.ratio} />
+                        <Plate n={f.n} caption={f.caption} ratio={RATIO} />
                       )}
-                      <figcaption className="mt-2 grid grid-cols-[2.5rem_1fr] text-caption text-ink-muted">
-                        <span className="tabular">{label}</span>
-                        <span>{f.caption}</span>
+                      <figcaption className="mt-4">
+                        <span className="smallcaps block text-brass">Plate {roman(f.n)}</span>
+                        <span className="mt-1 block font-serif text-body italic leading-snug text-ink-muted">{f.caption}</span>
                       </figcaption>
                     </figure>
                   </li>

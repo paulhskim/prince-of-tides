@@ -18,6 +18,11 @@ export type TravelMode = "walk" | "drive" | "on-site";
 
 export interface AreaPlace {
   name: string;
+  /**
+   * Map position (WGS84). Optional: omitted for on-site amenities, island-wide entries and
+   * anything we could not verify to roughly 50 m. Sources and checks: src/lib/maps/places.ts.
+   */
+  coordinates?: { lat: number; lng: number };
   /** 1 to 2 sentences, useful and specific. */
   description: string;
   /** Approx. road distance in miles from the resort. null when not a single point (e.g. island-wide). */
@@ -75,6 +80,7 @@ export const areaGuide: AreaGuide = {
       places: [
         {
           name: "Hilton Head Resort beach (via the marsh boardwalk)",
+          coordinates: { lat: 32.18704, lng: -80.70197 },
           description:
             "The resort's private elevated boardwalk crosses the salt marsh to the beach, with Coco's on the Beach waiting at the end. Beach chairs from the unit's storage locker make the walk easy; in season, the complimentary resort shuttle saves your legs.",
           distanceMiles: 1,
@@ -86,6 +92,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Burkes Beach Access",
+          coordinates: { lat: 32.19405, lng: -80.69767 },
           description:
             "A quieter mid-island access at the end of Burkes Beach Road with beach matting, outdoor showers and seasonal lifeguards. Parking is at Chaplin Community Park on Cast Net Drive (paid for visitors).",
           distanceMiles: 1.2,
@@ -96,6 +103,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Driessen Beach Park",
+          coordinates: { lat: 32.19899, lng: -80.69430 },
           description:
             "A family favorite at the end of Bradley Beach Road with restrooms, outdoor showers and a playground. Metered parking for visitors; lifeguards in beach season.",
           distanceMiles: 1.3,
@@ -106,6 +114,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Folly Field Beach Park",
+          coordinates: { lat: 32.20165, lng: -80.68919 },
           description:
             "A boardwalk winds through natural dunes to a wide stretch of sand. Restrooms, outdoor showers, beach matting and free beach wheelchair reservations; metered parking for visitors.",
           distanceMiles: 1.8,
@@ -116,6 +125,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Coligny Beach Park",
+          coordinates: { lat: 32.14156, lng: -80.75106 },
           description:
             "The island's most popular oceanfront park, at the end of Pope Avenue, with free parking, restrooms, showers and Wi-Fi. Shops and casual food at Coligny are across the street, so expect crowds in summer.",
           distanceMiles: 5.6,
@@ -135,6 +145,7 @@ export const areaGuide: AreaGuide = {
       places: [
         {
           name: "Coco's on the Beach",
+          coordinates: { lat: 32.18704, lng: -80.70197 },
           description:
             "The beach bar at the end of the resort's boardwalk, for a cold drink with your toes in the sand. Hours are seasonal, so check before you walk over.",
           distanceMiles: 1,
@@ -146,6 +157,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Poseidon",
+          coordinates: { lat: 32.18587, lng: -80.72131 },
           description:
             "Seafood, steaks and a raw bar in Shelter Cove Towne Centre, with a rooftop bar that hosts music in the evenings.",
           distanceMiles: 1.2,
@@ -156,6 +168,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Santa Fe Cafe",
+          coordinates: { lat: 32.17718, lng: -80.72793 },
           description:
             "Southwestern and Mexican plates with a rooftop cantina, mid-island. Closed Sundays and Mondays; lunch Tuesday to Friday, dinner Tuesday to Saturday.",
           distanceMiles: 2.1,
@@ -166,6 +179,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "ELA's On the Water",
+          coordinates: { lat: 32.18150, lng: -80.73223 },
           description:
             "Seafood and prime steaks overlooking Shelter Cove Harbour and Broad Creek, with a wraparound patio. Dinner nightly and brunch most days; book ahead for sunset.",
           distanceMiles: 2.4,
@@ -176,6 +190,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Big Jim's BBQ, Burgers & Pizza",
+          coordinates: { lat: 32.17080, lng: -80.71876 },
           description:
             "Casual barbecue, burgers and grilled pizza at the Robert Trent Jones course clubhouse in Palmetto Dunes, open from breakfast through dinner. Kids' menu and outdoor seating overlooking the course.",
           distanceMiles: 2.5,
@@ -186,6 +201,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "OMBRA Cucina Italiana",
+          coordinates: { lat: 32.16003, lng: -80.75441 },
           description:
             "Chef-driven Italian with a strong Italian wine list. Daily happy hour (4:30 to 6:30 PM) and an early three-course dinner menu make it easier on the budget.",
           distanceMiles: 4,
@@ -196,6 +212,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "The Jazz Corner",
+          coordinates: { lat: 32.15942, lng: -80.75570 },
           description:
             "A jazz supper club operating since 1999, with live shows most nights and dinner served during the music. Reservations are the way in, especially on weekends.",
           distanceMiles: 4,
@@ -206,6 +223,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Up the Creek Pub & Grill",
+          coordinates: { lat: 32.18521, lng: -80.75687 },
           description:
             "A laid-back locals' spot at Broad Creek Marina for burgers, smoked wings and seafood on the deck. Open daily from 11 AM.",
           distanceMiles: 5.2,
@@ -216,6 +234,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Fishcamp on Broad Creek",
+          coordinates: { lat: 32.18522, lng: -80.75662 },
           description:
             "Fresh seafood, oysters and steaks on the water beside Broad Creek Marina, with weekly entertainment.",
           distanceMiles: 5.2,
@@ -235,6 +254,7 @@ export const areaGuide: AreaGuide = {
       places: [
         {
           name: "Kroger (Shelter Cove)",
+          coordinates: { lat: 32.18583, lng: -80.72023 },
           description:
             "Full-size grocery with bakery, deli, seafood, a large wine and beer selection, a Starbucks inside and a gas station. Online pickup is available if you want groceries ready when you land.",
           distanceMiles: 1,
@@ -245,6 +265,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Kroger Pharmacy (Shelter Cove)",
+          coordinates: { lat: 32.18583, lng: -80.72023 },
           description:
             "The closest pharmacy, inside the Shelter Cove Kroger with a drive-thru window. Recent hours: Mon to Fri 9 AM to 8 PM, Sat 9 AM to 6 PM, Sun 10 AM to 5 PM (closed 1 to 1:30 PM daily).",
           distanceMiles: 1,
@@ -274,6 +295,7 @@ export const areaGuide: AreaGuide = {
       places: [
         {
           name: "Shelter Cove Harbour & Marina",
+          coordinates: { lat: 32.18080, lng: -80.73218 },
           description:
             "The island's largest marina, with a waterfront promenade, shops, restaurants and the King Neptune statue. In summer, HarbourFest brings music, family entertainment and weekly fireworks.",
           distanceMiles: 2.4,
@@ -284,6 +306,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Dolphin & nature cruises",
+          coordinates: { lat: 32.18080, lng: -80.73218 },
           description:
             "Dolphin tours, sunset sails, nature cruises on Broad Creek and fishing charters depart from Shelter Cove Marina. Book a day or two ahead in summer.",
           distanceMiles: 2.4,
@@ -294,6 +317,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Golf at Palmetto Dunes",
+          coordinates: { lat: 32.17083, lng: -80.71889 },
           description:
             "Three courses open to the public right next door: Robert Trent Jones, George Fazio and Arthur Hills.",
           distanceMiles: 1.6,
@@ -304,6 +328,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Coastal Discovery Museum at Honey Horn",
+          coordinates: { lat: 32.21149, lng: -80.74402 },
           description:
             "Free admission to exhibits, gardens and trails on a 70-acre historic property, plus a butterfly learning station and Lowcountry history programs. Open daily (Sundays from 11 AM).",
           distanceMiles: 5.3,
@@ -314,6 +339,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Harbour Town Lighthouse & Sea Pines",
+          coordinates: { lat: 32.13862, lng: -80.81264 },
           description:
             "Climb the 93-foot lighthouse at Harbour Town (open daily from 10 AM to sundown; small climbing fee) for the view from the top. Sea Pines charges a separate vehicle day-pass fee at the gate.",
           distanceMiles: 7.6,
@@ -324,6 +350,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Pinckney Island National Wildlife Refuge",
+          coordinates: { lat: 32.24943, lng: -80.76432 },
           description:
             "About 10 miles of trails across a refuge that is mostly salt marsh and tidal creeks, with a wading-bird rookery (ibis, egrets, herons). Open sunrise to sunset; no restrooms or water, and no pets, so pack accordingly.",
           distanceMiles: 8.7,
@@ -363,6 +390,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Adventure Cove",
+          coordinates: { lat: 32.20139, lng: -80.69799 },
           description:
             "Two 18-hole mini golf courses (Paradise Falls and Lost Lagoon) plus an arcade with prize redemption. Open daily; a good after-dinner outing.",
           distanceMiles: 1.3,
@@ -373,6 +401,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Palmetto Dunes lagoon paddling and bike rentals",
+          coordinates: { lat: 32.16832, lng: -80.72011 },
           description:
             "Rent kayaks or canoes for Palmetto Dunes' 11-mile lagoon, or bikes and e-bikes for the paths.",
           distanceMiles: 1.6,
@@ -383,6 +412,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "The Sandbox Children's Museum",
+          coordinates: { lat: 32.14430, lng: -80.75491 },
           description:
             "A nonprofit interactive museum for preschool and elementary-age kids at Lowcountry Celebration Park, near Coligny.",
           distanceMiles: 4.7,
@@ -412,6 +442,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Arts Center of Coastal Carolina",
+          coordinates: { lat: 32.17832, lng: -80.72817 },
           description:
             "Professional theater and touring concerts on a 349-seat main stage in Shelter Cove. Check the season calendar for matinees.",
           distanceMiles: 1.7,
@@ -422,6 +453,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Coastal Discovery Museum exhibits",
+          coordinates: { lat: 32.21149, lng: -80.74402 },
           description:
             "Indoor exhibits on island history, including Santa Elena and the historic Honey Horn buildings, with free admission.",
           distanceMiles: 5.3,
@@ -451,6 +483,7 @@ export const areaGuide: AreaGuide = {
       places: [
         {
           name: "Hilton Head Island Airport (HHH)",
+          coordinates: { lat: 32.22485, lng: -80.69716 },
           description:
             "On-island airport served by American, Delta and United (routes include Charlotte, Atlanta, New York-LaGuardia, Newark, Chicago, Washington, Philadelphia and Boston, several of them seasonal).",
           distanceMiles: 3.3,
@@ -461,6 +494,7 @@ export const areaGuide: AreaGuide = {
         },
         {
           name: "Savannah/Hilton Head International Airport (SAV)",
+          coordinates: { lat: 32.12943, lng: -81.20185 },
           description:
             "The larger regional airport, in Savannah, Georgia, with more airlines and nonstop routes. Allow about 50 to 60 minutes each way.",
           distanceMiles: 45.6,

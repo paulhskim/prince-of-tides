@@ -16,11 +16,11 @@ export function MapFacade({ caption }: { caption: string }) {
         <button
           type="button"
           onClick={() => setLoaded(true)}
-          className="inline-flex h-11 items-center border border-ink px-5 text-small font-medium text-ink transition-colors duration-100 hover:bg-ink hover:text-paper"
+          className="btn btn-secondary min-h-11 px-5"
         >
           Show map
         </button>
-        <span className="text-caption text-ink-muted">Loads Google Maps</span>
+        <span className="font-serif text-small italic text-ink-muted">Loads Google Maps</span>
       </div>
     );
   }

@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { footer, hero } from "@/content/copy";
-import { siteConfig } from "@/content/site.config";
 import { NAV } from "./nav";
+import { Wordmark } from "./Monogram";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -106,23 +106,25 @@ export function Masthead() {
 
   const cta = isHome ? "#reserve" : "/book";
 
+  // On the home page the masthead sits on the night cover until the page moves.
+  const onNight = isHome && !scrolled;
+
   return (
     <header
-      className={`sticky top-0 z-50 bg-paper transition-[border-color,height] duration-200 ease-quiet ${
-        scrolled ? "border-b border-rule" : "border-b border-transparent"
+      data-surface={onNight ? "dark" : undefined}
+      className={`sticky top-0 z-50 transition-[background-color,color,border-color] duration-500 ease-quiet ${
+        onNight ? "border-b border-transparent bg-pluff text-on-dark" : scrolled ? "border-b border-rule bg-paper text-ink" : "border-b border-transparent bg-paper text-ink"
       }`}
     >
       <div
-        className={`mx-auto flex max-w-page items-center justify-between gap-6 px-gutter transition-[height] duration-200 ease-quiet ${
-          scrolled ? "h-14" : "h-[72px]"
+        className={`mx-auto flex max-w-page items-center justify-between gap-6 px-gutter transition-[height] duration-300 ease-quiet ${
+          scrolled ? "h-16" : "h-20 lg:h-[88px]"
         }`}
       >
-        <Link href="/" className="font-serif text-[1.125rem] leading-none no-underline lg:text-[1.25rem]">
-          {siteConfig.brand.name}
-        </Link>
+        <Wordmark onNight={onNight} />
 
         <nav aria-label="Main" className="hidden lg:block">
-          <ul className="flex items-center gap-7">
+          <ul className="flex items-center gap-8">
             {NAV.map((item) => {
               const current = isCurrent(item.href, item.section);
               return (
@@ -130,9 +132,9 @@ export function Masthead() {
                   <Link
                     href={item.href}
                     aria-current={current ? (item.section ? "location" : "page") : undefined}
-                    className={`inline-flex min-h-11 items-center text-small no-underline decoration-marsh decoration-1 underline-offset-[6px] transition-colors duration-100 hover:underline ${
-                      current ? "underline" : ""
-                    }`}
+                    className={`smallcaps inline-flex min-h-11 items-center no-underline decoration-1 underline-offset-[9px] transition-[text-decoration-color] duration-200 hover:underline ${
+                      onNight ? "decoration-brass-light" : "decoration-brass"
+                    } ${current ? "underline" : ""}`}
                   >
                     {item.label}
                   </Link>
@@ -144,12 +146,9 @@ export function Masthead() {
 
         <div className="flex items-center gap-2">
           {pathname?.startsWith("/book") ? null : (
-          <a
-            href={cta}
-            className="hidden h-10 items-center border border-ink px-4 text-small font-medium text-ink no-underline transition-colors duration-100 hover:bg-ink hover:text-paper sm:inline-flex"
-          >
-            {hero.primaryCta.label}
-          </a>
+            <a href={cta} className={`btn hidden min-h-10 px-5 sm:inline-flex ${onNight ? "btn-on-dark" : "btn-secondary"}`}>
+              {hero.primaryCta.label}
+            </a>
           )}
           <button
             ref={menuButton}
@@ -157,10 +156,10 @@ export function Masthead() {
             aria-expanded={open}
             aria-controls="site-drawer"
             onClick={() => setOpen(true)}
-            className="-mr-2 inline-flex min-h-11 items-center gap-2 px-2 text-small font-medium lg:hidden"
+            className="smallcaps -mr-2 inline-flex min-h-11 items-center gap-2.5 px-2 lg:hidden"
           >
             Menu
-            <Menu aria-hidden="true" size={18} strokeWidth={1.25} />
+            <Menu aria-hidden="true" size={18} strokeWidth={1} />
           </button>
         </div>
       </div>
@@ -175,13 +174,11 @@ export function Masthead() {
         hidden={!open}
         className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-paper lg:hidden"
       >
-        <div className="flex h-[72px] shrink-0 items-center justify-between px-gutter">
-          <Link href="/" onClick={() => setOpen(false)} className="font-serif text-[1.125rem] no-underline">
-            {siteConfig.brand.name}
-          </Link>
-          <button type="button" onClick={close} className="-mr-2 inline-flex min-h-11 items-center gap-2 px-2 text-small font-medium">
+        <div className="flex h-20 shrink-0 items-center justify-between px-gutter">
+          <Wordmark onClick={() => setOpen(false)} />
+          <button type="button" onClick={close} className="smallcaps -mr-2 inline-flex min-h-11 items-center gap-2.5 px-2">
             Close
-            <X aria-hidden="true" size={18} strokeWidth={1.25} />
+            <X aria-hidden="true" size={18} strokeWidth={1} />
           </button>
         </div>
         <nav aria-label="Main" className="px-gutter">
@@ -191,7 +188,7 @@ export function Masthead() {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-14 items-center py-3 font-serif text-h3 no-underline"
+                  className="flex min-h-16 items-center py-3 font-serif text-[1.75rem] font-light leading-tight tracking-[-0.015em] no-underline"
                 >
                   {item.label}
                 </Link>
@@ -201,7 +198,7 @@ export function Masthead() {
           <a
             href={cta === "#reserve" ? "/#reserve" : cta}
             onClick={() => setOpen(false)}
-            className="mt-8 flex h-12 w-full items-center justify-center bg-marsh px-6 text-body font-medium text-sheet no-underline hover:bg-marsh-hover"
+            className="btn btn-primary mt-10 h-14 w-full"
           >
             {hero.primaryCta.label}
           </a>

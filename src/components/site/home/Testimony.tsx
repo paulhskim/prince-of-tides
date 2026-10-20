@@ -4,9 +4,9 @@ import { longMonth, splitHeading } from "../text";
 
 function Attribution({ review }: { review: Review }) {
   return (
-    <p className="mt-4 text-small">
-      {review.name}, {longMonth(review.date)}
-      <span className="block text-caption text-ink-muted">
+    <p className="mt-5 text-small">
+      <span className="font-medium">{review.name}</span>, {longMonth(review.date)}
+      <span className="mt-0.5 block text-caption text-ink-muted">
         {review.source}, rated {review.rating} of {review.outOf}
       </span>
     </p>
@@ -36,7 +36,7 @@ export function Testimony() {
           </SectionTitle>
         </div>
 
-        <figure className="col-span-4 mt-10 md:col-span-8 lg:col-span-10 lg:col-start-2 lg:mt-14">
+        <figure data-reveal className="col-span-4 mt-12 md:col-span-8 lg:col-span-10 lg:col-start-2 lg:mt-20">
           <blockquote className="hang-quote font-serif text-quote font-light italic">
             <p>&ldquo;{featured.text}&rdquo;</p>
           </blockquote>
@@ -45,11 +45,11 @@ export function Testimony() {
           </figcaption>
         </figure>
 
-        <div className="col-span-4 mt-16 grid gap-x-col gap-y-10 border-t border-rule pt-6 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:mt-20 lg:grid-cols-12">
+        <div data-reveal className="col-span-4 mt-16 grid gap-x-col gap-y-10 border-t border-rule pt-8 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:mt-20 lg:grid-cols-12">
           <div className="md:col-span-8 lg:col-span-3">
-            <p className="apparatus text-ink-muted">The record</p>
-            <p className="mt-2 font-serif text-h3 tabular">
-              {r.overall} <span className="text-ink-muted">of {r.outOf}</span>
+            <p className="smallcaps text-ink-muted">The record</p>
+            <p className="mt-3 font-serif text-[2.5rem] font-light leading-none tracking-[-0.02em] tabular">
+              {r.overall} <span className="text-[0.6em] italic text-ink-muted">of {r.outOf}</span>
             </p>
             <dl className="mt-3 text-small">
               <div className="flex justify-between border-b border-rule py-1.5">
