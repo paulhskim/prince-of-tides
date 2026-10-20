@@ -35,7 +35,6 @@ export function TheSpace() {
               return (
                 <li
                   key={room.name}
-                  data-reveal
                   className="grid grid-cols-4 gap-x-col border-b border-rule py-6 first:border-t first:border-t-ink md:grid-cols-8 lg:grid-cols-12 lg:py-7 lg:first:border-t-0"
                 >
                   <div className="col-span-4 md:col-span-3 lg:col-span-3">

@@ -31,7 +31,7 @@ export function Resort() {
         </div>
 
         <div className="col-span-4 md:col-span-8 lg:col-span-6 lg:col-start-7 lg:pt-3">
-          <dl data-reveal className="grid gap-x-col border-t border-ink sm:grid-cols-2" aria-label="Hilton Head Resort amenities directory">
+          <dl className="grid gap-x-col border-t border-ink sm:grid-cols-2" aria-label="Hilton Head Resort amenities directory">
             {resort.features.map((f) => (
               <div key={f.title} className="border-b border-rule-strong/40 py-5">
                 <dt className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">

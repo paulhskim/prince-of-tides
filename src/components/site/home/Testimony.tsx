@@ -36,7 +36,7 @@ export function Testimony() {
           </SectionTitle>
         </div>
 
-        <figure data-reveal className="col-span-4 mt-12 md:col-span-8 lg:col-span-10 lg:col-start-2 lg:mt-20">
+        <figure className="col-span-4 mt-12 md:col-span-8 lg:col-span-10 lg:col-start-2 lg:mt-20">
           <blockquote className="hang-quote font-serif text-quote font-light italic">
             <p>&ldquo;{featured.text}&rdquo;</p>
           </blockquote>
@@ -45,7 +45,7 @@ export function Testimony() {
           </figcaption>
         </figure>
 
-        <div data-reveal className="col-span-4 mt-16 grid gap-x-col gap-y-10 border-t border-rule pt-8 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:mt-20 lg:grid-cols-12">
+        <div className="col-span-4 mt-16 grid gap-x-col gap-y-10 border-t border-rule pt-8 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:mt-20 lg:grid-cols-12">
           <div className="md:col-span-8 lg:col-span-3">
             <p className="smallcaps text-ink-muted">The record</p>
             <p className="mt-3 font-serif text-[2.5rem] font-light leading-none tracking-[-0.02em] tabular">

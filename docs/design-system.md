@@ -4,6 +4,43 @@ Owner direction (overrides earlier briefs): quiet luxury in the spirit of Aesop.
 
 Source of truth for tokens: `src/styles/tokens.css`. Page compositions: `docs/ux-spec.md`.
 
+> **Luxury pass (current).** The owner asked for "a more luxurious vibe". The rationale and before/after
+> notes are in `docs/luxury-pass.md`. Where this section conflicts with older rules further down, this
+> section wins:
+>
+> - **Small capitals** (`smallcaps` utility; `apparatus` is an alias): sans 11px, uppercase, tracking 0.16em,
+>   weight 500, tabular lining figures. Used for running heads, labels, table heads, plate numbers, nav, buttons
+>   and quiet text actions. Never above every heading, never for prose, never for guest names or review text.
+> - **Display italic**: the connective words of a display line ("Prince *of* Tides", "0.8 *to* 1.1") and whole
+>   quotations, standfirst asides and captions. Still never for single-word emphasis in running text.
+> - **Folios**: section numerals are brass italic roman numerals at cap height (`SectionTitle`); sub-route
+>   contents lists and plate numbers use the same roman numerals.
+> - **Running head** (`RunningHead`): small capitals between two hairlines, opening the cover, every sub-route
+>   (`PageHeader`), the plates and the reservations section.
+> - **Typography in code**: kerning, `liga` and `calt` on globally; old-style figures in serif prose, tabular
+>   lining figures in data; typographic apostrophes and quotes via `smart()` in `components/site/text.ts`
+>   (never applied to guest reviews, which stay verbatim).
+> - **Wordmark lockup**: the monogram (italic P over roman T in a hairline ring, `Monogram.tsx`) beside the name
+>   with "of" in italic and "Hilton Head Island" in small capitals. The masthead sits on night over the home
+>   cover and turns to paper on scroll (or when the drawer opens).
+> - **Buttons**: `btn` + `btn-primary` (evergreen fill), `btn-secondary` (ink hairline, fills ink on hover) or
+>   `btn-on-dark`; labels in small capitals; text actions use `link-caps` (small capitals with a drawn hairline).
+> - **Fields**: ledger lines. No box: one `rule-strong` underline, entry set in the serif at 19px, label in
+>   small capitals, "(optional)" in serif italic. Focus firms the line to a 2px ink rule. The textarea keeps a
+>   hairline box. Checkbox: 20px square hairline, evergreen when checked.
+> - **Guest stepper**: a segmented hairline control (minus, the count in serif figures, plus), 44px cells.
+>   The circular buttons are retired.
+> - **Reservation card**: `sheet`, a 2px ink top rule over an inset 1px `rule` frame, small-capital labels,
+>   serif values and a light serif total.
+> - **Focus**: 2px outline, offset 4px, ink (on night, `on-dark`).
+> - **Motion**: the cover name settles (opacity and a 14px rise, 1.1s) and its plate fades (1.4s); photographs
+>   in the plates and gallery fade in once (1.6s) as they enter the viewport (`RevealObserver`, `data-reveal`).
+>   Text never fades. Everything is off under `prefers-reduced-motion`, and nothing is hidden without script.
+> - **Photographs**: always shown whole at their native ratio (all current owner photographs are 3:2), with
+>   nothing laid over them. No crops to 4:5 or 21:9 for composition; rhythm comes from width and placement.
+> - **Night passages**: cover, plates, arrival and footer on `pluff`; the plates passage numbers photographs
+>   as Plates I to VI with monograph captions.
+
 ---
 
 ## 1. Audience and personality
@@ -32,77 +69,82 @@ Principles:
 | Banned | Use instead |
 |---|---|
 | Purple/blue gradients, pastel glows, glassmorphism, backdrop blur, floating blobs, noise/grain overlays | Flat paper, stone and pluff fields |
-| Gradient text, colored single-word emphasis in headlines, italic single-word accents in headlines | Plain set headline; italics only for whole quotations and titles |
+| Gradient text, colored single-word emphasis in headlines, italic emphasis | Plain set headline; italics for whole quotations, captions and the connective of a display line |
 | Large rounded rectangles; any radius above 1px except stepper circles | Square corners (`rounded-none`) |
 | Pill badges, chips, tag clouds | Text labels, or a 1px square-bordered label (rare) |
 | Repetitive card grids (three feature cards, review cards, amenity tiles with icons) | Lists, tables, definition lists, pull quotes, spreads |
 | Centered hero + three features + testimonials + generic CTA | The section sequence in `ux-spec.md` |
 | Drop shadows on cards/images/buttons | None. One overlay shadow only for dialogs, popovers and the mobile sheet |
 | Emojis, decorative icons, icon-per-amenity, illustrated spot graphics | Typographic lists. Lucide only for functional controls (section 6) |
-| ALL-CAPS tracked eyebrows above every heading | Sentence-case margin label in the left column |
+| ALL-CAPS tracked eyebrows above every heading | Small capitals only in running heads, labels and apparatus (see Luxury pass) |
 | Middle-dot meta strings ("A · B · C"), "→" appended to links, em dashes anywhere | Line breaks, commas, a ledger row, or a real arrow icon only where it is a control |
 | Startup language: "Unlock", "Seamlessly", "Reimagine", "Elevate your", "Experience the magic" | Plain, specific statements |
 | Invented stats, logos, badges ("Superhost", "Top 1%"), fake urgency ("3 people are looking") | Only verified facts from BRIEF.md and owner config |
-| Fade-and-slide-up on every section, hover-lift on every card, parallax | The single cover reveal (section 7) |
+| Fade-and-slide-up on every section, hover-lift on every card, parallax | The cover reveal and slow photograph fades (Luxury pass) |
 | Stock photos implying they show the unit, or crops implying an ocean view | Owner photos; stone placeholders with a caption |
 | Uniform section spacing and identical heading treatments throughout | Three densities, compositions per section |
 | Tinted near-black `#111`/`#0B0B0B`, monospace data labels | `ink` `#22241F`; tabular figures in the grotesk |
 
 ## 3. Color
 
-Single light theme. Tailwind default colors are disabled in `tokens.css` (`--color-*: initial`); only these exist (`bg-paper`, `text-ink`, `border-rule`, etc.).
+Single light theme with deliberate night passages. Tailwind default colors are disabled in `tokens.css` (`--color-*: initial`); only these exist (`bg-paper`, `text-ink`, `border-rule`, etc.). Token names are kept from the first system; values changed in the luxury pass (`docs/luxury-pass.md`).
 
 | Token | Hex | Role |
 |---|---|---|
-| `paper` | `#ECECE5` | Page background. Cool mineral paper, deliberately not cream |
-| `sheet` | `#F6F6F1` | Inputs, reservation ledger, dialogs, popovers |
-| `stone` | `#DFE0D6` | Alternate band (resort directory), photo placeholders, ledger total row |
-| `pluff` | `#2B2D27` | The only dark band (arrival) and lightbox backdrop. Named for Lowcountry pluff mud |
-| `ink` | `#22241F` | All headings and body text, secondary button border, focus ring |
-| `ink-muted` | `#585B52` | Captions, helper text, margin labels, metadata |
-| `ink-faint` | `#73766C` | Disabled text and large index numerals only. Not for small readable text |
-| `on-dark` | `#E7E8E0` | Text on pluff |
-| `on-dark-muted` | `#A9AC9F` | Secondary text on pluff |
-| `marsh` | `#475638` | **The one accent.** Primary button fill, selected dates, current nav item underline |
-| `marsh-hover` | `#36432A` | Primary hover/pressed |
-| `marsh-soft` | `#DCE0D0` | Calendar in-range days, text selection |
-| `rule` | `#C6C8BC` | Hairlines between content (decorative, not a control boundary) |
-| `rule-strong` | `#7D8075` | Input borders, stepper circles, calendar outlines (meets 3:1 for UI) |
-| `success` | `#3D5E3A` | Request sent, field valid (text only, no fills) |
+| `paper` | `#F1ECE2` | Page background. Warm bone paper |
+| `sheet` | `#F8F5EE` | Reservation card, dialogs, popovers, the desktop reservation bar |
+| `stone` | `#E6DFD1` | The resort band, photo placeholders, hover fills |
+| `pluff` | `#1A201C` | Marsh-night. The full-bleed night passages: cover, plates, arrival, footer, area-guide seasons; lightbox backdrop |
+| `ink` | `#1E201B` | All headings and body text, secondary button border, focus ring |
+| `ink-muted` | `#5C584E` | Captions, helper text, labels, metadata |
+| `ink-faint` | `#78736A` | Disabled controls and large numerals only. Not for small readable text |
+| `on-dark` | `#EDE7DA` | Text on night |
+| `on-dark-muted` | `#ABA696` | Secondary text on night |
+| `marsh` | `#2E3B30` | Deep evergreen. Primary button fill, selected dates, checked boxes |
+| `marsh-hover` | `#1F2921` | Primary hover/pressed |
+| `marsh-soft` | `#E0DECB` | Calendar in-range days, text selection |
+| `brass` | `#7A5C34` | **The one accent.** Section folios, plate numbers, the monogram, the current-page mark, the italic "to" in the beach figure |
+| `brass-light` | `#C6A774` | The same accent on night |
+| `rule` | `#D3CCBD` | Hairlines between content (decorative, not a control boundary) |
+| `rule-strong` | `#857E70` | Field underlines, stepper and checkbox borders, calendar outlines (meets 3:1 for UI) |
+| `success` | `#3D5E3A` | Request sent, field valid (text only) |
 | `warning` | `#7A5410` | Minimum-night notices, seasonal caveats |
 | `danger` | `#9A3B2C` | Errors |
-| `focus` | `#22241F` | 2px focus outline, offset 3px. On pluff, `on-dark` |
+| `focus` | `#1E201B` | 2px focus outline, offset 4px. On night, `on-dark` |
 
-Usage ratio guide: paper ~80%, ink text, stone ~8%, pluff ~6%, marsh under 2% (buttons and selected states only). Marsh is never used for headings, decorative rules, or large fills.
+Rhythm of the home page: night (cover) / paper / paper / night (plates) / paper / stone (resort) / paper / paper / night (arrival) / paper (reservations) / night (footer). Brass stays under 1% of any screen; it is never a fill, never a heading color and never a button.
 
-### 3.1 Contrast (WCAG 2.1, computed with relative luminance script)
+### 3.1 Contrast (WCAG 2.1, computed with the relative luminance formula)
 
 | Foreground | Background | Ratio | Use | Pass |
 |---|---|---|---|---|
-| ink | paper | 13.20 | body, headings | AA/AAA |
-| ink | sheet | 14.45 | form text | AAA |
-| ink | stone | 11.77 | band text | AAA |
-| ink | marsh-soft | 11.65 | in-range day numerals | AAA |
-| ink-muted | paper | 5.83 | captions, labels | AA |
-| ink-muted | sheet | 6.39 | helper text | AA |
-| ink-muted | stone | 5.20 | captions on band | AA |
-| ink-faint | paper | 3.90 | disabled, numerals 24px+ only | AA large only |
-| sheet | marsh | 7.29 | primary button label | AAA |
-| sheet | marsh-hover | 9.72 | primary hover | AAA |
-| marsh | paper | 6.66 | text links in marsh (rare) | AA |
-| marsh | marsh-soft | 5.88 | | AA |
-| on-dark | pluff | 11.29 | dark band text | AAA |
-| on-dark-muted | pluff | 6.03 | dark band secondary | AA |
-| on-dark | marsh | 6.41 | | AA |
-| danger | paper / sheet | 5.83 / 6.38 | errors | AA |
-| success | sheet | 6.77 | confirmations | AA |
-| warning | sheet | 6.24 | notices | AA |
-| rule-strong | paper / sheet | 3.39 / 3.71 | input borders (non-text 3:1) | AA |
-| rule | paper | 1.43 | decorative hairlines only | n/a |
+| ink | paper | 13.96 | body, headings | AAA |
+| ink | sheet | 15.10 | form text, ledger | AAA |
+| ink | stone | 12.40 | band text | AAA |
+| ink | marsh-soft | 12.12 | in-range day numerals | AAA |
+| ink-muted | paper | 6.02 | captions, labels | AA |
+| ink-muted | sheet | 6.51 | helper text | AA |
+| ink-muted | stone | 5.35 | captions on band | AA |
+| ink-faint | paper / sheet | 4.00 / 4.33 | disabled, large numerals only | AA large |
+| sheet | marsh | 10.81 | primary button label | AAA |
+| sheet | marsh-hover | 13.80 | primary hover | AAA |
+| brass | paper | 5.23 | folios, plate numbers (small caps) | AA |
+| brass | sheet / stone | 5.66 / 4.65 | ledger mark, resort band | AA |
+| brass-light | pluff | 7.24 | plate numbers on night | AAA |
+| on-dark | pluff | 13.45 | night text | AAA |
+| on-dark-muted | pluff | 6.81 | night secondary | AA |
+| on-dark | marsh | 9.55 | | AAA |
+| danger | paper / sheet | 5.88 / 6.35 | errors | AA |
+| success | sheet | 6.74 | confirmations | AA |
+| warning | sheet | 6.22 | notices | AA |
+| rule-strong | paper / sheet | 3.42 / 3.70 | field underlines (non-text 3:1) | AA |
+| rule | paper | 1.36 | decorative hairlines only | n/a |
 
-Rules: never convey state by color alone (unavailable dates also get a strike; errors also get text). Placeholder text in inputs uses `ink-muted`, not `ink-faint`.
+Rules: never convey state by color alone (unavailable dates also get a strike; errors also get text). Placeholder text uses `ink-muted` italic. Text is never animated below full opacity (only photographs fade), so contrast holds at every moment.
 
 ## 4. Typography
+
+Luxury pass: families unchanged after reviewing alternatives (Cormorant, Bodoni Moda, Playfair, Fraunces); see `docs/luxury-pass.md`. Display sizes were enlarged and tightened (display up to 184px at -0.042em; h1 up to 92px; h2 up to 62px) and a light weight is used for display and section titles.
 
 ### 4.1 Families
 
@@ -171,7 +213,7 @@ Price figures in the ledger: sans 500 `text-body` with `tabular-nums`; the estim
 
 Rules:
 - Measure: reading text max `max-w-measure` (36rem, about 68 characters at 18px serif). Never full-width paragraphs.
-- Sentence case everywhere: headings, labels, buttons, nav. No all caps, no letter-spaced labels.
+- Sentence case in headings and prose. Labels, buttons and nav are written in sentence case and set in small capitals by CSS (see Luxury pass).
 - Italic only for full quotations, titles, and the host's signature. Never for single-word emphasis.
 - Bold is not used in the serif. Sans uses 400 and 500 only (600 permitted for the ledger total label).
 - Left aligned, ragged right. Centered text is permitted only in the lightbox counter and the success page confirmation line.
@@ -425,6 +467,7 @@ Estimated total              (sans 600)  $X,XXX   (serif text-h3 tabular)
 - `bg-paper`, 1px `ink` rule top, `py-section-sm`.
 - Grid lg: cols 1 to 4 wordmark (serif 28px) + "Hilton Head Resort, mid-island, Hilton Head Island, South Carolina"; cols 5 to 6 "The stay" links; cols 7 to 8 "Plan" links; cols 9 to 12 contact (TODO_OWNER email/phone), "Also listed on Airbnb and Vrbo" links with `ArrowUpRight`.
 - Bottom row after 1px `rule`: `text-caption ink-muted`: "Town of Hilton Head Island Short-Term Rental Permit 029008", copyright, Policies link, and colophon line "Set in Newsreader and Hanken Grotesk."
+- Luxury pass: the footer is a night passage (`pluff`) with the monogram, the name in light serif, brass small-capital column heads and serif links.
 
 ## 9. Imagery
 
@@ -439,7 +482,7 @@ Estimated total              (sans 600)  $X,XXX   (serif text-h3 tabular)
 
 | Slot | Ratio | `sizes` | Notes |
 |---|---|---|---|
-| Cover (hero) | 4:5 portrait | `(min-width:1024px) 58vw, 100vw` | `priority`, LCP element |
+| Cover (hero) | native (3:2) | `(min-width:1280px) 1060px, 82vw, 100vw` | `priority`, LCP element; first gallery photo until a cover photo exists |
 | Standfirst detail | 3:4 | `(min-width:1024px) 25vw, 50vw` | Optional, beside particulars |
 | The space spread | 3:2 and 4:5 pair | `(min-width:1024px) 40vw, 100vw` | Two images offset vertically |
 | Contact sheet | 3:2 thumbnails, one 4:5 | `(min-width:1024px) 25vw, 50vw` | 5 frames |

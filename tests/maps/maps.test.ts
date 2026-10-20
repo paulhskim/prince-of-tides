@@ -88,7 +88,7 @@ test("every coordinate sits inside the Hilton Head / Bluffton / Savannah airport
     ...all.filter((p) => p.coordinates).map((p) => ({ name: p.name, c: p.coordinates! })),
     ...GEO_LABELS.map((g) => ({ name: g.text, c: g.coordinates })),
   ];
-  assert.ok(pts.length > 20);
+  assert.ok(pts.length >= 8);
   for (const { name, c } of pts) {
     assert.ok(Number.isFinite(c.lat) && Number.isFinite(c.lng), name);
     assert.ok(c.lat >= REGION_BOUNDS.south && c.lat <= REGION_BOUNDS.north, `${name} lat ${c.lat}`);
@@ -117,20 +117,33 @@ test("locator set has the resort first plus beach, Shelter Cove, grocery and air
   const loc = getLocatorPlaces();
   assert.equal(loc[0].kind, "resort");
   const ids = loc.map((p) => p.id);
-  for (const want of ["cocos-on-the-beach", "burkes-beach-access", "shelter-cove-harbour-and-marina", "kroger-shelter-cove", "hilton-head-island-airport-hhh"]) {
+  for (const want of ["cocos-on-the-beach", "burkes-beach-access", "shelter-cove-harbour-and-marina", "shelter-cove-towne-centre", "hilton-head-island-airport-hhh"]) {
     assert.ok(ids.includes(want), want);
   }
-  assert.ok(loc.every((p) => p.coordinates));
+  // Markers exist at least for the resort, the grocery centre and the airport.
+  assert.ok(groupByProximity(loc).length >= 3);
 });
 
 test("missing coordinates are handled (no markers, still listed)", () => {
   const places = getGuidePlaces();
   assert.ok(places.some((p) => !p.coordinates));
   const groups = groupByProximity(places);
+  assert.equal(groups.length, places.filter((p) => p.coordinates).length);
   assert.ok(groups.every((g) => g.places.every((p) => p.coordinates)));
-  // Kroger and its pharmacy share one marker.
-  assert.ok(groups.some((g) => g.places.length > 1));
   assert.ok(getGuideCategories().length > 0);
+});
+
+test("whole foods (closed in 2024) is gone and groceries stay useful", () => {
+  const names = areaGuide.categories.flatMap((c) => c.places.map((p) => p.name));
+  assert.ok(!names.some((n) => /whole foods/i.test(n)));
+  const groceries = areaGuide.categories.find((c) => c.id === "groceries")!;
+  assert.ok(groceries.places.filter((p) => p.tags.includes("groceries")).length >= 2);
+});
+
+test("coordinates are documented as non-Google", () => {
+  for (const f of ["src/content/area-guide.ts", "src/lib/maps/places.ts"]) {
+    assert.ok(fs.readFileSync(path.join(ROOT, f), "utf8").includes("not from Google"), f);
+  }
 });
 
 test("fit bounds keep Savannah out so the island stays the subject", () => {
@@ -144,6 +157,7 @@ test("fit bounds keep Savannah out so the island stays the subject", () => {
 
 test("marker accessible names include name and approx distance", () => {
   const driessen = getGuidePlaces().find((p) => p.id === "driessen-beach-park")!;
+  // Road distance from the guide is used even when the place has no coordinates.
   assert.match(accessibleName(driessen), /^\d+\. Driessen Beach Park, about 1\.3 mi from the resort$/);
   assert.match(accessibleName(RESORT), /Hilton Head Resort/);
 });

@@ -44,10 +44,29 @@ confidence, warmth and finish: it reads as a carefully kept document, not as arr
 - **Components.** A monogram lockup in the masthead (which sits on night over the cover, then on paper);
   small-cap navigation; refined buttons (small-cap labels, evergreen fill, ink outline, quiet text links
   with a drawn underline); underlined ledger-style inputs; a segmented hairline stepper replacing the
-  circles; a finer checkbox and select; a 1px focus ring offset from the control, doubled to 2px for
-  contrast where needed; a colophon footer on night.
+  circles; a finer checkbox and select; a 2px ink focus ring offset 4px from the control; a colophon footer on night.
 - **Booking as concierge.** The reservation ledger is set as a card of record (cream sheet, ink rules,
   small-cap labels, serif figures) and the /book page opens like a reservation letter.
-- **Motion.** Slow reveals (opacity and 12px translate over 900ms) for plates and section openings as they
-  enter the viewport; images fade in once decoded. Off entirely under `prefers-reduced-motion`, and content
+- **Motion.** The cover name settles into place and its plate fades in; photographs in the plates and the
+  gallery fade in slowly as they enter the viewport. Off entirely under `prefers-reduced-motion`, and content
   is never hidden without JavaScript.
+
+## Iterations (after screenshots in `.screens/lux-after/`)
+
+1. First build. The night cover and plates worked at once; problems: the italic "of" touched the T of
+   "Tides"; on mobile the photograph pushed the action below the first screen; the plates passage had a
+   double top margin; arrival steps were still numbered "01" in grey sans.
+   Fixed: a hair of space after the italic, the mobile action moved directly under Plate I, tighter plates
+   padding, arrival steps in brass italic numerals.
+2. Second pass. Text blocks set to fade on scroll failed the axe contrast audit mid-fade (and are a poor
+   trade for readers). Reveals are now photographs only; text is always at full opacity. The mobile drawer
+   inherited the night masthead colour; the masthead now returns to paper while the drawer is open. The
+   gallery claimed "the resort and the way to the beach" with only residence photographs; it now says what is
+   there. The /book "back" link moved into the running head.
+3. Third look (skeptical). Home, /book, /gallery, /faq, /area and /policies now share one title page system
+   (running head, display-cut title, standfirst), the page alternates light and night with intent, and every
+   photograph is shown whole and numbered. Left alone on purpose: no parallax, no hover zoom, no new
+   imagery, no claims beyond the brief.
+
+Not changed: the font families. Newsreader light at opsz 72 with its italic is the more distinctive choice
+than the usual "luxury" serifs, and Hanken Grotesk carries the small capitals and tabular figures well.

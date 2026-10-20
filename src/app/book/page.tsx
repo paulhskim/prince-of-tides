@@ -19,14 +19,13 @@ export default function BookPage() {
       <JsonLd data={pageBreadcrumb("book")} />
       <PageHeader
         eyebrow="Reservations"
-        folio="Prince of Tides, Hilton Head Resort"
-        title="Request a stay"
-        lead={bookingCopy.reassurance.body}
-        aside={
-          <Link href="/" className="link-caps">
+        folio={
+          <Link href="/" className="no-underline hover:underline">
             Back to the residence
           </Link>
         }
+        title="Request a stay"
+        lead={bookingCopy.reassurance.body}
       />
       <div className="mx-auto max-w-page px-gutter pb-section">
         <ReservationForm variant="page" />

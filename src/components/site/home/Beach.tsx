@@ -3,7 +3,7 @@ import { beachAccess, footer } from "@/content/copy";
 import { areaGuide, type AreaPlace } from "@/content/area-guide";
 import { photoFor } from "@/lib/photos";
 import { Grid, SectionTitle } from "../layout";
-import { MapFacade } from "../MapFacade";
+import { EstateMap } from "@/components/maps/EstateMap";
 import { Photo } from "../Photo";
 import { smart, splitHeading } from "../text";
 
@@ -57,7 +57,7 @@ export function Beach() {
             {title}
           </SectionTitle>
 
-          <p data-reveal className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-3 border-t border-ink pt-6">
+          <p className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-3 border-t border-ink pt-6">
             <span className="display-cut text-figure">
               0.8<span className="italic text-brass"> to </span>1.1
             </span>
@@ -116,11 +116,15 @@ export function Beach() {
           <p className="mt-3 text-caption text-ink-muted">Drive times from the resort gate. {addressNote}</p>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <MapFacade caption="Map of Hilton Head Resort, mid-island" />
             <Link href="/area" className="link-caps">
               The area guide
             </Link>
           </div>
+        </div>
+
+        <div id="map" className="col-span-4 scroll-mt-24 md:col-span-8 lg:col-span-12">
+          <h3 className="apparatus mb-4 border-b border-ink pb-2">The resort on the island</h3>
+          <EstateMap variant="locator" focus="resort" caption="Hilton Head Resort, mid-island. Distances are approximate." />
         </div>
       </Grid>
     </section>

@@ -107,7 +107,7 @@ export function Masthead() {
   const cta = isHome ? "#reserve" : "/book";
 
   // On the home page the masthead sits on the night cover until the page moves.
-  const onNight = isHome && !scrolled;
+  const onNight = isHome && !scrolled && !open;
 
   return (
     <header
@@ -172,7 +172,7 @@ export function Masthead() {
         aria-modal="true"
         aria-label="Site menu"
         hidden={!open}
-        className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-paper lg:hidden"
+        className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-paper text-ink lg:hidden"
       >
         <div className="flex h-20 shrink-0 items-center justify-between px-gutter">
           <Wordmark onClick={() => setOpen(false)} />

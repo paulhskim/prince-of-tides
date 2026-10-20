@@ -2,20 +2,16 @@
  * Place data for the estate map, derived from src/content/area-guide.ts (single source of truth)
  * plus the resort itself (from src/content/seo.ts geo).
  *
- * Coordinate research (October 2026). Each point was checked against at least one map listing
- * for the business address and, where available, an independent source:
- * - Harbour Town Lighthouse: Wikipedia 32.13861, -80.81278 agrees within ~15 m.
- * - Hilton Head Island Airport (HHH): OpenStreetMap link on Wikipedia 32.2244, -80.6969 agrees
- *   within ~50 m (we use the terminal, 120 Beach City Rd).
- * - Savannah/Hilton Head Intl (SAV): Wikipedia airfield point 32.1275, -81.2022; we use the
- *   terminal (400 Airways Ave), about 200 m north.
- * - Pinckney Island NWR: the official U.S. Fish and Wildlife Service reference point. It marks
- *   the refuge, not the trailhead parking area (which we could not verify).
- * - Resort beach end of the boardwalk shares Coco's on the Beach's point.
- * - Palmetto Dunes paddling: Hilton Head Outfitters, 80 Queens Folly Rd (linked from
- *   palmettodunes.com as its rental partner).
- * - Whole Foods Market (Shelter Cove) has no coordinates: it closed permanently in August 2024.
- * - On-site amenities and island-wide entries (bike pathways) have no point of their own.
+ * Coordinates from OpenStreetMap contributors / Wikipedia; not from Google.
+ * Sources (checked October 2026):
+ * - Harbour Town Lighthouse: Wikipedia, 32.13861, -80.81278.
+ * - Hilton Head Island Airport (HHH): the OpenStreetMap map link on its Wikipedia article, 32.2244, -80.6969.
+ * - Savannah/Hilton Head Intl (SAV): Wikipedia, 32.1275, -81.20222.
+ * - Pinckney Island NWR: U.S. Fish and Wildlife Service reference point (the refuge, not the trailhead).
+ * - Shelter Cove Towne Centre (locator only): Wikipedia, 32.184707, -80.721344.
+ * Every other place has no coordinates until it can be verified to about 50 m from a non-Google
+ * source (OpenStreetMap, Wikipedia/Wikidata or an official agency). The component lists those
+ * places in its fallback and simply draws no marker for them.
  */
 
 import { areaGuide, type AreaPlace } from "@/content/area-guide";
@@ -50,7 +46,7 @@ export const RESORT_ID = "hilton-head-resort";
 
 export const RESORT_ADDRESS = "Hilton Head Resort, 663 William Hilton Parkway, Hilton Head Island, SC 29928";
 
-/** Public resort point. Same value as seo.ts geo; Google's listing for the resort sits ~100 m west. */
+/** Public resort point: the same value as seo.ts geo (listing point, confirmed by the US Census geocoder within ~0.15 mi). */
 export const RESORT: MapPlace = {
   id: RESORT_ID,
   name: "Hilton Head Resort",
@@ -141,17 +137,30 @@ const LOCATOR: { name: string; label?: string; labelSide: MapPlace["labelSide"] 
   { name: "Driessen Beach Park", label: "Driessen Beach", labelSide: "right" },
   { name: "Folly Field Beach Park", label: "Folly Field Beach", labelSide: "right" },
   { name: "Shelter Cove Harbour & Marina", label: "Shelter Cove", labelSide: "bottom" },
-  { name: "Kroger (Shelter Cove)", label: "Kroger", labelSide: "top" },
   { name: "Hilton Head Island Airport (HHH)", label: "Airport (HHH)", labelSide: "right" },
 ];
+
+/** Locator-only point: the shopping centre itself (Kroger is its anchor). Wikipedia coordinates. */
+export const SHELTER_COVE_TOWNE_CENTRE: MapPlace = {
+  id: "shelter-cove-towne-centre",
+  name: "Shelter Cove Towne Centre (Kroger)",
+  label: "Shelter Cove Towne Centre",
+  kind: "place",
+  categoryId: "groceries",
+  coordinates: { lat: 32.184707, lng: -80.721344 },
+  distanceMiles: 1,
+  labelSide: "bottom",
+};
 
 export function getLocatorPlaces(): MapPlace[] {
   const guide = getGuidePlaces();
   const picked: MapPlace[] = [];
   for (const entry of LOCATOR) {
     const g = guide.find((p) => p.name === entry.name);
-    if (!g || !g.coordinates) continue;
+    // Places without verified coordinates stay in the list (fallback) but get no marker.
+    if (!g) continue;
     picked.push({ ...g, number: undefined, label: entry.label ?? g.label, labelSide: entry.labelSide });
+    if (entry.name === "Shelter Cove Harbour & Marina") picked.push(SHELTER_COVE_TOWNE_CENTRE);
   }
   return [{ ...RESORT, labelSide: "right" }, ...picked];
 }

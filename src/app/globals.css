@@ -35,25 +35,17 @@
 }
 
 /*
- * Scroll reveals. Elements marked data-reveal settle into place once as they enter the viewport
- * (opacity and a 12px rise). Hidden only when JavaScript has marked the document ready and the
- * reader has not asked for reduced motion, so nothing is ever lost without script.
+ * Scroll reveals. Photographs inside elements marked data-reveal fade in once, slowly, as they enter
+ * the viewport. Only images fade: text is never set below full opacity, so contrast holds at every
+ * moment. Hidden only when JavaScript has marked the document ready and the reader has not asked
+ * for reduced motion, so nothing is ever lost without script.
  */
 @media (prefers-reduced-motion: no-preference) {
-  html.reveal-ready [data-reveal]:not([data-shown]) {
+  html.reveal-ready [data-reveal]:not([data-shown]) img {
     opacity: 0;
-    transform: translateY(12px);
   }
-  html.reveal-ready [data-reveal] {
-    transition:
-      opacity 1000ms var(--ease-quiet),
-      transform 1100ms var(--ease-settle);
-  }
-  html.reveal-ready [data-reveal="plate"]:not([data-shown]) {
-    transform: none;
-  }
-  html.reveal-ready [data-reveal="plate"] {
-    transition: opacity 1400ms var(--ease-quiet);
+  html.reveal-ready [data-reveal] img {
+    transition: opacity 1600ms var(--ease-quiet);
   }
 }
 

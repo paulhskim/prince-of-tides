@@ -21,7 +21,7 @@ export function Amenities() {
           <p className="font-serif text-lead italic text-ink-muted">{amenities.intro}</p>
         </div>
 
-        <div data-reveal className="col-span-4 mt-10 grid grid-cols-2 gap-x-col gap-y-8 md:col-span-8 md:grid-cols-3 lg:col-span-12 lg:grid-cols-6">
+        <div className="col-span-4 mt-10 grid grid-cols-2 gap-x-col gap-y-8 md:col-span-8 md:grid-cols-3 lg:col-span-12 lg:grid-cols-6">
           {groups.map((g) => (
             <div key={g.title}>
               <h3 className="smallcaps border-b border-rule pb-2.5">{sentenceCase(g.title).replace(" & ", " and ")}</h3>
@@ -35,7 +35,7 @@ export function Amenities() {
         </div>
 
         {notProvided ? (
-          <div data-reveal className="col-span-4 mt-14 grid gap-x-col gap-y-4 border-y border-ink py-6 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:grid-cols-12">
+          <div className="col-span-4 mt-14 grid gap-x-col gap-y-4 border-y border-ink py-6 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:grid-cols-12">
             <h3 className="md:col-span-2 lg:col-span-2">
               <span className="block font-serif text-h3 font-light italic">Plainly stated</span>
               <span className="smallcaps mt-1 block text-ink-muted">{sentenceCase(notProvided.title).replace(" / ", ", ")}</span>

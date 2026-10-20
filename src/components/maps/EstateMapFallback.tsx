@@ -20,7 +20,7 @@ export function EstateMapFallback({
 }) {
   const listed = places.filter((p) => p.kind !== "resort");
   return (
-    <div className="absolute inset-0 flex flex-col overflow-auto bg-paper p-5 md:p-8">
+    <div tabIndex={0} role="region" aria-label="Places near Hilton Head Resort" className="absolute inset-0 flex flex-col overflow-auto bg-paper p-5 md:p-8">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule pb-3">
         <p className="font-serif text-h3">
           <span className="mr-2 inline-block size-2.5 bg-marsh align-middle" aria-hidden="true" />

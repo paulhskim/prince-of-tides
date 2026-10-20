@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Grid, PageHeader } from "@/components/site/layout";
 import { roman, sentenceCase } from "@/components/site/text";
 import { areaGuide, type AreaPlace } from "@/content/area-guide";
+import { EstateMap } from "@/components/maps/EstateMap";
 
 export const metadata = pageMetadata("area");
 
@@ -47,6 +48,12 @@ export default function AreaPage() {
         lead={areaGuide.intro.body}
         aside={<p className="border-t border-ink pt-3 text-caption text-ink-muted">{areaGuide.distanceDisclaimer} Last checked {verified(areaGuide.lastVerified)}.</p>}
       />
+
+      <Grid className="pb-14 lg:pb-20">
+        <div className="col-span-4 md:col-span-8 lg:col-span-12">
+          <EstateMap variant="guide" caption="Places in this guide. Numbers match the listings below. Distances are approximate." />
+        </div>
+      </Grid>
 
       <Grid className="pb-section">
         {/* Index */}

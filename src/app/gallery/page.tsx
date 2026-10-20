@@ -46,7 +46,7 @@ export default function GalleryPage() {
         title="Photographs"
         lead={
           hasPhotos
-            ? `${photos.length} photographs of the residence, the resort and the way to the beach. Select any plate to view it larger.`
+            ? `${photos.length} photographs of ${groups.length > 1 ? "the residence, the resort and the way to the beach" : "the residence"}, each shown whole. Select any plate to view it larger.`
             : "Photographs of the residence, the resort and the way to the beach are being made. Until they arrive, this is the list of plates: what each frame will show."
         }
         aside={
@@ -62,13 +62,7 @@ export default function GalleryPage() {
                 ))}
               </ul>
             </nav>
-          ) : (
-            <nav aria-label="Photograph sections">
-              <a href={`#${groups[0]?.id ?? "residence"}`} className="link-caps">
-                {groups[0]?.label ?? "The residence"}
-              </a>
-            </nav>
-          )
+          ) : undefined
         }
       />
 

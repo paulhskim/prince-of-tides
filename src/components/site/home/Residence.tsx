@@ -18,7 +18,7 @@ export function Residence() {
           <SectionTitle id="residence-title" numeral={numeral}>
             {title}
           </SectionTitle>
-          <p data-reveal className="mt-8 font-serif text-[clamp(1.375rem,1.1rem+1.1vw,1.9375rem)] font-light leading-[1.3] tracking-[-0.008em] oldstyle lg:mt-12">
+          <p className="mt-8 font-serif text-[clamp(1.375rem,1.1rem+1.1vw,1.9375rem)] font-light leading-[1.3] tracking-[-0.008em] oldstyle lg:mt-12">
             {lead ? (
               <>
                 <span className="text-[0.78em] font-normal uppercase tracking-[0.09em]">{lead}</span>
@@ -28,7 +28,7 @@ export function Residence() {
               first
             )}
           </p>
-          <div data-reveal className="mt-10 gap-x-col font-serif text-prose oldstyle md:columns-2 [&>p]:mb-[1em] [&>p]:break-inside-avoid">
+          <div className="mt-10 gap-x-col font-serif text-prose oldstyle md:columns-2 [&>p]:mb-[1em] [&>p]:break-inside-avoid">
             {rest.map((p) => (
               <p key={p.slice(0, 24)}>{p}</p>
             ))}
