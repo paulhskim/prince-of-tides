@@ -39,7 +39,11 @@ export function ReservationSheet({
             type="button"
             disabled={!ready}
             aria-disabled={!ready || undefined}
-            onClick={() => router.push(`/book?${stayToQuery(stay)}`)}
+            onClick={() => {
+              // Release the modal (and its scroll lock) before leaving the page.
+              onClose();
+              router.push(`/book?${stayToQuery(stay)}`);
+            }}
             className="flex h-12 w-full items-center justify-center bg-marsh px-6 text-body font-medium tracking-[0.01em] text-sheet transition-colors duration-[var(--duration-fast)] hover:bg-marsh-hover disabled:cursor-not-allowed disabled:bg-stone disabled:text-ink-faint"
           >
             {ready ? "Request these dates" : "Choose your dates"}

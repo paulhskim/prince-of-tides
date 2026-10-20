@@ -6,7 +6,9 @@
  * stores so the reservation bar, the inline ledger and the mobile sheet stay in sync on one page.
  */
 import { useCallback, useEffect, useSyncExternalStore } from "react";
-import { addDays, isISODate, todayISO, type ISODate } from "@/lib/booking/dates";
+import { siteConfig } from "@/content/site.config";
+import { addDays, diffDays, isISODate, todayISO, type ISODate } from "@/lib/booking/dates";
+import { lastBookableDate } from "@/lib/booking/rules";
 import { GUEST_RULES } from "@/lib/booking/schemas";
 
 export type Stay = {
@@ -29,12 +31,17 @@ function clampInt(v: string | null, min: number, max: number, fallback: number):
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
 }
 
-/** Read stay params. Accepts checkIn/checkOut and the ux-spec aliases arrive/depart. */
-export function stayFromParams(params: URLSearchParams): Stay {
+/**
+ * Read stay params. Accepts checkIn/checkOut and the ux-spec aliases arrive/depart. Dates the calendar
+ * could never produce are dropped (arrival in the past or beyond the booking window, stays longer than
+ * maxNights), so a stale or hand-edited link opens the calendar instead of quoting an impossible stay.
+ */
+export function stayFromParams(params: URLSearchParams, today: ISODate = todayISO()): Stay {
   const ci = params.get("checkIn") ?? params.get("arrive");
   const co = params.get("checkOut") ?? params.get("depart");
-  const checkIn = isISODate(ci) ? ci : null;
-  const checkOut = checkIn && isISODate(co) && co > checkIn ? co : null;
+  const checkIn = isISODate(ci) && ci >= today && ci <= lastBookableDate(today) ? ci : null;
+  const checkOut =
+    checkIn && isISODate(co) && co > checkIn && diffDays(checkIn, co) <= siteConfig.booking.maxNights ? co : null;
   const adults = clampInt(params.get("adults"), 1, GUEST_RULES.maxAdults, DEFAULT_STAY.adults);
   const children = clampInt(params.get("children"), 0, GUEST_RULES.maxGuests - adults, 0);
   const infants = clampInt(params.get("infants"), 0, GUEST_RULES.maxInfants, 0);

@@ -143,12 +143,14 @@ export function Masthead() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {pathname?.startsWith("/book") ? null : (
           <a
             href={cta}
-            className="hidden h-10 items-center bg-marsh px-4 text-small font-medium text-sheet no-underline transition-colors duration-100 hover:bg-marsh-hover sm:inline-flex"
+            className="hidden h-10 items-center border border-ink px-4 text-small font-medium text-ink no-underline transition-colors duration-100 hover:bg-ink hover:text-paper sm:inline-flex"
           >
             {hero.primaryCta.label}
           </a>
+          )}
           <button
             ref={menuButton}
             type="button"

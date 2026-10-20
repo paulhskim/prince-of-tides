@@ -6,7 +6,7 @@ import { Minus, Plus } from "lucide-react";
 export type AccordionItem = { id: string; question: string; answer: string };
 
 /** Accessible disclosure list (button + region). Multiple items may be open; deep-linkable by id. */
-export function Accordion({ items, headingLevel = 3 }: { items: AccordionItem[]; headingLevel?: 2 | 3 }) {
+export function Accordion({ items, headingLevel = 3 }: { items: AccordionItem[]; headingLevel?: 2 | 3 | 4 }) {
   const [open, setOpen] = useState<Set<string>>(new Set());
   const uid = useId();
 
@@ -31,7 +31,7 @@ export function Accordion({ items, headingLevel = 3 }: { items: AccordionItem[];
       return next;
     });
 
-  const H = headingLevel === 2 ? "h2" : "h3";
+  const H = headingLevel === 2 ? "h2" : headingLevel === 4 ? "h4" : "h3";
 
   return (
     <div className="border-b border-rule">

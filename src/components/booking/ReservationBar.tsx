@@ -3,7 +3,7 @@
 /**
  * Compact reservation bar.
  *
- * Desktop (lg+): Arrive | Depart | Guests | estimate | "Request to book". Arrive/Depart open a popover
+ * Desktop (lg+): Arrive | Depart | Guests | estimate | "Request a stay" / "Request these dates". Arrive/Depart open a popover
  * calendar, Guests a popover stepper (aria-expanded, Esc and outside click close, focus returns).
  * The page decides where the bar sits (design-system 8.5: a row under the masthead once the cover
  * scrolls away).
@@ -94,11 +94,11 @@ function DesktopBar() {
   }
 
   const cell =
-    "flex h-14 min-w-36 flex-col items-start justify-center border-r border-rule px-5 text-left transition-colors duration-[var(--duration-fast)] hover:bg-stone/60 focus-visible:outline-offset-[-2px]";
+    "flex h-16 min-w-40 flex-col items-start justify-center border-r border-rule px-5 text-left transition-colors duration-[var(--duration-fast)] hover:bg-stone/60 focus-visible:outline-offset-[-2px]";
 
   return (
     <div ref={rootRef} className="relative hidden lg:block" data-testid="reservation-bar">
-      <div className="flex items-stretch border-y border-rule bg-paper">
+      <div className="flex items-stretch border-y border-ink bg-sheet">
         <button ref={datesBtn} type="button" className={cell} aria-expanded={open === "dates"} aria-controls={`${popId}-dates`} onClick={() => setOpen(open === "dates" ? null : "dates")}>
           <span className="text-label text-ink-muted">{bookingCopy.labels.checkIn}</span>
           <span className="text-small text-ink tabular">{stay.checkIn ? formatShort(stay.checkIn) : bookingCopy.placeholders.selectDate}</span>
@@ -111,7 +111,7 @@ function DesktopBar() {
           <span className="text-label text-ink-muted">{bookingCopy.labels.guests}</span>
           <span className="text-small text-ink tabular">{guestLine(stay)}</span>
         </button>
-        <div className="flex flex-1 items-center justify-end gap-6 pl-5">
+        <div className="flex flex-1 items-center justify-end gap-6 pl-5 pr-2">
           <p className="text-small text-ink-muted tabular" aria-live="polite">
             {ready && quote ? (
               <>
@@ -121,8 +121,8 @@ function DesktopBar() {
               "Add dates for an estimate"
             )}
           </p>
-          <button type="button" onClick={requestToBook} className={primarySm}>
-            Request to book
+          <button type="button" onClick={requestToBook} className={`${primarySm} h-12 px-6 text-body`}>
+            {ready ? "Request these dates" : "Request a stay"}
           </button>
         </div>
       </div>
@@ -224,7 +224,7 @@ export function MobileReservationBar() {
             )}
           </div>
           <button ref={btnRef} type="button" onClick={() => setSheetOpen(true)} className={primarySm}>
-            {ready ? "Request these dates" : "Check availability"}
+            {ready ? "Request these dates" : "Request a stay"}
           </button>
         </div>
       </div>

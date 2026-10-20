@@ -53,6 +53,14 @@ export function Dialog({
     return () => el.removeEventListener("close", handleClose);
   }, [onClose, returnFocusTo]);
 
+  // Unmounting while open (e.g. router.push from the sheet's primary action) fires no "close" event:
+  // release the scroll lock so the next page can scroll.
+  useEffect(() => {
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, []);
+
   const sheet = variant === "sheet";
   return (
     <dialog

@@ -154,16 +154,20 @@ function InlineReservation() {
           <div className="mt-5">
             <QuoteLedger quote={quote} compact />
           </div>
+          {/* Not a disabled control: before dates are chosen it opens the calendar, set as a secondary action. */}
           <button
             type="button"
-            aria-disabled={!ready || undefined}
             onClick={(e) => {
               if (ready) router.push(`/book?${stayToQuery(stay)}`);
               else openDates(e);
             }}
-            className={`${primaryBtn} mt-6 h-14`}
+            className={
+              ready
+                ? `${primaryBtn} mt-6 h-14`
+                : "mt-6 flex h-14 w-full items-center justify-center border border-ink px-6 text-body font-medium text-ink transition-colors duration-[var(--duration-fast)] hover:bg-ink hover:text-paper"
+            }
           >
-            {ready ? "Request these dates" : "Check availability"}
+            {ready ? "Request these dates" : bookingCopy.buttons.checkDates}
           </button>
           <p className="mt-3 text-caption text-ink-muted">No payment is taken now. The host confirms availability and sends an invoice.</p>
         </section>
@@ -465,7 +469,7 @@ function RequestPage() {
 
         {/* 1. Dates */}
         <fieldset ref={datesRef} id={`${uid}-dates`} className="mt-8 border-t border-ink pt-5" aria-describedby={errors.dates ? `${uid}-dates-error` : undefined}>
-          <legend className="float-left w-full font-serif text-h3">Your dates</legend>
+          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">1</span>Your dates</h2></legend>
           <p className="clear-both pt-1 text-small text-ink-muted">
             Check-in {formatClock(siteConfig.times.checkIn)}. Check-out {formatClock(siteConfig.times.checkOut)}.
           </p>
@@ -522,17 +526,21 @@ function RequestPage() {
         </fieldset>
 
         {/* 2. Guests */}
-        <fieldset id={`${uid}-guests`} className="mt-12 border-t border-ink pt-5">
-          <legend className="float-left w-full font-serif text-h3">Guests</legend>
+        <fieldset id={`${uid}-guests`} className="mt-12 border-t border-ink pt-5" aria-describedby={errors.children ? `${uid}-guests-error` : undefined}>
+          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">2</span>Guests</h2></legend>
           <div className="clear-both pt-4">
             <GuestFields idPrefix={`${uid}-g`} value={stay} onChange={setStay} />
           </div>
-          {errors.children && <p className="mt-2 text-small text-danger">{errors.children}</p>}
+          {errors.children && (
+            <p id={`${uid}-guests-error`} className="mt-2 text-small text-danger">
+              {errors.children}
+            </p>
+          )}
         </fieldset>
 
         {/* 3. Contact */}
         <fieldset className="mt-12 border-t border-ink pt-5">
-          <legend className="float-left w-full font-serif text-h3">Your details</legend>
+          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">3</span>Your details</h2></legend>
           <div className="clear-both max-w-measure space-y-6 pt-5">
             <TextField
               id={`${uid}-name`}
@@ -572,7 +580,7 @@ function RequestPage() {
 
         {/* 4. Arrival and note */}
         <fieldset className="mt-12 border-t border-ink pt-5">
-          <legend className="float-left w-full font-serif text-h3">Arrival and a note</legend>
+          <legend className="float-left w-full"><h2 className="font-serif text-h3"><span aria-hidden="true" className="mr-3 inline-block min-w-[1.5ch] align-top mt-[0.45em] font-serif text-[0.9375rem] leading-none text-ink-muted">4</span>Arrival and a note</h2></legend>
           <div className="clear-both max-w-measure space-y-6 pt-5">
             <SelectField
               id={`${uid}-arrivalTime`}

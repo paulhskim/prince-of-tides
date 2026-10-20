@@ -20,7 +20,7 @@ export default function BookPage() {
       </p>
       <div className="mt-8 grid grid-cols-4 gap-x-col md:grid-cols-8 lg:grid-cols-12">
         <header className="col-span-4 md:col-span-8 lg:col-span-7">
-          <h1 className="font-serif text-h1">Request to book</h1>
+          <h1 className="font-serif text-h1">Request a stay</h1>
           <p className="mt-4 max-w-measure font-serif text-lead">{bookingCopy.reassurance.body}</p>
         </header>
       </div>

@@ -1,7 +1,7 @@
 import { host } from "@/content/copy";
 import { siteConfig } from "@/content/site.config";
 import { photoFor } from "@/lib/photos";
-import { Grid, MarginLabel } from "../layout";
+import { Grid, SectionTitle } from "../layout";
 import { Photo } from "../Photo";
 import { isSet, splitHeading } from "../text";
 
@@ -16,23 +16,19 @@ export function Host() {
   const portrait = photoFor("host");
   return (
     <section aria-labelledby="host-title" className="py-section">
-      <Grid>
-        <div aria-hidden="true" className="col-span-full mb-6 border-t border-rule" />
-        <div className="col-span-4 md:col-span-3 lg:col-span-3">
-          {portrait ? (
-            <figure className="mb-4 w-[200px] max-w-full">
-              <Photo photo={portrait} slot="host" ratio="4/5" sizes="200px" />
-            </figure>
-          ) : null}
-          <MarginLabel numeral={numeral} sticky={false}>
-            From the host
-          </MarginLabel>
-        </div>
-        <div className="col-span-4 mt-6 md:col-span-5 lg:col-span-6 lg:col-start-4 lg:mt-0">
-          <h2 id="host-title" className="text-h2">
+      <Grid className="gap-y-8">
+        <div className="col-span-4 border-t border-ink pt-6 md:col-span-8 lg:col-span-12">
+          <SectionTitle id="host-title" numeral={numeral}>
             {title}
-          </h2>
-          <p className="mt-6 max-w-measure font-serif text-prose">{host.body}</p>
+          </SectionTitle>
+        </div>
+        {portrait ? (
+          <figure className="col-span-2 md:col-span-2 lg:col-span-2">
+            <Photo photo={portrait} slot="host" ratio="4/5" sizes="200px" />
+          </figure>
+        ) : null}
+        <div className={`col-span-4 md:col-span-6 lg:col-span-6 ${portrait ? "lg:col-start-4" : "lg:col-start-1"}`}>
+          <p className="max-w-measure font-serif text-lead oldstyle">{host.body}</p>
           <p className="mt-6 font-serif text-h3 italic">{contact.hostName}</p>
         </div>
       </Grid>

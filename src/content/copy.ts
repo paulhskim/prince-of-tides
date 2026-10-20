@@ -196,7 +196,7 @@ export const hero: HeroCopy = {
   headline: "Rest, at the pace of the tide.",
   subhead:
     "Two bedrooms, two baths, inside a gated resort. A heated pool and steam room down the corridor. A boardwalk over the marsh to the sea.",
-  primaryCta: { label: "Check dates", href: "#book" },
+  primaryCta: { label: "Request a stay", href: "#reserve" },
   secondaryCta: { label: "See the rooms", href: "#the-space" },
   trustBadges: [
     "Guest rating 9.2 / 10 on Vrbo",
@@ -572,7 +572,7 @@ export const host: HostCopy = {
 export const bookingCta: BookingCtaCopy = {
   heading: "Request a stay",
   body: "Choose your dates and see an estimate. Send a request; nothing is charged. We confirm availability and the final figure ourselves.",
-  button: { label: "Check dates", href: "#book" },
+  button: { label: "Request a stay", href: "#reserve" },
 };
 
 export const booking: BookingCopy = {
@@ -619,7 +619,7 @@ export const booking: BookingCopy = {
     checkoutOnly: "Departure only",
   },
   buttons: {
-    checkDates: "Check dates",
+    checkDates: "Choose dates",
     continue: "Continue",
     submit: "Send request",
     submitting: "Sending",

@@ -29,7 +29,7 @@ const baseURL = process.env.PW_BASE_URL ?? "http://localhost:3100";
 const port = new URL(baseURL).port || "3100";
 
 export default defineConfig({
-  testDir: "tests/booking",
+  testDir: "tests",
   testMatch: /.*\.spec\.ts$/,
   fullyParallel: false,
   workers: 1,

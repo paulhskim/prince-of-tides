@@ -65,6 +65,7 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
                 {frame(g.frames[0].n)} to {frame(g.frames[g.frames.length - 1].n)}
               </p>
             </div>
+            {g.frames.some((f) => f.src) ? (
             <ul className="col-span-4 grid grid-cols-4 gap-x-col gap-y-10 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:grid-cols-12 lg:gap-y-16">
               {g.frames.map((f, i) => {
                 const r = RHYTHM[i % RHYTHM.length];
@@ -92,16 +93,7 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
                           />
                         </button>
                       ) : (
-                        <div
-                          role="img"
-                          aria-label={`Photograph to come: ${f.caption}`}
-                          data-placeholder="gallery"
-                          className={`photo-placeholder ${r.ratio}`}
-                        >
-                          <span className="absolute bottom-3 left-3 right-3 text-caption text-ink-muted">
-                            Photograph to come
-                          </span>
-                        </div>
+                        <Plate n={f.n} caption={f.caption} ratio={r.ratio} />
                       )}
                       <figcaption className="mt-2 grid grid-cols-[2.5rem_1fr] text-caption text-ink-muted">
                         <span className="tabular">{label}</span>
@@ -112,6 +104,19 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
                 );
               })}
             </ul>
+            ) : (
+              /* No photographs yet: a list of plates, small and dense, like a catalogue in preparation. */
+              <ol className="col-span-4 grid grid-cols-2 gap-x-col gap-y-8 md:col-span-8 md:grid-cols-4 lg:col-span-12 lg:grid-cols-6">
+                {g.frames.map((f) => (
+                  <li key={f.n} id={`frame-${frame(f.n)}`} className="scroll-mt-36">
+                    <figure>
+                      <Plate n={f.n} caption={f.caption} ratio="aspect-[4/3]" />
+                      <figcaption className="mt-2 text-caption text-ink-muted">{f.caption}</figcaption>
+                    </figure>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </section>
       ))}
@@ -125,5 +130,19 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
         />
       ) : null}
     </>
+  );
+}
+
+/** A reserved plate: the frame number, set like a plate number in a book, on a stone field. */
+function Plate({ n, caption, ratio }: { n: number; caption: string; ratio: string }) {
+  return (
+    <div role="img" aria-label={`Photograph to come: ${caption}`} data-placeholder="gallery" className={`photo-placeholder ${ratio}`}>
+      <span aria-hidden="true" className="absolute left-3 top-2.5 font-serif text-h3 text-ink-muted tabular">
+        {frame(n)}
+      </span>
+      <span aria-hidden="true" className="absolute bottom-2.5 left-3 text-caption text-ink-muted">
+        To come
+      </span>
+    </div>
   );
 }

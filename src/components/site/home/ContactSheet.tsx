@@ -4,7 +4,7 @@ import { Grid } from "../layout";
 import { Photo } from "../Photo";
 import { frame } from "../text";
 
-/** Five frames on the home page. Real photographs first; planned shots fill any gaps. */
+/** Five frames on the home page once photographs exist. Planned shots fill any gaps. */
 const PLANNED: PhotoSlot[] = ["bedroom1", "dining", "bedroom2", "bath", "detail"];
 
 const LAYOUT = [
@@ -27,6 +27,8 @@ export function ContactSheet() {
   const picks: (PhotoType | undefined)[] = all.slice(0, 5);
   while (picks.length < 5) picks.push(undefined);
   const count = all.length;
+  // Without photographs the home page shows no empty frames; the rooms section links the plate list.
+  if (count === 0) return null;
 
   return (
     <section aria-labelledby="sheet-title" className="py-section-sm">

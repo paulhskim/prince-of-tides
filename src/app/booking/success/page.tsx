@@ -6,7 +6,12 @@ import { getStore } from "@/lib/booking/store";
 export const metadata: Metadata = { ...noindexMetadata, title: "Request received" };
 export const dynamic = "force-dynamic";
 
-/** /booking/success?id=POT-XXXX-XXXX (also accepts ?ref=). */
+/**
+ * /booking/success?id=POT-XXXX-XXXX (also accepts ?ref=).
+ * Anyone holding a reference can load this URL, so the server-rendered summary carries no guest PII
+ * (no name, email or phone): only dates, party size, estimate and status. The guest's name and email
+ * are shown only in the browser that sent the request (sessionStorage, see SuccessSummary).
+ */
 export default async function SuccessPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sp = await searchParams;
   const raw = sp.id ?? sp.ref;
@@ -18,8 +23,6 @@ export default async function SuccessPage({ searchParams }: { searchParams: Prom
       if (r) {
         initial = {
           id: r.id,
-          name: r.name,
-          email: r.email,
           checkIn: r.checkIn,
           checkOut: r.checkOut,
           adults: r.adults,

@@ -41,19 +41,24 @@
   --color-focus: #22241f;        /* focus ring is ink; on pluff use on-dark */
 
   /* ---------- Type scale (fluid; min = mobile 360px, max = desktop 1280px+) ---------- */
-  --text-display: clamp(2.5rem, 1.55rem + 4.2vw, 4.75rem);
-  --text-display--line-height: 1.04;
-  --text-display--letter-spacing: -0.02em;
+  /* Display: the name on the cover only. Light weight at the largest optical size. */
+  --text-display: clamp(3.5rem, 0.6rem + 11.4vw, 10rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.035em;
+  /* Figure: the few numbers that carry a section (0.8 to 1.1 mi, 4:00 PM). */
+  --text-figure: clamp(2.75rem, 1.6rem + 4.6vw, 5.5rem);
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.025em;
   --text-h1: clamp(2.125rem, 1.6rem + 2.4vw, 3.5rem);
   --text-h1--line-height: 1.08;
   --text-h1--letter-spacing: -0.015em;
-  --text-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.625rem);
-  --text-h2--line-height: 1.12;
-  --text-h2--letter-spacing: -0.01em;
+  --text-h2: clamp(2rem, 1.45rem + 2.2vw, 3.25rem);
+  --text-h2--line-height: 1.06;
+  --text-h2--letter-spacing: -0.018em;
   --text-h3: clamp(1.3125rem, 1.2rem + 0.55vw, 1.625rem);
   --text-h3--line-height: 1.22;
-  --text-quote: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
-  --text-quote--line-height: 1.28;
+  --text-quote: clamp(1.625rem, 1.1rem + 2.1vw, 2.75rem);
+  --text-quote--line-height: 1.2;
   --text-lead: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem);
   --text-lead--line-height: 1.5;
   --text-prose: 1.125rem;          /* serif reading text: intro, The Space, host letter, area guide */
@@ -65,6 +70,10 @@
   --text-label: 0.8125rem;
   --text-label--line-height: 1.35;
   --text-label--letter-spacing: 0.01em;
+  /* Apparatus: folios, running heads, table heads, numerals beside titles. Sans 12px, ink. */
+  --text-apparatus: 0.75rem;
+  --text-apparatus--line-height: 1.3;
+  --text-apparatus--letter-spacing: 0.03em;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1.4;
   --text-caption--letter-spacing: 0.02em;
@@ -215,4 +224,26 @@
 
 @utility rule-top-ink {
   border-top: 1px solid var(--color-ink);
+}
+
+/* Apparatus: the small sans layer (folios, running heads, figures in tables). */
+@utility apparatus {
+  font-family: var(--font-sans);
+  font-size: var(--text-apparatus);
+  line-height: var(--text-apparatus--line-height);
+  letter-spacing: var(--text-apparatus--letter-spacing);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Old-style figures inside serif reading text, so numbers sit in the line. */
+@utility oldstyle {
+  font-variant-numeric: oldstyle-nums proportional-nums;
+}
+
+/* The display cut: light, largest optical size. */
+@utility display-cut {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-variation-settings: "opsz" 72;
 }

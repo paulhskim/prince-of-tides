@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- JSON-LD objects are inspected loosely in these tests. */
 /**
  * SEO checks. Run: npx tsx --test tests/seo/seo.test.ts
  */

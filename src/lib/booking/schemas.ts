@@ -53,12 +53,21 @@ const PHONE_DIGITS_MIN = 7;
 
 /** Contact and consent fields per docs/ux-spec.md section 3.3. */
 export const contactShape = {
-  name: z.string().trim().min(2, "Full name: enter at least 2 characters.").max(120),
+  // The name is echoed in the guest acknowledgement (and its subject line), so control characters and
+  // links are refused: no header tricks, and the form cannot be used to mail spam links to third parties.
+  name: z
+    .string()
+    .trim()
+    .min(2, "Full name: enter at least 2 characters.")
+    .max(120)
+    .refine((n) => !/[\u0000-\u001f\u007f]/.test(n), { message: "Full name: please remove special characters." })
+    .refine((n) => !/(https?:|www\.|\/\/|<|>)/i.test(n), { message: "Full name: please enter your name only." }),
   email: z.string().trim().max(254).pipe(z.email({ message: `Email: ${v.invalidEmail}` })),
   phone: z
     .string()
     .trim()
     .max(40)
+    .refine((p) => /^[0-9+().\s/#-]*((ext\.?|x)\s*[0-9]+)?$/i.test(p), { message: `Phone: ${v.invalidPhone}` })
     .refine((p) => p.replace(/\D/g, "").length >= PHONE_DIGITS_MIN, { message: `Phone: ${v.invalidPhone}` }),
   arrivalTime: z.enum(ARRIVAL_TIMES).optional().or(z.literal("")),
   message: z.string().max(1000, "Message: 1000 characters at most.").optional().default(""),

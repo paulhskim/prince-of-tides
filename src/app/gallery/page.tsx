@@ -47,7 +47,7 @@ export default function GalleryPage() {
             <p className="mt-5 max-w-measure font-serif text-lead">
               {hasPhotos
                 ? `${photos.length} photographs of the residence, the resort and the way to the beach. Select any frame to view it larger.`
-                : "The residence, the resort and the way to the beach. Each frame below is reserved for a photograph of the real thing."}
+                : "Photographs of the residence, the resort and the way to the beach are being made. Until they arrive, this is the list of plates: what each frame will show."}
             </p>
           </div>
           <nav aria-label="Photograph sections" className="col-span-4 mt-8 md:col-span-8 lg:col-span-9 lg:col-start-4">

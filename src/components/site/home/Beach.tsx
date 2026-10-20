@@ -1,111 +1,125 @@
-import { beachAccess, particulars } from "@/content/copy";
-import { areaGuide } from "@/content/area-guide";
+import Link from "next/link";
+import { beachAccess, footer } from "@/content/copy";
+import { areaGuide, type AreaPlace } from "@/content/area-guide";
 import { photoFor } from "@/lib/photos";
-import { Grid, MarginLabel } from "../layout";
+import { Grid, SectionTitle } from "../layout";
+import { MapFacade } from "../MapFacade";
 import { Photo } from "../Photo";
 import { splitHeading } from "../text";
 
-/** The route as a genuine sequence. Stop notes are fragments of the copy. */
-const ROUTE = [
-  { name: "Building 3", note: "Beside the indoor atrium" },
-  { name: "Marsh boardwalk", note: "A private raised walk over the salt marsh" },
-  { name: "The beach", note: "Coco's on the Beach at the far end" },
+/** Places for the "getting about" list, by their area-guide names. */
+const PICKS = [
+  "Hilton Head Island Airport (HHH)",
+  "Savannah/Hilton Head International Airport (SAV)",
+  "Kroger (Shelter Cove)",
+  "Shelter Cove Harbour & Marina",
+  "Golf at Palmetto Dunes",
+  "Adventure Cove",
 ];
 
+function find(name: string): AreaPlace | undefined {
+  for (const c of areaGuide.categories) {
+    const p = c.places.find((x) => x.name === name);
+    if (p) return p;
+  }
+  return undefined;
+}
+
+function shortName(name: string): string {
+  return name
+    .replace(/^Savannah\/Hilton Head International Airport/, "Savannah airport")
+    .replace(/^Hilton Head Island Airport/, "Hilton Head airport");
+}
+
+/**
+ * V. To the beach: the honest trade-off, given the page's one large figure. The walk, in order, on
+ * the left; the island by distance on the right (beaches, then errands and airports).
+ */
 export function Beach() {
   const { numeral, title } = splitHeading(beachAccess.heading);
   const wide = photoFor("boardwalk");
-  const beachDistance = particulars.items.find((p) => p.label === "Beach")?.value;
   const beaches = areaGuide.categories.find((c) => c.id === "beaches")?.places ?? [];
+  const places = PICKS.map(find).filter((p): p is AreaPlace => !!p);
+  const addressNote = footer.smallPrint[0].split(". ").slice(1).join(". ");
 
   return (
-    <section id="beach" aria-labelledby="beach-title" className="py-section-lg">
-      <figure className="mx-auto max-w-bleed">
-        <Photo
-          photo={wide}
-          slot="boardwalk"
-          ratioClass="aspect-[4/3] md:aspect-[21/9]"
-          sizes="100vw"
-          placeholderLabel="the boardwalk across the salt marsh, wide, toward the beach"
-        />
-        {wide ? (
+    <section id="beach" aria-labelledby="beach-title" className="pb-section-sm pt-section">
+      {wide ? (
+        <figure className="mx-auto mb-14 max-w-bleed lg:mb-20">
+          <Photo photo={wide} slot="boardwalk" ratioClass="aspect-[4/3] md:aspect-[21/9]" sizes="100vw" />
           <figcaption className="mx-auto mt-2 max-w-page px-gutter text-caption text-ink-muted">{wide.caption}</figcaption>
-        ) : null}
-      </figure>
+        </figure>
+      ) : null}
 
-      <Grid className="mt-14 lg:mt-20">
-        <MarginLabel numeral={numeral} className="col-span-4 mb-3 md:col-span-8 lg:col-span-3 lg:mb-0">
-          The trade-off, plainly
-        </MarginLabel>
-        <div className="col-span-4 md:col-span-8 lg:col-span-9 lg:col-start-4">
-          <h2 id="beach-title" className="text-h2">
+      <Grid className="gap-y-14">
+        <div className="col-span-4 md:col-span-8 lg:col-span-7">
+          <SectionTitle id="beach-title" numeral={numeral}>
             {title}
-          </h2>
-          <p className="mt-6 max-w-measure font-serif text-prose">{beachAccess.body}</p>
+          </SectionTitle>
 
-          {/* Route line */}
-          <div className="mt-14">
-            <ol className="grid gap-0 md:grid-cols-3">
-              {ROUTE.map((stop, i) => (
-                <li key={stop.name} className="relative pb-8 pl-8 md:pb-0 md:pl-0 md:pt-8 md:pr-6">
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-0 top-1.5 size-[9px] rounded-round border border-ink bg-paper md:top-0"
-                  />
-                  {i < ROUTE.length - 1 ? (
-                    <span
-                      aria-hidden="true"
-                      className="absolute bottom-0 left-[4px] top-[15px] w-px bg-ink md:bottom-auto md:left-[9px] md:right-0 md:top-[4px] md:h-px md:w-auto"
-                    />
-                  ) : null}
-                  <span className="block font-serif text-h3">{stop.name}</span>
-                  <span className="mt-1 block text-small text-ink-muted">{stop.note}</span>
-                </li>
+          <p className="mt-10 flex flex-wrap items-baseline gap-x-5 gap-y-2 border-t border-ink pt-5">
+            <span className="display-cut text-figure tabular">
+              0.8<span className="text-ink-muted"> to </span>1.1
+            </span>
+            <span className="max-w-[14rem] text-small">miles, by a private boardwalk raised over the salt marsh</span>
+          </p>
+
+          <p className="mt-8 max-w-measure font-serif text-prose oldstyle">{beachAccess.body}</p>
+
+          <h3 className="apparatus mt-12 border-b border-ink pb-2">An afternoon, in order</h3>
+          <ol>
+            {beachAccess.steps.map((s, i) => (
+              <li key={s} className="grid grid-cols-[2.25rem_1fr] border-b border-rule py-3">
+                <span className="font-serif text-body text-ink-muted tabular">{i + 1}</span>
+                <span className="font-serif text-prose leading-snug oldstyle">{s}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-caption text-ink-muted">{beachAccess.footnote}</p>
+        </div>
+
+        <div className="col-span-4 md:col-span-8 lg:col-span-4 lg:col-start-9 lg:pt-[clamp(4rem,2rem+3vw,6rem)]">
+          <table className="w-full text-left text-small">
+            <caption className="apparatus border-b border-ink pb-2 text-left">Beaches, approx. distance</caption>
+            <tbody>
+              {beaches.map((b) => (
+                <tr key={b.name} className="border-b border-rule align-baseline">
+                  <th scope="row" className="py-2.5 pr-4 font-normal">
+                    {b.name}
+                  </th>
+                  <td className="whitespace-nowrap py-2.5 text-right tabular">
+                    {b.distanceMiles !== null ? `${b.distanceMiles} mi` : ""}
+                    <span className="block text-caption text-ink-muted">
+                      {b.mode === "walk" ? "on foot" : b.driveMinutes ? `${b.driveMinutes} min drive` : ""}
+                    </span>
+                  </td>
+                </tr>
               ))}
-            </ol>
-            {beachDistance ? (
-              <p className="mt-6 border-t border-rule pt-3 text-small tabular md:mt-8">{beachDistance}</p>
-            ) : null}
-          </div>
+            </tbody>
+          </table>
 
-          <div className="mt-14 grid gap-x-col gap-y-12 md:grid-cols-8 lg:grid-cols-9">
-            <div className="md:col-span-4 lg:col-span-5">
-              <h3 className="font-sans text-label font-medium">An afternoon, in order</h3>
-              <ol className="mt-3 border-t border-ink">
-                {beachAccess.steps.map((s, i) => (
-                  <li key={s} className="grid grid-cols-[2.5rem_1fr] border-b border-rule py-3 text-small">
-                    <span className="font-serif text-body text-ink-muted tabular">{i + 1}</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ol>
-              <p className="mt-3 text-caption text-ink-muted">{beachAccess.footnote}</p>
-            </div>
+          <table id="location" className="mt-10 w-full scroll-mt-24 text-left text-small">
+            <caption className="apparatus border-b border-ink pb-2 text-left">Getting about, approx. drive</caption>
+            <tbody>
+              {places.map((p) => (
+                <tr key={p.name} className="border-b border-rule">
+                  <th scope="row" className="py-2.5 pr-4 font-normal">
+                    {shortName(p.name)}
+                  </th>
+                  <td className="py-2.5 text-right tabular">
+                    {p.driveMinutes ? `${p.driveMinutes} min` : p.distanceMiles ? `${p.distanceMiles} mi` : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-3 text-caption text-ink-muted">Drive times from the resort gate. {addressNote}</p>
 
-            {beaches.length ? (
-              <div className="md:col-span-4 lg:col-span-4">
-                <table className="w-full text-left text-small">
-                  <caption className="pb-3 text-left font-sans text-label font-medium">
-                    Nearby beaches, distances approx.
-                  </caption>
-                  <tbody className="border-t border-ink">
-                    {beaches.map((b) => (
-                      <tr key={b.name} className="border-b border-rule align-top">
-                        <th scope="row" className="py-3 pr-4 font-normal">
-                          {b.name}
-                        </th>
-                        <td className="whitespace-nowrap py-3 text-right tabular">
-                          {b.distanceMiles !== null ? `${b.distanceMiles} mi` : ""}
-                          <span className="block text-caption text-ink-muted">
-                            {b.mode === "walk" ? "on foot" : b.driveMinutes ? `${b.driveMinutes} min drive` : ""}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : null}
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <MapFacade caption="Map of Hilton Head Resort, mid-island" />
+            <Link href="/area" className="inline-flex min-h-11 items-center text-small font-medium">
+              The area guide
+            </Link>
           </div>
         </div>
       </Grid>

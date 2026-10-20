@@ -13,8 +13,9 @@ import { guestSummary } from "@/lib/booking/guest-summary";
 
 export type RequestSummary = {
   id: string;
-  name: string;
-  email: string;
+  /** Only from this browser's sessionStorage; the server never sends contact details here. */
+  name?: string;
+  email?: string;
   checkIn: string;
   checkOut: string;
   adults: number;
@@ -39,22 +40,27 @@ export function SuccessSummary({ id, initial, paid }: { id: string | null; initi
     () => readSession(id),
     () => null,
   );
-  let s = initial;
-  if (!s && stored) {
+  let session: RequestSummary | null = null;
+  if (stored) {
     try {
-      s = JSON.parse(stored) as RequestSummary;
+      const parsed = JSON.parse(stored) as RequestSummary;
+      session = parsed && parsed.id === id ? parsed : null;
     } catch {
-      s = null;
+      session = null;
     }
   }
+  // Server record (no PII) wins for dates, status and total; this browser's copy adds name and email.
+  const s: RequestSummary | null = initial
+    ? { ...initial, name: session?.name, email: session?.email }
+    : session;
   const confirmed = paid && s?.status === "confirmed";
-  const title = confirmed ? "Reservation confirmed." : bookingCopy.success.title;
+  const title = confirmed ? "Reservation confirmed." : id ? bookingCopy.success.title : "No request to show.";
 
   return (
     <div className="grid grid-cols-4 gap-x-col md:grid-cols-8 lg:grid-cols-12" data-testid="booking-success">
       <div className="col-span-4 md:col-span-8 lg:col-span-7">
         <h1 className="font-serif text-h1">{title}</h1>
-        {s ? (
+        {s && s.name && s.email ? (
           <p className="mt-5 max-w-measure font-serif text-lead">
             {bookingCopy.success.body
               .replace("{{guestName}}", s.name.split(" ")[0] || s.name)
@@ -62,9 +68,19 @@ export function SuccessSummary({ id, initial, paid }: { id: string | null; initi
               .replace("{{checkOut}}", formatLong(s.checkOut))
               .replace("{{email}}", s.email)}
           </p>
-        ) : (
+        ) : s ? (
           <p className="mt-5 max-w-measure font-serif text-lead">
-            Thank you. Your request is with us{id ? ` under reference ${id}` : ""}. Please keep this reference for your records.
+            Thank you. Your request for {formatLong(s.checkIn)} to {formatLong(s.checkOut)} is with us under reference {s.id}. A
+            confirmation has been sent to the email address you gave.
+          </p>
+        ) : id ? (
+          <p className="mt-5 max-w-measure font-serif text-lead">
+            Thank you. Your request is with us under reference {id}. Please keep this reference for your records.
+          </p>
+        ) : (
+          <p className="mt-5 max-w-measure font-serif text-lead" data-testid="success-missing">
+            This page confirms a booking request once one has been sent. If you sent one, the confirmation email holds your
+            reference. To send a request, <Link href="/book">choose your dates</Link>.
           </p>
         )}
         {paid && !confirmed && (
@@ -107,7 +123,7 @@ export function SuccessSummary({ id, initial, paid }: { id: string | null; initi
                 ["Depart", formatShortYear(s.checkOut)],
                 ["Nights", String(diffDays(s.checkIn, s.checkOut))],
                 ["Guests", guestSummary(s)],
-                ["Email", s.email],
+                ...(s.email ? [["Email", s.email]] : []),
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4 border-b border-rule py-2.5">
                   <dt className="text-ink-muted">{k}</dt>

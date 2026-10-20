@@ -55,9 +55,9 @@
   }
 }
 
-/* On large screens the docked reservation bar sits under the masthead; anchors clear both. */
+/* On large screens anchors clear the masthead. */
 @media (min-width: 1024px) {
   html {
-    scroll-padding-top: 8.5rem;
+    scroll-padding-top: 5rem;
   }
 }
