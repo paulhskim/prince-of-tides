@@ -1,14 +1,14 @@
 "use client";
 
-/** Mobile reservation sheet (design-system 8.7): dates, guests, quote, primary action pinned at the bottom. */
+/** Mobile reservation sheet (design-system 8.7): dates, guests, stay note (no prices), primary action pinned at the bottom. */
 import { useRouter } from "next/navigation";
 import { siteConfig } from "@/content/site.config";
-import { diffDays, formatClock } from "@/lib/booking/dates";
+import { formatClock } from "@/lib/booking/dates";
 import { countedGuests } from "@/lib/booking/schemas";
 import { DateRangeCalendar } from "./DateRangeCalendar";
 import { Dialog } from "./Dialog";
 import { GuestFields } from "./GuestFields";
-import { QuoteLedger, useQuote } from "./QuoteLedger";
+import { StayNote, useQuote } from "./QuoteLedger";
 import { stayToQuery, useAvailability, useStay } from "./state";
 
 export function ReservationSheet({
@@ -24,7 +24,7 @@ export function ReservationSheet({
   const avail = useAvailability();
   const router = useRouter();
   const quote = useQuote(stay.checkIn, stay.checkOut, countedGuests(stay));
-  const ready = Boolean(stay.checkIn && stay.checkOut && quote && quote.meetsMinNights);
+  const ready = Boolean(stay.checkIn && stay.checkOut && quote && quote.errors.length === 0);
 
   return (
     <Dialog
@@ -78,9 +78,9 @@ export function ReservationSheet({
       </section>
       <section aria-labelledby="sheet-quote" className="mt-8">
         <h3 id="sheet-quote" className="smallcaps mb-3 text-ink-muted">
-          Estimate{stay.checkIn && stay.checkOut ? `, ${diffDays(stay.checkIn, stay.checkOut)} nights` : ""}
+          Your quote
         </h3>
-        <QuoteLedger quote={quote} compact />
+        <StayNote checkIn={stay.checkIn} checkOut={stay.checkOut} quote={quote} />
       </section>
     </Dialog>
   );

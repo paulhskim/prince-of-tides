@@ -1,6 +1,7 @@
 /**
- * The stay set like a hotel folio: nights grouped by season and rate, discount, cleaning, every tax line
- * with its rate, the total and the averages. Every figure is read from a Quote produced by computeQuote
+ * The stay set like a tailored quote: consecutive nights grouped by rate and reason (season weeknights,
+ * season weekend nights, or the holiday / island event that prices them), a night-by-night ledger,
+ * discount, cleaning, every tax line with its rate, the total and the averages. Every figure is read from a Quote produced by computeQuote
  * (src/content/site.config.ts); nothing is added or recomputed here.
  *
  * <StayTerms /> sets the payment schedule and the cancellation tiers as real dates for the arrival.
@@ -10,9 +11,11 @@ import { policies } from "@/content/policies";
 import { formatMoney, formatShort, formatShortYear, type ISODate } from "@/lib/booking/dates";
 import {
   ILLUSTRATIVE_NOTE,
+  RATES_VARY_NOTE,
   averagePerNight,
   cancellationDates,
-  groupNightsBySeasonRate,
+  groupNightRuns,
+  nightsPhrase,
   paymentSchedule,
   pct,
   securityDepositAmount,
@@ -21,7 +24,7 @@ import {
 const money = (n: number) => formatMoney(n);
 
 export function Folio({ quote, caption = "Your stay, itemized" }: { quote: Quote; caption?: string }) {
-  const groups = groupNightsBySeasonRate(quote);
+  const groups = groupNightRuns(quote);
   const avg = averagePerNight(quote);
   const row = "border-b border-rule";
   const th = "py-3 pr-4 text-left font-normal align-baseline";
@@ -42,14 +45,14 @@ export function Folio({ quote, caption = "Your stay, itemized" }: { quote: Quote
         </thead>
         <tbody>
           {groups.map((g) => (
-            <tr key={`${g.season}-${g.rate}`} className={row} data-testid="folio-nights">
+            <tr key={g.first} className={row} data-testid="folio-nights" data-kind={g.kind}>
               <th scope="row" className={th}>
                 <span className="text-ink">
-                  {g.nights} {g.nights === 1 ? "night" : "nights"} at {money(g.rate)}
+                  {nightsPhrase(g)}, {g.name}
                 </span>
-                <span className="block text-caption text-ink-muted">
-                  {g.season}
-                  {g.nights > 1 ? `, ${formatShort(g.first)} to ${formatShort(g.last)}` : `, ${formatShort(g.first)}`}
+                {g.kind === "event" && <span className="smallcaps ml-2 align-[0.08em] text-brass">Event rate</span>}
+                <span className="block text-caption text-ink-muted tabular">
+                  {g.nights > 1 ? `${formatShort(g.first)} to ${formatShort(g.last)}` : formatShort(g.first)}, {money(g.rate)} a night
                 </span>
               </th>
               <td className={td}>{money(g.amount)}</td>
@@ -120,6 +123,9 @@ export function Folio({ quote, caption = "Your stay, itemized" }: { quote: Quote
           </tr>
         </tfoot>
       </table>
+      <p className="mt-2 text-right font-serif text-small italic text-ink-muted" data-testid="folio-rates-note">
+        {RATES_VARY_NOTE}
+      </p>
       <dl className="mt-4 grid grid-cols-2 gap-x-6 text-caption text-ink-muted">
         <div>
           <dt className="smallcaps">Average nightly rate</dt>
@@ -132,6 +138,27 @@ export function Folio({ quote, caption = "Your stay, itemized" }: { quote: Quote
           </dd>
         </div>
       </dl>
+      {quote.nights > 1 && (
+        <details className="group mt-5 border-t border-rule pt-3" data-testid="folio-ledger">
+          <summary className="smallcaps flex min-h-11 cursor-pointer list-none items-center justify-between text-ink-muted hover:text-ink [&::-webkit-details-marker]:hidden">
+            <span>Night by night</span>
+            <span aria-hidden="true" className="font-serif text-body normal-case transition-transform duration-[var(--duration-fast)] group-open:rotate-45">
+              +
+            </span>
+          </summary>
+          <ol className="pb-1 text-caption">
+            {quote.nightlyBreakdown.map((n) => (
+              <li key={n.date} className="flex items-baseline justify-between gap-4 border-b border-rule py-2 last:border-b-0" data-testid="folio-night">
+                <span>
+                  <span className="text-ink tabular">{formatShort(n.date)}</span>
+                  <span className="text-ink-muted">, {n.label}</span>
+                </span>
+                <span className="tabular text-ink">{money(n.rate)}</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
       {quote.isPlaceholder && <p className="mt-4 font-serif text-small italic text-ink-muted">{ILLUSTRATIVE_NOTE} The host confirms the final figure before any payment.</p>}
     </div>
   );

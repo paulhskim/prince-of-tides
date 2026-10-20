@@ -5,7 +5,7 @@
 import { siteConfig } from "@/content/site.config";
 import { addDays, diffDays, formatLong, formatShort, type ISODate } from "./dates";
 import { isRangeFreeInSet } from "./ranges";
-import { lastBookableDate, minNightsFor } from "./rules";
+import { arrivalProblem, earliestDeparture, lastBookableDate, minNightsFor, minNightsForStay } from "./rules";
 
 export type Selection = { checkIn: ISODate | null; checkOut: ISODate | null };
 
@@ -15,6 +15,7 @@ export type DayKind =
   | "departure-only"
   | "beyond"
   | "gap-too-short"
+  | "arrival-day"
   | "below-min"
   | "past-next-block"
   | "available"
@@ -54,6 +55,7 @@ export function canArriveOn(iso: ISODate, ctx: Omit<CalendarContext, "selection"
     return prev >= ctx.today && !ctx.blocked.has(prev) ? "departure-only" : "blocked";
   }
   if (iso > lastBookableDate(ctx.today)) return "beyond";
+  if (arrivalProblem(iso)) return "arrival-day";
   const min = minNightsFor(iso);
   if (freeRun(iso, ctx.blocked, min) < min) return "gap-too-short";
   return true;
@@ -63,7 +65,7 @@ export function canDepartOn(iso: ISODate, checkIn: ISODate, blocked: ReadonlySet
   if (iso <= checkIn) return "available";
   if (!isRangeFreeInSet(blocked, checkIn, iso)) return "past-next-block";
   const nights = diffDays(checkIn, iso);
-  if (nights < minNightsFor(checkIn)) return "below-min";
+  if (nights < minNightsForStay(checkIn, iso)) return "below-min";
   if (nights > siteConfig.booking.maxNights) return "beyond";
   return true;
 }
@@ -107,13 +109,15 @@ export function dayInfo(iso: ISODate, ctx: CalendarContext): DayInfo {
 
 function dayLabel(iso: ISODate, kind: DayKind, isToday: boolean, checkIn: ISODate | null): string {
   const base = `${isToday ? "Today, " : ""}${formatLong(iso)}`;
-  const min = checkIn ? minNightsFor(checkIn) : minNightsFor(iso);
+  const min = checkIn && iso > checkIn ? minNightsForStay(checkIn, iso) : minNightsFor(iso);
+  const arrivalRule = kind === "arrival-day" ? arrivalProblem(iso) : null;
   const suffix: Record<DayKind, string> = {
     past: "unavailable",
     blocked: "unavailable",
     "departure-only": "available for departure only",
     beyond: "unavailable, outside the booking window",
     "gap-too-short": `unavailable for arrival, the open dates are shorter than the ${min}-night minimum`,
+    "arrival-day": `unavailable for arrival. ${arrivalRule ?? ""}`.trim(),
     "below-min": `below the ${min}-night minimum`,
     "past-next-block": "unavailable, the stay would cross reserved nights",
     available: "available",
@@ -142,9 +146,9 @@ export function selectDay(iso: ISODate, ctx: CalendarContext): Selection | null 
 export function selectionHint(sel: Selection): { text: string; tone: "plain" | "warning" } {
   if (!sel.checkIn) return { text: "Choose an arrival date.", tone: "plain" };
   if (!sel.checkOut) {
-    const min = minNightsFor(sel.checkIn);
+    const e = earliestDeparture(sel.checkIn);
     return {
-      text: `Choose a departure date. ${min}-night minimum: depart on or after ${formatShort(addDays(sel.checkIn, min))}.`,
+      text: `Choose a departure date. ${e.minNights}-night minimum${e.fromEvent ? ` for ${e.reason}` : ""}: depart on or after ${formatShort(e.date)}.`,
       tone: "warning",
     };
   }

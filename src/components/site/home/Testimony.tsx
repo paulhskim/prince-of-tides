@@ -14,7 +14,7 @@ function Attribution({ review }: { review: Review }) {
 }
 
 /**
- * VI. Guests, in their words: one quotation set large, then a row of record. The rating is a
+ * Guests, in their words: one quotation set large, then a row of record. The rating is a
  * line of fact at the head of that row, not a headline number.
  */
 export function Testimony() {

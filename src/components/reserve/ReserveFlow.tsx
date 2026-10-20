@@ -2,8 +2,9 @@
 
 /**
  * /reserve: the reservation page. One page, five steps, a progress index beside them:
- *   I Dates (calendar with the nightly rate on each date, seasonal rate card below)
- *   II Guests  III Your stay (folio, payment schedule, cancellation dates)
+ *   I Dates (availability calendar with minimum-stay hints; no prices before dates are chosen)
+ *   II Guests  III Your stay (the tailored quote: each night's rate and why, taxes, payment schedule,
+ *   cancellation dates; it appears only once arrival and departure are both chosen)
  *   IV Your details  V Review and request
  * The stay lives in the URL (useStay), so it is shareable and survives refresh. "Request this
  * reservation" posts to /api/inquiry, which revalidates and recomputes the quote on the server; the
@@ -21,6 +22,7 @@ import { formatClock, formatMoney, formatRangeCompact, formatShort, formatShortY
 import { ARRIVAL_TIMES, countedGuests, fieldErrors, inquirySchema } from "@/lib/booking/schemas";
 import { guestSummary } from "@/lib/booking/guest-summary";
 import { nightsOf, paymentSchedule } from "@/lib/booking/reserve";
+import { minNightsMessage } from "@/lib/booking/rules";
 import { DateRangeCalendar } from "@/components/booking/DateRangeCalendar";
 import { Dialog } from "@/components/booking/Dialog";
 import { Checkbox, SelectField, TextField, TextareaField } from "@/components/booking/fields";
@@ -29,7 +31,6 @@ import { useQuote } from "@/components/booking/QuoteLedger";
 import { useAvailability, useStay } from "@/components/booking/state";
 import { RunningHead } from "@/components/site/layout";
 import { Folio, StayTerms } from "./Folio";
-import { RateCard } from "./RateCard";
 import { Confirmation, type ConfirmationData } from "./Confirmation";
 
 /* ------------------------------------------------------------------ */
@@ -190,12 +191,13 @@ function Flow({ onConfirmed }: { onConfirmed: (d: ConfirmationData) => void }) {
       }
     }
     if (!hasDates) out.dates = withFieldName("dates", bookingCopy.validation.datesRequired);
-    else if (quote && !quote.meetsMinNights) out.dates = withFieldName("dates", bookingCopy.minNightsMessage.replace("{{minNights}}", String(quote.minNightsRequired)));
+    else if (quote && !quote.meetsMinNights) out.dates = withFieldName("dates", minNightsMessage(stay.checkIn!, stay.checkOut!));
+    else if (quote && quote.arrivalRule) out.dates = withFieldName("dates", quote.arrivalRule);
     delete out.company;
     delete out.quotedTotal;
     delete out.source;
     return out;
-  }, [payload, hasDates, quote]);
+  }, [payload, hasDates, quote, stay.checkIn, stay.checkOut]);
 
   useEffect(() => {
     if (!Object.keys(touched).length) return;
@@ -325,7 +327,7 @@ function Flow({ onConfirmed }: { onConfirmed: (d: ConfirmationData) => void }) {
           <div className="mt-[clamp(1.75rem,1rem+2.4vw,3.25rem)] grid grid-cols-4 gap-x-col gap-y-6 md:grid-cols-8 lg:grid-cols-12">
             <h1 className="display-cut col-span-4 text-h1 md:col-span-8 lg:col-span-7">Reserve your stay</h1>
             <p className="col-span-4 max-w-measure font-serif text-lead oldstyle md:col-span-7 lg:col-span-4 lg:col-start-9 lg:self-end">
-              Every night priced on the calendar, every tax itemized, the payment and cancellation dates set out. Send it as a request; the host confirms before anything is paid.
+              Choose your dates and your quote is drawn up for them: each night priced for its season or island event, every tax itemized, the payment and cancellation dates set out. Send it as a request; the host confirms before anything is paid.
             </p>
           </div>
         </div>
@@ -355,11 +357,10 @@ function Flow({ onConfirmed }: { onConfirmed: (d: ConfirmationData) => void }) {
                 Dates
               </StepHeading>
               <p className="mt-3 max-w-measure text-small text-ink-muted">
-                Check-in {formatClock(siteConfig.times.checkIn)}, check-out {formatClock(siteConfig.times.checkOut)}. The figure under each date is that night&rsquo;s rate.
+                Check-in {formatClock(siteConfig.times.checkIn)}, check-out {formatClock(siteConfig.times.checkOut)}. Choose arrival, then departure; your itemized quote follows in step III.
               </p>
               <DateRangeCalendar
                 className="mt-6"
-                showRates
                 selection={{ checkIn: stay.checkIn, checkOut: stay.checkOut }}
                 onChange={(s) => {
                   setStay(s);
@@ -375,9 +376,6 @@ function Flow({ onConfirmed }: { onConfirmed: (d: ConfirmationData) => void }) {
                   {errors.dates}
                 </p>
               )}
-              <div className="mt-12">
-                <RateCard id="reserve-rates" />
-              </div>
             </section>
 
             {/* II. Guests */}
@@ -404,8 +402,10 @@ function Flow({ onConfirmed }: { onConfirmed: (d: ConfirmationData) => void }) {
               ) : (
                 <p className="mt-5 max-w-measure font-serif text-prose text-ink-muted" data-testid="stay-empty">
                   {hasDates && quote && !quote.meetsMinNights
-                    ? bookingCopy.minNightsMessage.replace("{{minNights}}", String(quote.minNightsRequired))
-                    : "Choose your arrival and departure above. The folio appears here: every night and its rate, the cleaning fee, each tax with its rate, the payment schedule and the cancellation dates."}
+                    ? minNightsMessage(stay.checkIn!, stay.checkOut!)
+                    : hasDates && quote && quote.arrivalRule
+                      ? quote.arrivalRule
+                      : "Choose your arrival and departure above. Your quote is drawn up here for those dates: each night and the reason for its rate, the cleaning fee, each tax, the payment schedule and the cancellation dates."}
                 </p>
               )}
             </section>

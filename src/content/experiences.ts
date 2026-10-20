@@ -282,8 +282,8 @@ export const bookDirect: BookDirectReason[] = [
   },
   {
     id: "itemized",
-    title: "The whole quote, itemized",
-    body: "Nightly rates, the cleaning fee and lodging taxes are set out line by line before you send anything.",
+    title: "A quote drawn up for your dates",
+    body: "Choose your dates and each night is priced for its season or island event, with the cleaning fee and lodging taxes set out line by line before you send anything.",
   },
   {
     id: "no-charge",

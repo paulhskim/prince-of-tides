@@ -115,7 +115,12 @@ Hilton Head Resort cluster at about $155 (winter) to $256 (June), average about 
 of Tides has interior views (a discount factor) but strong reviews (9.2/10) and the best location in the
 resort for the indoor amenities, so we price at the comp average, slightly above in summer.
 
-### Suggested rate card (PLACEHOLDER: market-based starting suggestion for the owner to confirm)
+### Suggested rate card (SUPERSEDED)
+
+Superseded by the tailored plan in `docs/rate-plan.md` (weeknight and weekend rates for every season,
+plus dated holiday and island-event rates such as RBC Heritage week). The site no longer shows any rate
+table; rates appear only in the itemized quote on /reserve after dates are chosen. The original card is
+kept below for reference.
 
 | Season | Nights (MM-DD) | Sun to Thu | Fri and Sat | Min nights |
 |---|---|---|---|---|
@@ -131,7 +136,7 @@ resort for the indoor amenities, so we price at the comp average, slightly above
 - Weekly discount (7+ nights): **10%**. Monthly (28+ nights): **25%** (winter snowbird demand).
 - Discounts apply to lodging only, not to cleaning or taxes; they do not stack.
 - Minimum nights follow the season of the check-in night.
-- **Recommended manual overrides** (not in config yet): RBC Heritage golf week (mid-April, dates change
+- **Recommended manual overrides** (now in config as dated events, see `docs/rate-plan.md`): RBC Heritage golf week (mid-April, dates change
   yearly), Easter week, July 4 week and Thanksgiving: raise 20% to 35% and hold a 5 to 7 night minimum.
 - Direct-booking pricing tip: price direct at the platform nightly rate. The guest still saves the
   Airbnb/Vrbo service fee, which is the honest "book direct" saving.

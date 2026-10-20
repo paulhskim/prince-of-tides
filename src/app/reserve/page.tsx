@@ -6,9 +6,10 @@ import { breadcrumbSchema } from "@/lib/seo/schema";
 import { absoluteUrl } from "@/lib/seo/site-url";
 
 /**
- * /reserve: the reservation page (dates with nightly rates, guests, folio, details, review and
- * request, confirmation). Titles and descriptions come from the "book" entry in src/content/seo.ts;
- * the canonical points here because /book now redirects to this page.
+ * /reserve: the reservation page (dates, guests, the itemized quote once dates are chosen, details,
+ * review and request, confirmation). The only place on the site where rates appear. Titles and
+ * descriptions come from the "book" entry in src/content/seo.ts; the canonical points here because
+ * /book now redirects to this page.
  */
 const base = pageMetadata("book");
 export const metadata: Metadata = {

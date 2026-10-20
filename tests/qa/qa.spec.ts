@@ -6,7 +6,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { addDays, todayISO } from "../../src/lib/booking/dates";
-import { computeQuote } from "../../src/content/site.config";
+import { computeQuote, rateForISO } from "../../src/content/site.config";
 import { formatMoney } from "../../src/lib/booking/dates";
 import { reviewsSection } from "../../src/content/copy";
 
@@ -23,11 +23,17 @@ async function settle(page: Page) {
   await page.waitForTimeout(300);
 }
 
-/** First arrival on or after `from` whose season needs `min` nights and has room for the stay. */
+/**
+ * First arrival on or after `from` on an ordinary (non-event) night whose season needs `min` nights,
+ * where every stay of up to 10 nights keeps that same minimum and a `min`-night stay is valid.
+ */
 function arrivalWithMin(min: number, from = addDays(today, 30)): string {
   for (let i = 0; i < 330; i++) {
     const d = addDays(from, i);
-    if (computeQuote(d, addDays(d, 10), 2).minNightsRequired === min) return d;
+    const r = rateForISO(d);
+    if (r.kind === "event" || r.minNights !== min) continue;
+    if (computeQuote(d, addDays(d, 10), 2).minNightsRequired !== min) continue;
+    if (computeQuote(d, addDays(d, min), 2).errors.length === 0) return d;
   }
   throw new Error(`no ${min}-night season found`);
 }

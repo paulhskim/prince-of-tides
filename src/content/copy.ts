@@ -609,7 +609,7 @@ export const arrival: ArrivalCopy = {
 };
 
 export const host: HostCopy = {
-  heading: "VIII. Your Host",
+  heading: "V. Your Host",
   body: "TODO_OWNER: host name. TODO_OWNER: two or three sentences on who you are, what keeps you on Hilton Head, and how quickly you reply. When you book directly, your questions go to the person who looks after the condo.",
   placeholderNote:
     "TODO_OWNER: replace host name, bio and photo (/public/photos/host.jpg) before launch. Do not publish this section with placeholders visible.",
@@ -617,7 +617,7 @@ export const host: HostCopy = {
 
 export const bookingCta: BookingCtaCopy = {
   heading: "Request a stay",
-  body: "Choose your dates and see an estimate. Send a request; nothing is charged. We confirm availability and the final figure ourselves.",
+  body: "Choose your dates; the reservation page draws up your quote for them. Send a request; nothing is charged. We confirm availability and the final figure ourselves.",
   button: { label: "Request a stay", href: "/reserve" },
 };
 

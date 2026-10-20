@@ -3,7 +3,7 @@ import { Grid, SectionTitle } from "../layout";
 import { splitHeading, withoutTodos } from "../text";
 
 /**
- * VII. Before you arrive: the one dark band, set as a timetable. The two times are the figures;
+ * Before you arrive: the one dark band, set as a timetable. The two times are the figures;
  * the four steps of an arrival run left to right in the order they happen; the remaining notes
  * follow in a smaller register.
  */

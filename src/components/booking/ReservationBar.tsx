@@ -16,7 +16,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { booking as bookingCopy, reviewsSection } from "@/content/copy";
-import { formatMoney, formatRangeCompact, formatShort, diffDays } from "@/lib/booking/dates";
+import { formatRangeCompact, formatShort, diffDays } from "@/lib/booking/dates";
 import { countedGuests } from "@/lib/booking/schemas";
 import { DateRangeCalendar } from "./DateRangeCalendar";
 import { GuestFields, guestLine } from "./GuestFields";
@@ -114,10 +114,10 @@ function DesktopBar() {
           <p className="font-serif text-body italic text-ink-muted tabular" aria-live="polite">
             {ready && quote ? (
               <>
-                {diffDays(stay.checkIn!, stay.checkOut!)} nights, estimated total <span className="not-italic text-ink">{formatMoney(quote.total)}</span>
+                {diffDays(stay.checkIn!, stay.checkOut!)} nights, <span className="not-italic text-ink">quote on the next page</span>
               </>
             ) : (
-              "Add dates for an estimate"
+              "Add dates for your quote"
             )}
           </p>
           <button type="button" onClick={requestToBook} className={`${primarySm} min-h-14 px-8`}>
@@ -214,7 +214,7 @@ export function MobileReservationBar() {
                 <p className="truncate text-small font-medium text-ink tabular">
                   {formatRangeCompact(stay.checkIn!, stay.checkOut!)}, {quote.nights} nights
                 </p>
-                <p className="text-caption text-ink-muted tabular">Estimated total {formatMoney(quote.total)}</p>
+                <p className="text-caption text-ink-muted">Your quote is drawn up on the next page</p>
               </>
             ) : (
               <>

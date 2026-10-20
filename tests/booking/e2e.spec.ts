@@ -1,6 +1,6 @@
 /**
- * Reservation e2e (/reserve): keyboard date selection, nightly rates on the calendar, itemized folio
- * equal to computeQuote, request submitted to /api/inquiry, confirmation with reference and the payment
+ * Reservation e2e (/reserve): no prices before dates are chosen, keyboard date selection, the tailored
+ * folio (grouped nights with their reasons) equal to computeQuote, request submitted to /api/inquiry, confirmation with reference and the payment
  * preview; blocked ranges cannot be selected; /book redirects with its query string; screenshots into
  * .screens/reserve/.
  *
@@ -12,7 +12,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { computeQuote } from "../../src/content/site.config";
 import { addDays, todayISO, formatLong, formatMoney, shiftMonthsKeepDay } from "../../src/lib/booking/dates";
-import { paymentSchedule, rateForNight, seasonRows } from "../../src/lib/booking/reserve";
+import { groupNightRuns, nightsPhrase, paymentSchedule } from "../../src/lib/booking/reserve";
 
 /**
  * The server reads manual blocks from BLOCKED_DATES_FILE when set (src/lib/booking/availability.ts).
@@ -62,35 +62,28 @@ async function openReserve(page: Page, query = "") {
   await expect(calendar(page)).toHaveAttribute("data-availability", "ready");
 }
 
-/** First arrival at least `from` days out whose season minimum fits `nights` and avoids the seeded block. */
+/** First arrival at least `from` days out whose stay rules fit `nights` and that avoids the seeded block. */
 function arrivalFor(nights: number, from = 70): string {
   for (let i = from; i < from + 200; i++) {
     const a = addDays(today, i);
     const q = computeQuote(a, addDays(a, nights), 2);
-    if (q.meetsMinNights && (addDays(a, nights) <= BLOCK_START || a >= BLOCK_END)) return a;
+    if (q.errors.length === 0 && (addDays(a, nights) <= BLOCK_START || a >= BLOCK_END)) return a;
   }
   throw new Error("no arrival found");
 }
 
-test("reserve: keyboard dates, rates on the calendar, folio equals computeQuote, request, confirmation", async ({ page }) => {
+test("reserve: no prices before dates, keyboard dates, tailored folio equals computeQuote, request, confirmation", async ({ page }) => {
   await openReserve(page);
   const cal = calendar(page);
   await page.screenshot({ path: path.join(SCREENS, "initial-1440.png") });
 
-  // Rates are printed on open dates and read out in the label.
-  const sample = addDays(today, 7);
-  const sampleBtn = cal.locator(`button[data-iso="${sample}"]`);
-  if (await sampleBtn.isVisible()) {
-    const r = rateForNight(sample);
-    await expect(sampleBtn).toHaveAttribute("data-rate", String(r.nightly));
-    await expect(sampleBtn).toHaveAttribute("aria-label", new RegExp(`${formatMoney(r.nightly, { cents: false }).replace("$", "\\$")} per night, ${r.season}`));
-  }
-  await expect(cal.getByTestId("season-line").first()).not.toBeEmpty();
-
-  // Seasonal rate card generated from the config, with the illustrative note.
-  const card = page.getByTestId("rate-card");
-  for (const row of seasonRows()) await expect(card).toContainText(row.name);
-  await expect(card.getByTestId("illustrative-note")).toHaveText("Rates shown are illustrative until the season is published.");
+  // Before dates are chosen: no rate on any date, no rate table, no figure anywhere on the page.
+  await expect(cal.locator("[data-rate]")).toHaveCount(0);
+  await expect(page.getByTestId("rate-card")).toHaveCount(0);
+  await expect(page.getByTestId("season-line")).toHaveCount(0);
+  await expect(page.getByTestId("folio")).toHaveCount(0);
+  expect(await page.locator("main").innerText()).not.toContain("$");
+  await expect(cal).toContainText("Minimum stay");
 
   // Keyboard only: focus the grid, two months on with PageDown, Enter, six days on, Enter.
   await cal.locator('button[data-iso][tabindex="0"]').focus();
@@ -113,6 +106,18 @@ test("reserve: keyboard dates, rates on the calendar, folio equals computeQuote,
   const q = computeQuote(arrive, depart, 2);
   const folio = page.getByTestId("folio");
   await expect(page.getByTestId("folio-total")).toHaveText(formatMoney(q.total));
+  // Nights grouped into runs, each with its rate and the reason for it.
+  const runs = groupNightRuns(q);
+  const runRows = folio.getByTestId("folio-nights");
+  await expect(runRows).toHaveCount(runs.length);
+  for (const [i, g] of runs.entries()) {
+    await expect(runRows.nth(i)).toContainText(`${nightsPhrase(g)}, ${g.name}`);
+    await expect(runRows.nth(i)).toContainText(`${formatMoney(g.rate)} a night`);
+    await expect(runRows.nth(i)).toContainText(formatMoney(g.amount));
+  }
+  await expect(folio.getByTestId("folio-rates-note")).toHaveText("Rates vary by date, season and island events.");
+  // Still no rates printed on the calendar itself.
+  await expect(cal.locator("[data-rate]")).toHaveCount(0);
   await expect(page.getByTestId("summary-total")).toHaveText(formatMoney(q.total));
   const taxRows = folio.getByTestId("folio-tax");
   await expect(taxRows).toHaveCount(q.taxes.length);
@@ -192,7 +197,7 @@ test("blocked nights cannot be selected; turnover on the block's first night is 
 
   // Arrive just far enough before the block for the season minimum.
   let k = 1;
-  while (!computeQuote(addDays(BLOCK_START, -k), BLOCK_START, 2).meetsMinNights) k++;
+  while (computeQuote(addDays(BLOCK_START, -k), BLOCK_START, 2).errors.length) k++;
   const arrive = addDays(BLOCK_START, -k);
   await (await showDay(cal, arrive)).click();
 
@@ -240,7 +245,7 @@ test("/book redirects permanently to /reserve with the query string", async ({ p
   await expect(page.getByTestId("folio-total")).toHaveText(formatMoney(computeQuote(a, d, 4).total));
 });
 
-test("mobile: one month with rates, folio and confirmation at 390", async ({ page }) => {
+test("mobile: one month, no rates on dates, folio and confirmation at 390", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openReserve(page);
   await page.screenshot({ path: path.join(SCREENS, "initial-390.png") });
@@ -248,10 +253,11 @@ test("mobile: one month with rates, folio and confirmation at 390", async ({ pag
   const d = addDays(a, 6);
   await openReserve(page, `?checkIn=${a}&checkOut=${d}&adults=2`);
   const cal = calendar(page);
-  // One month visible, and its open dates carry rates.
+  // One month visible; dates carry no rates. The prices are in the folio.
   const visibleMonths = await cal.locator("table[role=grid]").evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length);
   expect(visibleMonths).toBe(1);
-  await expect(cal.locator(`button[data-iso="${a}"]`)).toHaveAttribute("data-rate", String(rateForNight(a).nightly));
+  await expect(cal.locator("[data-rate]")).toHaveCount(0);
+  await expect(page.getByTestId("folio-nights")).toHaveCount(groupNightRuns(computeQuote(a, d, 2)).length);
   const { sw, cw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
   expect(sw).toBeLessThanOrEqual(cw);
   await page.screenshot({ path: path.join(SCREENS, "dates-selected-390.png"), fullPage: true });
@@ -273,7 +279,34 @@ test("home ledger and bar send the stay to /reserve", async ({ page }) => {
   test.skip((await reserve.count()) === 0, "home page has no #reserve section");
   await reserve.scrollIntoViewIfNeeded();
   await expect(reserve.getByTestId("date-range-calendar").first()).toHaveAttribute("data-availability", "ready");
+  // Even with dates chosen, the home page names the nights but prints no price.
+  await expect(reserve.getByTestId("stay-note")).toContainText("6 nights");
+  expect(await page.locator("main").innerText()).not.toMatch(/\$\s?\d/);
   await reserve.getByRole("button", { name: "Request these dates" }).click();
   await page.waitForURL(new RegExp(`/reserve\\?checkIn=${a}`));
   await expect(page.getByTestId("folio")).toBeVisible();
+});
+
+test("no public price chart: home, masthead and footer carry no prices or Rates section", async ({ page, request }) => {
+  // Rendered HTML minus scripts (React's flight data uses "$1"-style references that are not prices),
+  // plus the JSON-LD, which must not carry a price either.
+  const full = await (await request.get("/")).text();
+  const html = full.replace(/<script(?![^>]*application\/ld\+json)[\s\S]*?<\/script>/g, "");
+  expect(html).not.toMatch(/\$\s?\d/);
+  expect(html).not.toContain('id="rates"');
+  expect(html).not.toContain("#rates");
+
+  await page.goto("/");
+  const masthead = page.locator("header").first();
+  await expect(masthead.getByRole("link", { name: /^Rates$/ })).toHaveCount(0);
+  await expect(page.locator("footer").getByRole("link", { name: /^Rates$/ })).toHaveCount(0);
+  expect(await page.locator("body").innerText()).not.toMatch(/\$\s?\d/);
+  await expect(page.locator("#rates")).toHaveCount(0);
+  await page.screenshot({ path: path.join(SCREENS, "home-top-1440.png") });
+
+  // /reserve before dates: no nightly figure in the HTML or on screen.
+  const reserveHtml = (await (await request.get("/reserve")).text()).replace(/<script(?![^>]*application\/ld\+json)[\s\S]*?<\/script>/g, "");
+  expect(reserveHtml).not.toMatch(/\$\s?\d/);
+  await openReserve(page);
+  expect(await page.locator("main").innerText()).not.toMatch(/\$\s?\d/);
 });

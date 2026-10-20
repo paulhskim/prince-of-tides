@@ -7,7 +7,8 @@
 import { Resend } from "resend";
 import { siteConfig, type Quote } from "@/content/site.config";
 import { emails } from "@/content/copy";
-import { formatLong, formatMoney } from "./dates";
+import { formatLong, formatMoney, formatShort } from "./dates";
+import { groupNightRuns, nightsPhrase } from "./reserve";
 import type { BookingRecord } from "./store";
 import { guestSummary } from "./guest-summary";
 import { resolveOwnerTokens } from "./owner-tokens";
@@ -20,9 +21,10 @@ export function fillTemplate(template: string, vars: Record<string, string | num
 
 export function quoteAsText(q: Quote): string {
   const lines: string[] = [];
-  const groups = new Map<number, number>();
-  for (const n of q.nightlyBreakdown) groups.set(n.rate, (groups.get(n.rate) ?? 0) + 1);
-  for (const [rate, count] of groups) lines.push(`${formatMoney(rate)} x ${count} nights: ${formatMoney(rate * count)}`);
+  for (const g of groupNightRuns(q)) {
+    const dates = g.nights > 1 ? `${formatShort(g.first)} to ${formatShort(g.last)}` : formatShort(g.first);
+    lines.push(`${nightsPhrase(g)}, ${g.name} (${dates}), ${formatMoney(g.rate)} a night: ${formatMoney(g.amount)}`);
+  }
   if (q.discounts > 0) lines.push(`${q.discountLabel ?? "Discount"}: -${formatMoney(q.discounts)}`);
   lines.push(`Cleaning fee: ${formatMoney(q.cleaningFee)}`);
   for (const t of q.taxes) lines.push(`${t.name} (${(t.rate * 100).toFixed(0)}%): ${formatMoney(t.amount)}`);

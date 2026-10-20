@@ -6,7 +6,8 @@
  * ledger cells open the reservation sheet. "Request these dates" goes to /reserve with the stay in the
  * query string; the full request form lives there (src/components/reserve/ReserveFlow.tsx).
  *
- * Pricing is computeQuote() from site.config.ts; the server recomputes everything on submit.
+ * No prices here: the itemized quote appears only on /reserve once dates are chosen (computeQuote in
+ * site.config.ts; the server recomputes everything on submit).
  */
 import { useCallback, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ import { formatShort } from "@/lib/booking/dates";
 import { countedGuests } from "@/lib/booking/schemas";
 import { DateRangeCalendar } from "./DateRangeCalendar";
 import { GuestFields, guestLine } from "./GuestFields";
-import { QuoteLedger, useQuote } from "./QuoteLedger";
+import { StayNote, useQuote } from "./QuoteLedger";
 import { ReservationSheet } from "./ReservationSheet";
 import { stayToQuery, useAvailability, useStay, type Stay } from "./state";
 
@@ -147,7 +148,7 @@ function InlineReservation() {
             <GuestFields idPrefix="inline" value={stay} onChange={setStay} />
           </div>
           <div className="mt-5">
-            <QuoteLedger quote={quote} compact />
+            <StayNote checkIn={stay.checkIn} checkOut={stay.checkOut} quote={quote} />
           </div>
           {/* Not a disabled control: before dates are chosen it opens the calendar, set as a secondary action. */}
           <button

@@ -31,13 +31,13 @@ export const faq: FaqItem[] = [
   },
   {
     category: "Booking",
-    q: "Is the price on the calendar final?",
-    a: "The quote on this site is an estimate. Your written quote from the host is final and includes the nightly rate, cleaning fee and South Carolina and Hilton Head Island accommodations taxes, listed line by line.",
+    q: "How is my stay priced?",
+    a: "Each night is priced for its date: weeknights and weekend nights by season, with holiday and island-event weeks (RBC Heritage week, for one) priced on their own. Choose your dates on the reservation page and the quote for those dates is set out night by night, with the cleaning fee and South Carolina and Hilton Head Island accommodations taxes listed line by line. It is an estimate until your host sends the written quote, which is final.",
   },
   {
     category: "Booking",
     q: "Is there a minimum stay?",
-    a: "Yes. Minimum stays vary by season and are shown on the calendar when you pick dates. Summer stays are usually longer. Stays of a week or more, and a month or more, receive a discount.",
+    a: "Yes. Minimum stays vary by season and are shown on the calendar when you pick dates. Summer stays are usually longer, and holiday and island-event weeks set their own minimum. Stays of a week or more, and a month or more, receive a discount.",
   },
   // Payment and cancellation
   {

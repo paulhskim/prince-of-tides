@@ -5,41 +5,75 @@
  * src/content/site.config.ts. These helpers only group, date and describe what that quote and the
  * policies in src/content/policies.ts already say.
  */
-import { getNightlyRate, siteConfig, type Quote, type Season } from "@/content/site.config";
+import { rateForISO, siteConfig, type NightKind, type NightRate, type Quote, type QuoteNight } from "@/content/site.config";
 import { policies } from "@/content/policies";
-import { addDays, daysInMonth, diffDays, type ISODate } from "./dates";
+import { addDays, diffDays, weekday, type ISODate } from "./dates";
 
 const roundCents = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 
 /* ------------------------------------------------------------------ */
-/* Nightly rates                                                       */
+/* Nightly rates (only ever shown after a guest has chosen dates)      */
 /* ------------------------------------------------------------------ */
 
 /** Rate for the night that starts on `iso` (same call computeQuote makes). */
-export function rateForNight(iso: ISODate): { nightly: number; season: string; minNights: number } {
-  const [y, m, d] = iso.split("-").map(Number);
-  return getNightlyRate(new Date(y, m - 1, d, 12));
+export function rateForNight(iso: ISODate): NightRate {
+  return rateForISO(iso);
 }
 
-export type NightGroup = { season: string; rate: number; nights: number; amount: number; first: ISODate; last: ISODate };
+export type NightGroup = {
+  /** Event name, or the season name for weeknight / weekend runs. */
+  name: string;
+  season: string;
+  kind: NightKind;
+  rate: number;
+  nights: number;
+  amount: number;
+  first: ISODate;
+  last: ISODate;
+  /** Event nights priced at the event's own Friday and Saturday rate. */
+  eventWeekend: boolean;
+};
+
+/** True when `n` is a Friday or Saturday night of an event that has its own weekend rate. */
+function isEventWeekend(n: QuoteNight): boolean {
+  if (n.kind !== "event") return false;
+  const wd = weekday(n.date);
+  if (wd !== 5 && wd !== 6) return false;
+  const e = siteConfig.pricing.events.find((x) => n.date >= x.first && n.date <= x.last && x.name === n.label);
+  return Boolean(e?.weekendNightly && e.weekendNightly !== e.nightly);
+}
 
 /**
- * Nights grouped like a hotel folio: consecutive runs are not required, nights are grouped by season and
- * rate in order of first appearance ("Spring, 3 nights at $195", "Spring, 2 nights at $215").
+ * Nights grouped like a tailored quote: consecutive nights with the same rate and the same reason form
+ * one line ("3 weeknights, Late fall, $140", "4 nights, RBC Heritage week, $325"). A new line starts
+ * whenever the rate or the reason changes, so the folio reads in date order.
  */
-export function groupNightsBySeasonRate(q: Pick<Quote, "nightlyBreakdown">): NightGroup[] {
+export function groupNightRuns(q: Pick<Quote, "nightlyBreakdown">): NightGroup[] {
   const groups: NightGroup[] = [];
   for (const n of q.nightlyBreakdown) {
-    const g = groups.find((x) => x.season === n.season && x.rate === n.rate);
-    if (g) {
+    const g = groups[groups.length - 1];
+    const eventWeekend = isEventWeekend(n);
+    if (g && g.rate === n.rate && g.kind === n.kind && g.name === nameOf(n) && g.eventWeekend === eventWeekend && addDays(g.last, 1) === n.date) {
       g.nights++;
       g.amount = roundCents(g.amount + n.rate);
       g.last = n.date;
     } else {
-      groups.push({ season: n.season, rate: n.rate, nights: 1, amount: n.rate, first: n.date, last: n.date });
+      groups.push({ name: nameOf(n), season: n.season, kind: n.kind, rate: n.rate, nights: 1, amount: n.rate, first: n.date, last: n.date, eventWeekend });
     }
   }
   return groups;
+}
+
+function nameOf(n: QuoteNight): string {
+  return n.kind === "event" ? n.label : n.season;
+}
+
+/** "3 weeknights", "1 weekend night", "4 nights" (event nights; "weekend nights" at an event's weekend rate). */
+export function nightsPhrase(g: Pick<NightGroup, "kind" | "nights"> & { eventWeekend?: boolean }): string {
+  const one = g.nights === 1;
+  if (g.kind === "weeknight") return `${g.nights} ${one ? "weeknight" : "weeknights"}`;
+  if (g.kind === "weekend" || g.eventWeekend) return `${g.nights} weekend ${one ? "night" : "nights"}`;
+  return `${g.nights} ${one ? "night" : "nights"}`;
 }
 
 /** Averages for the folio footer. `allIn` includes cleaning and taxes; `lodging` is after any discount. */
@@ -48,70 +82,24 @@ export function averagePerNight(q: Pick<Quote, "nights" | "subtotal" | "discount
   return { lodging: roundCents((q.subtotal - q.discounts) / q.nights), allIn: roundCents(q.total / q.nights) };
 }
 
-/* ------------------------------------------------------------------ */
-/* Seasons                                                             */
-/* ------------------------------------------------------------------ */
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/** "06-01" to "Jun 1". */
-export function formatMonthDay(md: string): string {
-  const [m, d] = md.split("-").map(Number);
-  return `${MONTHS[m - 1]} ${d}`;
+/** Events (names) that price at least one night of the quote, in date order. */
+export function eventsInQuote(q: Pick<Quote, "nightlyBreakdown">): string[] {
+  const out: string[] = [];
+  for (const n of q.nightlyBreakdown) if (n.kind === "event" && !out.includes(n.label)) out.push(n.label);
+  return out;
 }
 
-export type SeasonRow = {
-  name: string;
-  dates: string;
-  /** Lowest nightly rate in the season. */
-  from: number;
-  /** Friday and Saturday rate when it differs. */
-  weekend: number | null;
-  weeknight: number;
-  minNights: number;
-};
-
-/** The seasonal rate table, straight from siteConfig.pricing.seasons (config order). */
-export function seasonRows(seasons: Season[] = siteConfig.pricing.seasons): SeasonRow[] {
-  return seasons.map((s) => {
-    const weekend = s.weekendNightly && s.weekendNightly !== s.nightly ? s.weekendNightly : null;
-    return {
-      name: s.name,
-      dates: `${formatMonthDay(s.start)} to ${formatMonthDay(s.end)}`,
-      from: weekend === null ? s.nightly : Math.min(s.nightly, weekend),
-      weekend,
-      weeknight: s.nightly,
-      minNights: s.minNights,
-    };
-  });
-}
-
-export type SeasonSpan = { season: string; from: ISODate; to: ISODate };
-
-/** Seasons that cover the nights of a month, as consecutive spans (for labels under the month heading). */
-export function seasonSpansInMonth(monthIso: ISODate): SeasonSpan[] {
-  const first = `${monthIso.slice(0, 7)}-01`;
-  const spans: SeasonSpan[] = [];
-  for (let i = 0; i < daysInMonth(first); i++) {
-    const iso = addDays(first, i);
-    const season = rateForNight(iso).season;
-    const last = spans[spans.length - 1];
-    if (last && last.season === season) last.to = iso;
-    else spans.push({ season, from: iso, to: iso });
-  }
-  return spans;
-}
-
-/** True when the night of `iso` belongs to a different season than the night before. */
-export function isSeasonStart(iso: ISODate): boolean {
-  return rateForNight(iso).season !== rateForNight(addDays(iso, -1)).season;
-}
-
-/** Lowest nightly rate across the config (for "from $X a night"). */
-export function lowestNightly(): number {
-  const { pricing } = siteConfig;
-  const all = [pricing.baseNightly, ...pricing.seasons.flatMap((s) => [s.nightly, s.weekendNightly ?? s.nightly])];
-  return Math.min(...all);
+/**
+ * Minimum-stay hint for the calendar (no prices): the default minimum, the seasons that ask for more,
+ * and the longest event minimum.
+ */
+export function minimumStaySummary(): string {
+  const { booking, pricing } = siteConfig;
+  const def = booking.minNightsDefault;
+  const seasonal = pricing.seasons.filter((s) => s.minNights > def).map((s) => `${s.minNights} in ${s.name.toLowerCase()}`);
+  const eventMax = Math.max(def, ...pricing.events.map((e) => e.minNights));
+  const events = eventMax > def ? ` Holiday and island-event weeks set their own minimum, up to ${eventMax} nights, shown as you choose.` : "";
+  return `Minimum stay ${def} nights${seasonal.length ? `; ${seasonal.join(", ")}` : ""}.${events}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -228,5 +216,8 @@ export const nightsOf = (checkIn: ISODate | null, checkOut: ISODate | null) => (
 /** Percent label: 0.05 to "5%", 0.025 to "2.5%". */
 export const pct = (rate: number) => `${Math.round(rate * 1000) / 10}%`;
 
-/** The honest note shown wherever rates appear while pricing.isPlaceholder is true. */
+/** The honest note shown under a quote while pricing.isPlaceholder is true. */
 export const ILLUSTRATIVE_NOTE = "Rates shown are illustrative until the season is published.";
+
+/** One line under the total: why the nightly figures differ. */
+export const RATES_VARY_NOTE = "Rates vary by date, season and island events.";

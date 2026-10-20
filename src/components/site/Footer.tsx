@@ -7,7 +7,7 @@ import { Crest } from "./Monogram";
 import { NAV, RESERVE } from "./nav";
 import { isSet } from "./text";
 
-/** The footer mirrors the masthead: the five sections in the same order, then the planning pages. */
+/** The footer mirrors the masthead: the four sections in the same order, then the planning pages. */
 const STAY = NAV.map(({ label, href }) => ({ label, href }));
 
 const PLAN = [

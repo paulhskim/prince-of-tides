@@ -7,15 +7,14 @@ import {
   averagePerNight,
   balanceDueDate,
   cancellationDates,
-  formatMonthDay,
-  groupNightsBySeasonRate,
-  isSeasonStart,
+  eventsInQuote,
+  groupNightRuns,
+  minimumStaySummary,
+  nightsPhrase,
   paymentSchedule,
   paymentTerms,
   pct,
   rateForNight,
-  seasonRows,
-  seasonSpansInMonth,
   securityDepositAmount,
   tierDayBounds,
 } from "../../src/lib/booking/reserve";
@@ -23,28 +22,61 @@ import {
 describe("nightly rates and folio grouping", () => {
   test("rateForNight matches computeQuote's nightly breakdown", () => {
     const q = computeQuote("2027-04-15", "2027-04-25", 2);
-    for (const n of q.nightlyBreakdown) assert.equal(rateForNight(n.date).nightly, n.rate, n.date);
+    for (const n of q.nightlyBreakdown) {
+      const r = rateForNight(n.date);
+      assert.equal(r.nightly, n.rate, n.date);
+      assert.equal(r.label, n.label, n.date);
+      assert.equal(r.kind, n.kind, n.date);
+    }
   });
 
-  test("groups nights by season and rate, in order, and the groups add up to the subtotal", () => {
-    // Thu 15 Apr to Mon 19 Apr 2027, spring: Thu and Sun at the weeknight rate, Fri and Sat at the weekend rate.
-    const q = computeQuote("2027-04-15", "2027-04-19", 2);
-    const g = groupNightsBySeasonRate(q);
+  test("groups consecutive nights by rate and reason, in date order, adding up to the subtotal", () => {
+    // Sat 17 Apr to Fri 23 Apr 2027: the last RBC Heritage night, then Spring weeknights and a weekend night.
+    const q = computeQuote("2027-04-17", "2027-04-24", 2);
+    const g = groupNightRuns(q);
     assert.deepEqual(
-      g.map((x) => [x.season, x.rate, x.nights, x.amount, x.first, x.last]),
+      g.map((x) => [x.name, x.kind, x.rate, x.nights, x.amount, x.first, x.last]),
       [
-        ["Spring", 195, 2, 390, "2027-04-15", "2027-04-18"],
-        ["Spring", 215, 2, 430, "2027-04-16", "2027-04-17"],
+        ["RBC Heritage week", "event", 345, 1, 345, "2027-04-17", "2027-04-17"],
+        ["Spring", "weeknight", 190, 5, 950, "2027-04-18", "2027-04-22"],
+        ["Spring", "weekend", 225, 1, 225, "2027-04-23", "2027-04-23"],
       ],
     );
     assert.equal(g.reduce((s, x) => s + x.amount, 0), q.subtotal);
+    assert.deepEqual(g.map(nightsPhrase), ["1 weekend night", "5 weeknights", "1 weekend night"]);
+    assert.deepEqual(eventsInQuote(q), ["RBC Heritage week"]);
   });
 
-  test("a stay across a season change keeps each season's rate apart", () => {
+  test("event weekend nights at the event's weekend rate read as weekend nights", () => {
+    // Wed 7 Apr to Wed 14 Apr 2027: spring break (Wed, Thu, then Fri at its weekend rate), RBC Heritage (Sat, then Sun to Tue).
+    const g = groupNightRuns(computeQuote("2027-04-07", "2027-04-14", 2));
+    assert.deepEqual(
+      g.map((x) => `${nightsPhrase(x)}, ${x.name}, ${x.rate}`),
+      ["2 nights, Spring break weeks, 230", "1 weekend night, Spring break weeks, 255", "1 weekend night, RBC Heritage week, 345", "3 nights, RBC Heritage week, 325"],
+    );
+    // An event with one flat rate (Easter weekend) does not split out its Friday and Saturday.
+    const easter = groupNightRuns(computeQuote("2027-03-25", "2027-03-28", 2));
+    assert.deepEqual(easter.map((x) => `${nightsPhrase(x)}, ${x.name}`), ["3 nights, Easter weekend"]);
+  });
+
+  test("weekend nights between weeknights start a new line, so the folio reads in date order", () => {
+    // Thu 4 Nov to Tue 9 Nov 2027, Late fall: Thu, then Fri and Sat, then Sun and Mon.
+    const g = groupNightRuns(computeQuote("2027-11-04", "2027-11-09", 2));
+    assert.deepEqual(
+      g.map((x) => [x.kind, x.rate, x.nights]),
+      [
+        ["weeknight", 140, 1],
+        ["weekend", 160, 2],
+        ["weeknight", 140, 2],
+      ],
+    );
+  });
+
+  test("a stay across a season change keeps each season apart", () => {
     const q = computeQuote("2027-05-19", "2027-05-26", 2);
-    const seasons = new Set(groupNightsBySeasonRate(q).map((x) => x.season));
-    assert.deepEqual([...seasons], ["Spring", "Summer"]);
-    assert.equal(groupNightsBySeasonRate(q).reduce((s, x) => s + x.amount, 0), q.subtotal);
+    const names = new Set(groupNightRuns(q).map((x) => x.name));
+    assert.deepEqual([...names], ["Spring", "Early summer"]);
+    assert.equal(groupNightRuns(q).reduce((s, x) => s + x.amount, 0), q.subtotal);
   });
 
   test("averages: lodging after discount, and all in", () => {
@@ -57,31 +89,13 @@ describe("nightly rates and folio grouping", () => {
   });
 });
 
-describe("seasons", () => {
-  test("rate table rows come straight from the config", () => {
-    const rows = seasonRows();
-    assert.equal(rows.length, siteConfig.pricing.seasons.length);
-    const spring = rows.find((r) => r.name === "Spring")!;
-    assert.deepEqual(spring, { name: "Spring", dates: "Mar 1 to May 21", from: 195, weekend: 215, weeknight: 195, minNights: 3 });
-    const winter = rows.find((r) => r.name === "Winter")!;
-    assert.equal(winter.weekend, null);
-    assert.equal(winter.from, 145);
-    assert.equal(formatMonthDay("12-20"), "Dec 20");
-  });
-
-  test("season spans within a month and season starts", () => {
-    assert.deepEqual(seasonSpansInMonth("2027-05-01"), [
-      { season: "Spring", from: "2027-05-01", to: "2027-05-21" },
-      { season: "Summer", from: "2027-05-22", to: "2027-05-31" },
-    ]);
-    assert.deepEqual(
-      seasonSpansInMonth("2027-01-01").map((s) => s.season),
-      ["Holidays", "Winter"],
-    );
-    assert.equal(seasonSpansInMonth("2027-07-01").length, 1);
-    assert.equal(isSeasonStart("2027-05-22"), true);
-    assert.equal(isSeasonStart("2027-05-21"), false);
-    assert.equal(isSeasonStart("2026-12-20"), true);
+describe("minimum stay hint", () => {
+  test("names minimums only, never a price", () => {
+    const s = minimumStaySummary();
+    assert.match(s, new RegExp(`^Minimum stay ${siteConfig.booking.minNightsDefault} nights`));
+    assert.match(s, /5 in high summer/);
+    assert.match(s, /island-event weeks/);
+    assert.ok(!s.includes("$"), s);
   });
 });
 

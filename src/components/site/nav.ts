@@ -9,7 +9,8 @@ export type NavItem = {
 
 /**
  * The information architecture, in the order a guest asks: what is it, where do I sleep, what comes
- * with it, where is it, what does it cost. Reserve is a separate action, not a nav item.
+ * with it, where is it. Reserve is a separate action, not a nav item; prices appear only there, after
+ * dates are chosen.
  * Every item is an anchor on the home page; each has a deeper page linked from its section.
  */
 export const NAV: NavItem[] = [
@@ -17,7 +18,6 @@ export const NAV: NavItem[] = [
   { label: "The Rooms", href: "/#rooms", section: "rooms", gloss: "Who sleeps where, room by room" },
   { label: "Privileges", href: "/#privileges", section: "privileges", gloss: "Pools, steam room, the marsh boardwalk" },
   { label: "The Island", href: "/#island", section: "island", gloss: "Beaches, Harbour Town, the refuge" },
-  { label: "Rates", href: "/#rates", section: "rates", gloss: "Nightly rates, taxes and fees" },
 ];
 
 /** The reservation action, set apart from the nav. */
@@ -34,7 +34,6 @@ export const SECTION_OWNER: [id: string, owner: string | null][] = [
   ["day", "island"],
   ["seasons", "island"],
   ["reviews", null],
-  ["rates", "rates"],
   ["arrival", null],
   ["reserve", null],
 ];

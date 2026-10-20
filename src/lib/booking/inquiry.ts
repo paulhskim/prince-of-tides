@@ -163,7 +163,10 @@ function emptyQuoteFor(body: unknown): Quote {
     taxTotal: 0,
     total: 0,
     minNightsRequired: siteConfig.booking.minNightsDefault,
+    minNightsReason: "Standard",
     meetsMinNights: false,
+    meetsArrivalDay: true,
+    arrivalRule: null,
     isPlaceholder: siteConfig.pricing.isPlaceholder,
     errors: [],
   };

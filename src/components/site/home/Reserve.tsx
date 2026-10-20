@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { ReservationForm } from "@/components/booking/ReservationForm";
 import { booking, bookingCta } from "@/content/copy";
+import { bookDirect } from "@/content/experiences";
 import { Accordion } from "../Accordion";
 import { faqAnswer, faqId, featuredFaq } from "../faq-data";
 import { Grid, RunningHead } from "../layout";
+import { roman, smart } from "../text";
 
 /**
  * Reservations: the ledger, then the questions people ask at this point, beside the house rules.
@@ -24,13 +26,30 @@ export function Reserve() {
           <div className="mt-6 lg:col-span-5 lg:col-start-8 lg:mt-3">
             <p className="max-w-measure font-serif text-lead">{bookingCta.body}</p>
             <Link href={bookingCta.button.href} className="link-caps mt-3">
-              The full reservation page, with rates by night
+              Open the reservation page
             </Link>
           </div>
         </div>
 
         <div className="col-span-4 mt-10 md:col-span-8 lg:col-span-12 lg:mt-14">
           <ReservationForm variant="inline" />
+        </div>
+
+        <div className="col-span-4 mt-16 md:col-span-8 lg:col-span-12 lg:mt-20">
+          <h3 className="smallcaps border-b border-ink pb-2">Reserving here</h3>
+          <ol className="grid gap-x-col md:grid-cols-2 lg:grid-cols-4">
+            {bookDirect.map((r, i) => (
+              <li key={r.id} className="grid grid-cols-[2rem_1fr] border-b border-rule py-4 lg:border-b-0 lg:pr-4">
+                <span aria-hidden="true" className="font-serif text-body italic text-brass">
+                  {roman(i + 1)}
+                </span>
+                <span>
+                  <span className="block font-serif text-[1.1875rem] leading-snug">{smart(r.title)}</span>
+                  <span className="mt-1 block text-small text-ink-muted">{smart(r.body)}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
         </div>
 
         <div className="col-span-4 mt-16 grid gap-x-col gap-y-12 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:mt-20 lg:grid-cols-12">
