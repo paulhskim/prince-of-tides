@@ -110,7 +110,9 @@ const EMPTY: ReadonlySet<ISODate> = new Set();
 let availability: Availability | null = null;
 let inflight: Promise<void> | null = null;
 const availListeners = new Set<() => void>();
-const SERVER_AVAIL: Availability = { status: "loading", blocked: EMPTY, complete: true, today: "1970-01-01" };
+/** Placeholder "today" used only for the server render, before the browser knows the real date. */
+export const SERVER_TODAY: ISODate = "1970-01-01";
+const SERVER_AVAIL: Availability = { status: "loading", blocked: EMPTY, complete: true, today: SERVER_TODAY };
 
 function readAvailability(): Availability {
   if (!availability) availability = { status: "loading", blocked: EMPTY, complete: true, today: todayISO() };

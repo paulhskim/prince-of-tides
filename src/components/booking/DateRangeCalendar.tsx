@@ -26,7 +26,7 @@ import { dayInfo, monthMatrix, selectDay, selectionHint, type DayInfo, type Sele
 import { lastBookableDate } from "@/lib/booking/rules";
 import { isSeasonStart, rateForNight, seasonSpansInMonth } from "@/lib/booking/reserve";
 import { ChevronLeft, ChevronRight } from "./icons";
-import { useIsDesktop } from "./state";
+import { SERVER_TODAY, useIsDesktop } from "./state";
 
 const WEEKDAYS = [
   ["Su", "Sunday"],
@@ -209,7 +209,8 @@ export function DateRangeCalendar({
   return (
     <div
       ref={rootRef}
-      className={`relative ${className}`}
+      className={`relative ${className} ${today === SERVER_TODAY ? "invisible" : ""}`}
+      aria-busy={today === SERVER_TODAY || undefined}
       data-availability={status}
       data-testid="date-range-calendar"
     >
@@ -239,7 +240,7 @@ export function DateRangeCalendar({
       </div>
 
       <div className={`grid gap-x-8 ${shown === 2 ? "lg:grid-cols-2" : ""}`}>
-        {visibleMonths.map((month, i) => {
+        {(today === SERVER_TODAY ? [] : visibleMonths).map((month, i) => {
           const headingId = `${uid}-m${i}`;
           return (
             <div
