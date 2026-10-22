@@ -33,7 +33,8 @@ export function Photo({
 }: {
   photo?: PhotoType;
   slot: PhotoSlot;
-  ratio?: Ratio;
+  /** "native" frames the photograph at its own proportions (read from the file), so nothing is cropped. */
+  ratio?: Ratio | "native";
   ratioClass?: string;
   sizes: string;
   priority?: boolean;
@@ -43,7 +44,8 @@ export function Photo({
   /** Show only "Photograph to come" in the frame when a caption below already names the shot. */
   quiet?: boolean;
 }) {
-  const frameClass = ratioClass ?? RATIO_CLASS[ratio ?? "3/2"];
+  const native = ratio === "native" && photo?.width && photo?.height ? `${photo.width} / ${photo.height}` : undefined;
+  const frameClass = ratioClass ?? (native ? "" : RATIO_CLASS[ratio && ratio !== "native" ? ratio : "3/2"]);
   if (!photo) {
     const shot = placeholderLabel ?? SLOTS[slot].shot;
     return (
@@ -60,7 +62,7 @@ export function Photo({
     );
   }
   return (
-    <div className={`relative overflow-hidden bg-stone ${frameClass} ${className}`}>
+    <div className={`relative overflow-hidden bg-stone ${frameClass} ${className}`} style={native ? { aspectRatio: native } : undefined}>
       <Image
         src={photo.src}
         alt={photo.alt}

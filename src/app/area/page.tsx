@@ -86,7 +86,7 @@ export default function AreaPage() {
         lead={smart(areaGuide.intro.body)}
         aside={
           <p className="border-t border-ink pt-3 text-caption text-ink-muted">
-            {areaGuide.distanceDisclaimer} Island photographs show places on Hilton Head, not the residence.{" "}
+            {areaGuide.distanceDisclaimer} Island photographs show places on Hilton Head, not the residence; the beach by the boardwalk is the owner&rsquo;s own photograph.{" "}
             <Link href="/credits">Photography credits</Link>.
           </p>
         }

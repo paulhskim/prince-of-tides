@@ -59,7 +59,7 @@ Counts: High 2, Medium 6 (1 open, perf), Serious a11y 1, Moderate a11y 1, Low 9 
 5. Store: the default on Vercel is memory plus email; write the Postgres adapter before relying on stored requests or the success page summary across instances.
 6. Add Turnstile and a shared rate limit before promoting the site (items 17, 18).
 7. Decide whether the resort street address and coordinates should stay in JSON-LD (item 20). They identify the resort, not the unit.
-8. Photos: bedrooms, baths, cover (boardwalk) and resort shots still to come; the current images carry a "REsides 2025" watermark. The dining alt text says "seating six": please confirm that matches the table.
+8. Photos: the owner's own 13 photographs are in place (public/photos/manifest.json). Still needed: the primary bedroom (king) and its ensuite, the indoor pool itself, and the Building 3 exterior. Please confirm the dining copy ("four chairs and a bench") against the table.
 9. Remaining `TODO_OWNER` copy (backup phone, fans, locker instructions, host bio) is hidden from pages in production; fill it in to show those sentences.
 
 ## Tests added

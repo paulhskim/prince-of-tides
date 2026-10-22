@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CreditedPhoto } from "@/components/area/CreditedPhoto";
 import { experiences, type Experience } from "@/content/experiences";
+import { OwnerFigure } from "../OwnerFigure";
 import { Grid, RunningHead, SectionTitle } from "../layout";
 import { roman, smart } from "../text";
 
@@ -14,10 +15,12 @@ const LEAD = "beach-evening";
 const TRIO = ["dolphins", "pinckney", "harbour-town"];
 
 /**
- * V. The island: a night passage of photographs. These are credited Creative Commons photographs of
- * Hilton Head Island, never of the residence or the resort, and every one carries its credit line
- * (CreditedPhoto). One lead plate with its text beside it, three smaller plates in a row, then the
- * remaining experiences as a short directory leading to the area guide.
+ * IV. The island: a night passage of photographs. The lead, the beach at the end of the resort's
+ * boardwalk, is the owner's own photograph (OwnerFigure), because the owner has photographed it. The
+ * rest are credited Creative Commons photographs of places elsewhere on Hilton Head Island, never of
+ * the residence or the resort, and every one carries its credit line (CreditedPhoto). One lead plate
+ * with its text beside it, three smaller plates in a row, then the remaining experiences as a short
+ * directory leading to the area guide.
  */
 export function Island() {
   const lead = experiences.find((e) => e.id === LEAD);
@@ -34,7 +37,7 @@ export function Island() {
     >
       <Grid className="gap-y-10">
         <div className="col-span-4 md:col-span-8 lg:col-span-12">
-          <RunningHead tone="dark" left="Around the island" right="Photographs of Hilton Head Island, credited. Not the residence." />
+          <RunningHead tone="dark" left="Around the island" right="The beach is the owner’s photograph; the island’s are credited" />
         </div>
         <div className="col-span-4 md:col-span-8 lg:col-span-7">
           <SectionTitle id="island-title" numeral="IV" tone="dark">
@@ -45,10 +48,14 @@ export function Island() {
           Hilton Head is mostly water, marsh and light. These are the reasons to leave the pool, in roughly the order guests do.
         </p>
 
-        {lead?.photoId ? (
+        {lead && (lead.ownerPhoto || lead.photoId) ? (
           <article aria-labelledby={`isl-${lead.id}`} className="col-span-4 mt-6 grid gap-x-col gap-y-6 md:col-span-8 lg:col-span-12 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-8" data-reveal="plate">
-              <CreditedPhoto id={lead.photoId} tone="dark" sizes="(min-width:1280px) 840px, (min-width:1024px) 66vw, 100vw" />
+              {lead.ownerPhoto ? (
+                <OwnerFigure file={lead.ownerPhoto} tone="dark" sizes="(min-width:1280px) 840px, (min-width:1024px) 66vw, 100vw" />
+              ) : (
+                <CreditedPhoto id={lead.photoId!} tone="dark" sizes="(min-width:1280px) 840px, (min-width:1024px) 66vw, 100vw" />
+              )}
             </div>
             <div className="lg:col-span-4 lg:pb-16">
               <ExperienceText e={lead} n={1} large />

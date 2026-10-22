@@ -11,6 +11,9 @@ export type Frame = {
   src?: string;
   alt: string;
   caption: string;
+  /** Pixel size, so the frame is drawn at the photograph's own ratio. */
+  width?: number;
+  height?: number;
 };
 
 export type FrameGroup = { id: string; label: string; frames: Frame[] };
@@ -18,18 +21,33 @@ export type FrameGroup = { id: string; label: string; frames: Frame[] };
 const Lightbox = dynamic(() => import("./Lightbox").then((m) => m.Lightbox), { ssr: false });
 
 /**
- * Editorial rhythm, repeating every six frames (lg 12 cols, md 8). Every photograph is shown whole
- * at its own 3:2 ratio; the rhythm comes from width and placement, never from cropping.
+ * Editorial rhythm (lg 12 cols, md 8). Every photograph is shown whole at its own ratio (the owner's
+ * are 4:3, and two are 3:4 portraits); the rhythm comes from width and placement, never from
+ * cropping. Landscape frames follow a six-step rhythm; portrait frames are set narrower, in
+ * staggered pairs, so they are shown whole without towering.
  */
 const RHYTHM = [
   { cls: "md:col-span-8 lg:col-span-8" },
   { cls: "md:col-span-5 md:col-start-4 lg:col-span-4 lg:col-start-9 lg:self-end" },
   { cls: "md:col-span-5 lg:col-span-5 lg:col-start-2" },
   { cls: "md:col-span-6 md:col-start-3 lg:col-span-6 lg:col-start-7 lg:mt-32" },
-  { cls: "md:col-span-8 lg:col-span-12" },
+  { cls: "md:col-span-8 lg:col-span-10 lg:col-start-2" },
   { cls: "md:col-span-6 lg:col-span-7 lg:col-start-4" },
 ];
+const PORTRAIT_RHYTHM = [
+  { cls: "md:col-span-4 lg:col-span-5 lg:col-start-2" },
+  { cls: "md:col-span-4 md:col-start-5 md:mt-24 lg:col-span-4 lg:col-start-8 lg:mt-40" },
+];
 const RATIO = "aspect-[3/2]";
+
+const isTall = (f: Frame) => !!f.width && !!f.height && f.height > f.width;
+
+/** Layout class per frame: landscape and portrait frames each keep their own rhythm. */
+function layout(frames: Frame[]): string[] {
+  let land = 0;
+  let tall = 0;
+  return frames.map((f) => (isTall(f) ? PORTRAIT_RHYTHM[tall++ % PORTRAIT_RHYTHM.length].cls : RHYTHM[land++ % RHYTHM.length].cls));
+}
 
 export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
   const all = groups.flatMap((g) => g.frames).filter((f) => f.src);
@@ -68,10 +86,11 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
             {g.frames.some((f) => f.src) ? (
             <ul className="col-span-4 grid grid-cols-4 gap-x-col gap-y-12 md:col-span-8 md:grid-cols-8 lg:col-span-12 lg:grid-cols-12 lg:gap-y-20">
               {g.frames.map((f, i) => {
-                const r = RHYTHM[i % RHYTHM.length];
+                const cls = layout(g.frames)[i];
                 const label = `${frame(f.n)}`;
+                const native = f.width && f.height ? `${f.width} / ${f.height}` : undefined;
                 return (
-                  <li key={f.n} id={`frame-${label}`} className={`col-span-4 ${r.cls} scroll-mt-36`}>
+                  <li key={f.n} id={`frame-${label}`} className={`col-span-4 ${cls} scroll-mt-36`}>
                     <figure data-reveal="plate">
                       {f.src ? (
                         <button
@@ -81,7 +100,8 @@ export function GalleryGroups({ groups }: { groups: FrameGroup[] }) {
                           }}
                           onClick={() => openAt(f.n)}
                           aria-label={`Open photograph ${label}: ${f.alt}`}
-                          className={`relative block w-full overflow-hidden bg-stone ${RATIO}`}
+                          className={`relative block w-full overflow-hidden bg-stone ${native ? "" : RATIO}`}
+                          style={native ? { aspectRatio: native } : undefined}
                         >
                           <Image
                             src={f.src}

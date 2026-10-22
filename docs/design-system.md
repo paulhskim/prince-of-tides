@@ -36,8 +36,10 @@ Source of truth for tokens: `src/styles/tokens.css`. Page compositions: `docs/ux
 > - **Motion**: the cover name settles (opacity and a 14px rise, 1.1s) and its plate fades (1.4s); photographs
 >   in the plates and gallery fade in once (1.6s) as they enter the viewport (`RevealObserver`, `data-reveal`).
 >   Text never fades. Everything is off under `prefers-reduced-motion`, and nothing is hidden without script.
-> - **Photographs**: always shown whole at their native ratio (all current owner photographs are 3:2), with
->   nothing laid over them. No crops to 4:5 or 21:9 for composition; rhythm comes from width and placement.
+> - **Photographs**: always shown whole at their native ratio (the owner's photographs are 4:3, with two 3:4
+>   portraits: the heron on the boardwalk rail and the boardwalk across the marsh), with nothing laid over
+>   them. No crops to 4:5 or 21:9 for composition; rhythm comes from width and placement, and a portrait
+>   gets a narrower column rather than a crop.
 > - **Night passages**: cover, plates, arrival and footer on `pluff`; the plates passage numbers photographs
 >   as Plates I to VI with monograph captions.
 
@@ -485,14 +487,14 @@ Estimated total              (sans 600)  $X,XXX   (serif text-h3 tabular)
 
 | Slot | Ratio | `sizes` | Notes |
 |---|---|---|---|
-| Cover (hero) | native (3:2) | `(min-width:1280px) 1060px, 82vw, 100vw` | `priority`, LCP element; first gallery photo until a cover photo exists |
+| Cover (hero) | native (3:4 portrait) | `(min-width:1280px) 480px, 38vw, 58vw, 72vw` | `priority`, LCP element. The frontispiece: cols 8 to 12 on lg, straddling night and paper beside the tagline and standfirst; inset three columns of four on phones, with "Frontispiece" set vertically in the margin |
 | Standfirst detail | 3:4 | `(min-width:1024px) 25vw, 50vw` | Optional, beside particulars |
 | The space spread | 3:2 and 4:5 pair | `(min-width:1024px) 40vw, 100vw` | Two images offset vertically |
 | Contact sheet | 3:2 thumbnails, one 4:5 | `(min-width:1024px) 25vw, 50vw` | 5 frames |
 | Highlights photo | 4:5 | `(min-width:1024px) 40vw, 100vw` | Indoor pool atrium |
-| Beach route | 21:9 (mobile 4:3) | `100vw` | Marsh boardwalk |
+| Beach route | native (3:4 portrait) | `(min-width:1280px) 480px, 40vw, 100vw` | Marsh boardwalk, cols 1 to 5 beside the walk's figures; then the beach and Coco's on the Beach at 4:3 |
 | Host portrait | 4:5 | `200px` | Omitted entirely if not supplied |
-| Gallery page | mixed 3:2, 4:5, 16:9 | per grid | |
+| Gallery page | native (4:3, two 3:4) | per grid | Landscape frames in a six-step rhythm, portraits in staggered narrower pairs; plates numbered in display order |
 | OG image | 1200x630 | | Cover crop with wordmark |
 
 ### 9.3 Placeholder treatment (until photos arrive)
@@ -553,8 +555,11 @@ are unnumbered.
   a bed schematic, and a ledger (Beds, Bath, In the room, Suits). The schematic draws standard mattress
   sizes to proportion from above, in a cream frame captioned "Beds to proportion. Not a floor plan."
   It never draws walls, doors or windows; the real layout is not known. Both schematics share one
-  height so the king and the queen compare honestly. Common rooms follow with the owner photographs
-  shown whole at 3:2 (watermark untouched).
+  height so the king and the queen compare honestly. The second bedroom's owner photograph hangs below
+  its ledger (schematics stay level across both plates); the primary bedroom has no photograph yet and shows
+  none (no empty frame). "Two full baths" sits below the first bedroom with the owner's photograph of one
+  bath, captioned "one of the two" (which bath it is is not recorded). Common rooms follow with the owner
+  photographs shown whole at 4:3.
 - **Card of record** (`home/Privileges.tsx`): cream sheet in a double hairline frame, crest and "The
   privileges of the resort", the resort amenities grouped by use. Food and drink are listed as
   "purchased on site". The HOA footnote stays beside it.

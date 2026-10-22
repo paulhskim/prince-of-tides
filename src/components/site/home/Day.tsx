@@ -1,5 +1,6 @@
-import { CreditedPhoto } from "@/components/area/CreditedPhoto";
 import { dayInTheLife } from "@/content/experiences";
+import { getPhotos } from "@/lib/photos";
+import { Photo } from "../Photo";
 import { Grid } from "../layout";
 import { smart } from "../text";
 
@@ -11,10 +12,12 @@ function splitTime(t: string): [string, string] {
 
 /**
  * A day, unhurried: a timetable. The hours run down the page as figures; each line says what one
- * might do and where. The heron (a credited area photograph, not the resort) sits under the title.
+ * might do and where. Under the title, the owner's photograph of the kitchen corner with its two
+ * coffee makers, for the first line of the day.
  * A suggestion, not a programme: there is no staff and nothing is arranged for you.
  */
 export function Day() {
+  const coffee = getPhotos().find((p) => p.file === "kitchen-corner.jpg");
   return (
     <section id="day" aria-labelledby="day-title" className="pb-section-sm pt-section">
       <Grid className="gap-y-10">
@@ -26,9 +29,12 @@ export function Day() {
           <p className="mt-5 max-w-[26rem] font-serif text-lead oldstyle">
             One way to spend it, using only what is here and nearby. Nothing is arranged for you; that is rather the point.
           </p>
-          <div className="mt-10 hidden max-w-[19rem] lg:block" data-reveal="plate">
-            <CreditedPhoto id="hilton-head-great-blue-heron" sizes="304px" />
-          </div>
+          {coffee ? (
+            <figure className="mt-10 hidden max-w-[19rem] lg:block" data-reveal="plate">
+              <Photo photo={coffee} slot={coffee.slot} ratio="native" sizes="304px" />
+              <figcaption className="mt-2 font-serif text-caption italic text-ink-muted">{coffee.caption}</figcaption>
+            </figure>
+          ) : null}
         </div>
 
         <ol className="col-span-4 border-t border-ink md:col-span-8 lg:col-span-7 lg:col-start-6">

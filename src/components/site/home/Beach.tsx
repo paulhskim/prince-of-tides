@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { beachAccess, footer } from "@/content/copy";
 import { areaGuide, type AreaPlace } from "@/content/area-guide";
-import { photoFor } from "@/lib/photos";
-import { Grid, SectionTitle } from "../layout";
+import { getPhotos, photoFor } from "@/lib/photos";
+import { Grid, RunningHead, SectionTitle } from "../layout";
 import { EstateMap } from "@/components/maps/EstateMap";
 import { Photo } from "../Photo";
 import { smart, splitHeading } from "../text";
@@ -32,27 +32,31 @@ function shortName(name: string): string {
 }
 
 /**
- * To the beach (under III, privileges): the honest trade-off, given the page's one large figure. The
- * walk on the left; the island by distance on the right (beaches, then errands and airports); the map.
+ * To the beach (under III, privileges): the honest trade-off, told in the owner's photographs. The
+ * boardwalk is a portrait plate, shown whole beside the walk's figures (cropping it to a band would
+ * leave only planks); then the beach and Coco's on the Beach, the bar at the end of the boardwalk;
+ * then the island by distance (beaches, errands and airports) and the map.
  */
 export function Beach() {
   const { numeral, title } = splitHeading(beachAccess.heading);
-  const wide = photoFor("boardwalk");
+  const walk = photoFor("boardwalk");
+  const sand = getPhotos().find((p) => p.file === "beach-dunes.jpg") ?? photoFor("beach");
+  const cocos = getPhotos().find((p) => p.file === "resort-cocos.jpg") ?? photoFor("resort");
   const beaches = areaGuide.categories.find((c) => c.id === "beaches")?.places ?? [];
   const places = PICKS.map(find).filter((p): p is AreaPlace => !!p);
   const addressNote = footer.smallPrint[0].split(". ").slice(1).join(". ");
 
   return (
     <section id="beach" aria-labelledby="beach-title" className="pb-section-sm pt-section">
-      {wide ? (
-        <figure className="mx-auto mb-14 max-w-bleed lg:mb-20">
-          <Photo photo={wide} slot="boardwalk" ratioClass="aspect-[4/3] md:aspect-[21/9]" sizes="100vw" />
-          <figcaption className="mx-auto mt-2 max-w-page px-gutter text-caption text-ink-muted">{wide.caption}</figcaption>
-        </figure>
-      ) : null}
-
       <Grid className="gap-y-14">
-        <div className="col-span-4 md:col-span-8 lg:col-span-7">
+        {walk ? (
+          <figure data-reveal="plate" className="col-span-4 md:col-span-5 lg:col-span-5">
+            <Photo photo={walk} slot="boardwalk" ratio="native" sizes="(min-width:1280px) 480px, (min-width:1024px) 40vw, (min-width:768px) 60vw, 100vw" />
+            <figcaption className="mt-2 font-serif text-caption italic text-ink-muted">{walk.caption}</figcaption>
+          </figure>
+        ) : null}
+
+        <div className={`col-span-4 md:col-span-8 ${walk ? "lg:col-span-6 lg:col-start-7 lg:self-end lg:pb-10" : "lg:col-span-7"}`}>
           <SectionTitle id="beach-title" numeral={numeral}>
             {title}
           </SectionTitle>
@@ -69,7 +73,30 @@ export function Beach() {
           <p className="mt-6 max-w-measure border-t border-rule pt-3 text-caption text-ink-muted">{beachAccess.footnote}</p>
         </div>
 
-        <div className="col-span-4 md:col-span-8 lg:col-span-4 lg:col-start-9 lg:pt-[clamp(4rem,2rem+3vw,6rem)]">
+        {sand || cocos ? (
+          <div className="col-span-4 mt-4 md:col-span-8 lg:col-span-12 lg:mt-10">
+            <RunningHead left="On the sand" right="The owner’s photographs" />
+          </div>
+        ) : null}
+        {sand ? (
+          <figure data-reveal="plate" className="col-span-4 md:col-span-8 lg:col-span-7">
+            <Photo photo={sand} slot="beach" ratio="native" sizes="(min-width:1280px) 690px, (min-width:1024px) 57vw, 100vw" />
+            <figcaption className="mt-2 font-serif text-caption italic text-ink-muted">{sand.caption}</figcaption>
+          </figure>
+        ) : null}
+        {cocos ? (
+          <figure data-reveal="plate" className="col-span-4 md:col-span-6 md:col-start-3 lg:col-span-5 lg:col-start-8 lg:mt-[clamp(6rem,2rem+8vw,11rem)]">
+            <Photo photo={cocos} slot="resort" ratio="native" sizes="(min-width:1280px) 490px, (min-width:1024px) 40vw, (min-width:768px) 75vw, 100vw" />
+            <figcaption className="mt-2">
+              <span className="block font-serif text-caption italic text-ink-muted">{cocos.caption}</span>
+              <span className="mt-3 block max-w-[26rem] font-serif text-body leading-relaxed oldstyle">
+                Lunch, or something cold, before the walk home. Seasonal hours; paid for at the bar, not included in the stay.
+              </span>
+            </figcaption>
+          </figure>
+        ) : null}
+
+        <div className="col-span-4 md:col-span-4 lg:col-span-5 lg:mt-6">
           <table className="w-full text-left text-small">
             <caption className="apparatus border-b border-ink pb-2 text-left">Beaches, approx. distance</caption>
             <tbody>
@@ -88,8 +115,10 @@ export function Beach() {
               ))}
             </tbody>
           </table>
+        </div>
 
-          <table id="location" className="mt-10 w-full scroll-mt-24 text-left text-small">
+        <div className="col-span-4 md:col-span-4 lg:col-span-6 lg:col-start-7 lg:mt-6">
+          <table id="location" className="w-full scroll-mt-24 text-left text-small">
             <caption className="apparatus border-b border-ink pb-2 text-left">Getting about, approx. drive</caption>
             <tbody>
               {places.map((p) => (

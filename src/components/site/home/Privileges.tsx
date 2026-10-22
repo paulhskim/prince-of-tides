@@ -1,7 +1,9 @@
 import { privileges, type Privilege } from "@/content/experiences";
 import { resort } from "@/content/copy";
+import { photoFor } from "@/lib/photos";
 import { Grid, SectionTitle } from "../layout";
 import { Crest } from "../Monogram";
+import { Photo } from "../Photo";
 import { smart, splitHeading } from "../text";
 
 /** The resort's shared amenities, grouped the way a guest uses them. Ids from experiences.ts. */
@@ -17,7 +19,8 @@ const GROUPS: { title: string; ids: string[] }[] = [
  * III. Guest privileges: the resort's shared amenities set as a card of record, under the crest.
  * Only the real list (experiences.ts privileges, from docs/BRIEF.md), and plainly framed: they are
  * Hilton Head Resort's, shared and HOA run, open to guests of the residence. Nothing is "included"
- * that is sold (Coco's and the deli are listed as places to buy food and drink).
+ * that is sold (Coco's and the deli are listed as places to buy food and drink). Beside the card, the
+ * owner's photograph of the indoor atrium at night, captioned as the atrium (not the pool itself).
  */
 export function Privileges() {
   const { numeral, title } = splitHeading(resort.heading);
@@ -27,12 +30,13 @@ export function Privileges() {
   );
   const grouped = new Set(GROUPS.flatMap((g) => g.ids));
   const rest = privileges.filter((p) => !grouped.has(p.id));
+  const atrium = photoFor("pool");
   if (rest.length) groups.push({ title: "Also at the resort", ids: [], items: rest });
 
   return (
     <section id="privileges" aria-labelledby="privileges-title" className="bg-stone py-section">
       <Grid className="gap-y-12">
-        <div className="col-span-4 md:col-span-8 lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
+        <div className="col-span-4 md:col-span-8 lg:col-span-4">
           <SectionTitle id="privileges-title" numeral={numeral}>
             {title}
           </SectionTitle>
@@ -40,6 +44,12 @@ export function Privileges() {
           <p className="mt-8 border-t border-ink pt-4 font-serif text-[clamp(1.375rem,1.15rem+0.8vw,1.75rem)] font-light italic leading-snug">
             The heated indoor pool, the sauna and the steam room are a few steps from the door.
           </p>
+          {atrium ? (
+            <figure data-reveal="plate" className="mt-8 md:w-2/3 lg:w-full">
+              <Photo photo={atrium} slot="pool" ratio="native" sizes="(min-width:1280px) 380px, (min-width:1024px) 30vw, (min-width:768px) 60vw, 100vw" />
+              <figcaption className="mt-2 font-serif text-caption italic text-ink-muted">{atrium.caption}</figcaption>
+            </figure>
+          ) : null}
           <p className="mt-6 max-w-[24rem] text-caption text-ink-muted">{smart(resort.footnote)}</p>
         </div>
 

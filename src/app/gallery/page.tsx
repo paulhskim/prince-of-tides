@@ -17,9 +17,14 @@ export default function GalleryPage() {
   const photos = getGalleryPhotos();
   const hasPhotos = photos.length > 0;
 
-  // Number frames in the order photos were supplied, then group them.
+  // Group the frames (residence, resort, the way to the beach; within a group, the supplied order), then
+  // number them in the order they are shown, so the plates read I, II, III down the page and the
+  // lightbox steps through them in the same order.
   const source = hasPhotos
-    ? photos.map((p, i) => ({ group: p.group, frame: { n: i + 1, src: p.src, alt: p.alt, caption: p.caption } }))
+    ? photos.map((p) => ({
+        group: p.group,
+        frame: { n: 0, src: p.src, alt: p.alt, caption: p.caption, width: p.width, height: p.height },
+      }))
     : PLANNED_SHOTS.map((s) => ({ group: s.group, frame: { n: 0, alt: s.shot, caption: s.shot } }));
 
   let counter = 0;
@@ -33,8 +38,7 @@ export default function GalleryPage() {
     .filter((g) => g.frames.length > 0)
     .map((g) => ({
       ...g,
-      // Placeholders are numbered in display order; real photos keep their supplied order.
-      frames: g.frames.map((f) => (hasPhotos ? f : { ...f, n: ++counter })),
+      frames: g.frames.map((f) => ({ ...f, n: ++counter })),
     }));
 
   return (

@@ -26,10 +26,12 @@ required, or dev tools are skipped.
 | Photos (see naming guide) | `public/photos/README.txt`, `public/photos/manifest.json` |
 | Domain, email, storage, calendar and payment keys | `.env.local` (copy from `.env.example`) |
 
-Photo rights: the current photos carry a "REsides 2025" watermark. Get the unwatermarked originals and written
-permission (or reshoot) before the site is public. Still needed: both bedrooms, both bathrooms, boardwalk/beach,
-indoor pool, building exterior. Google needs 8+ photos including a bedroom and a bathroom before the
-VacationRental structured data turns on.
+Photographs: the owner's own photographs (13) are in place in `public/photos`, with alt text,
+captions and slots in `manifest.json`: the cover (a heron on the boardwalk rail), living room, kitchen, dining,
+the second bedroom, one full bath, the indoor atrium, the boardwalk, Coco's on the Beach, fairways and the beach.
+With 8+ photos including a bedroom, a bathroom and a common area, the home page emits `VacationRental`
+structured data. Still needed: the primary bedroom (king) and its ensuite, the indoor pool itself, and the
+Building 3 exterior.
 
 ## Booking phases
 

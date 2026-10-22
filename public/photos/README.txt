@@ -10,8 +10,8 @@ FILE FORMAT
 - Long edge about 2400px, under 1.5MB each. The site resizes them for every screen.
 
 NAMING (the filename prefix decides where a photo appears)
-  cover-boardwalk.jpg       Cover of the home page (portrait 4:5). Marsh boardwalk, golden hour.
-  boardwalk-wide.jpg        Wide band in "To the beach" (very wide, about 21:9).
+  cover-boardwalk.jpg       Cover of the home page (portrait 3:4, shown whole). Boardwalk or marsh.
+  boardwalk-marsh.jpg       "To the beach" plate (portrait 3:4 or landscape 4:3, shown whole).
   marsh-detail.jpg          Also counts as boardwalk.
   beach.jpg                 The beach at the end of the boardwalk.
   living-wide.jpg           Living area. Any file starting with "living" works.
@@ -21,7 +21,7 @@ NAMING (the filename prefix decides where a photo appears)
   bedroom-two.jpg           Second bedroom (queen and full).
   bath-ensuite.jpg          Bathrooms. Any file starting with "bath" works.
   linen-detail.jpg          Details. beach-gear.jpg is also treated as a detail.
-  resort-indoor-pool.jpg    Indoor pool atrium (used beside "In brief" on the home page).
+  resort-indoor-pool.jpg    Indoor pool atrium (beside Guest privileges on the home page).
   resort-outdoor-pool.jpg   Other resort shots: any file starting with "resort", "pool",
                             "tennis", "courts" or "fitness".
   building-3.jpg            Building exterior.

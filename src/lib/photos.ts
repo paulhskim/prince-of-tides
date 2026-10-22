@@ -41,6 +41,9 @@ export type Photo = {
   slot: PhotoSlot;
   group: PhotoGroup;
   order: number;
+  /** Pixel size read from the file header (JPEG or PNG); undefined when it cannot be read. */
+  width?: number;
+  height?: number;
 };
 
 type ManifestEntry = {
@@ -53,7 +56,7 @@ type ManifestEntry = {
 
 /** What each slot is meant to show. Used for placeholder labels and grouping. */
 export const SLOTS: Record<PhotoSlot, { shot: string; group: PhotoGroup }> = {
-  hero: { shot: "the marsh boardwalk at golden hour, looking toward the beach", group: "beach" },
+  hero: { shot: "the cover: a heron on the boardwalk rail over the salt marsh", group: "beach" },
   living: { shot: "living area, wide from the entry, with the dining table", group: "residence" },
   kitchen: { shot: "kitchen, the full run of appliances", group: "residence" },
   dining: { shot: "dining table set for four, natural light", group: "residence" },
@@ -128,6 +131,40 @@ function readManifest(): ManifestEntry[] {
   }
 }
 
+/** Width and height from a JPEG (SOFn marker) or PNG (IHDR) header, without decoding the image. */
+function readSize(file: string): { width: number; height: number } | undefined {
+  let buf: Buffer;
+  try {
+    buf = fs.readFileSync(path.join(PHOTO_DIR, file));
+  } catch {
+    return undefined;
+  }
+  if (buf.length > 24 && buf.readUInt32BE(0) === 0x89504e47) {
+    return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+  }
+  if (buf[0] !== 0xff || buf[1] !== 0xd8) return undefined;
+  let i = 2;
+  while (i + 9 < buf.length) {
+    if (buf[i] !== 0xff) {
+      i++;
+      continue;
+    }
+    const marker = buf[i + 1];
+    const len = buf.readUInt16BE(i + 2);
+    // SOF0 to SOF15, except DHT (C4), JPG (C8) and DAC (CC).
+    if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+      return { height: buf.readUInt16BE(i + 5), width: buf.readUInt16BE(i + 7) };
+    }
+    i += 2 + len;
+  }
+  return undefined;
+}
+
+/** True when a photograph is taller than it is wide. */
+export function isPortrait(photo: Pick<Photo, "width" | "height">): boolean {
+  return !!photo.width && !!photo.height && photo.height > photo.width;
+}
+
 let cache: Photo[] | null = null;
 
 /** All owner photographs, sorted by manifest order then filename. */
@@ -148,7 +185,9 @@ export function getPhotos(): Photo[] {
     const m = manifest.get(file);
     const slot = isSlot(m?.slot) ? m.slot : inferSlot(file);
     const alt = m?.alt?.trim() || altFromFilename(file);
+    const size = readSize(file);
     return {
+      ...size,
       src: `/photos/${encodeURIComponent(file)}`,
       file,
       alt,

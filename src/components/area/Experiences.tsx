@@ -1,4 +1,6 @@
 import { CreditedPhoto } from "./CreditedPhoto";
+import { OwnerFigure } from "@/components/site/OwnerFigure";
+import { getPhotos } from "@/lib/photos";
 import { roman, smart } from "@/components/site/text";
 import { areaPhoto } from "@/lib/area-photos";
 import type { Experience } from "@/content/experiences";
@@ -50,15 +52,18 @@ function Text({ e, n }: { e: Experience; n: number }) {
  * paired side by side at the end, as a quieter coda.
  */
 export function Experiences({ items }: { items: Experience[] }) {
-  const withPhoto = items.filter((e) => e.photoId);
-  const textOnly = items.filter((e) => !e.photoId);
+  const owned = new Set(getPhotos().map((p) => p.file));
+  const hasOwner = (e: Experience) => !!e.ownerPhoto && owned.has(e.ownerPhoto);
+  const withPhoto = items.filter((e) => e.photoId || hasOwner(e));
+  const textOnly = items.filter((e) => !e.photoId && !hasOwner(e));
 
   return (
     <div>
       <ol className="space-y-[clamp(4rem,2.5rem+5vw,8rem)]">
         {withPhoto.map((e, i) => {
-          const photo = areaPhoto(e.photoId!);
-          const tall = photo.height > photo.width;
+          const own = hasOwner(e) ? getPhotos().find((p) => p.file === e.ownerPhoto) : undefined;
+          const size = own ? { width: own.width ?? 4, height: own.height ?? 3 } : areaPhoto(e.photoId!);
+          const tall = size.height > size.width;
           const flip = i % 2 === 1;
           const photoCols = tall
             ? `lg:col-span-4 ${flip ? "lg:col-start-8" : "lg:col-start-2"}`
@@ -73,10 +78,17 @@ export function Experiences({ items }: { items: Experience[] }) {
               className="grid grid-cols-4 gap-x-col gap-y-8 md:grid-cols-8 lg:grid-cols-12 lg:items-center"
             >
               <div className={`col-span-4 md:col-span-8 lg:row-start-1 ${tall ? "max-w-sm lg:max-w-none" : ""} ${photoCols}`}>
-                <CreditedPhoto
-                  id={e.photoId!}
-                  sizes={tall ? "(min-width:1280px) 400px, (min-width:1024px) 32vw, 100vw" : "(min-width:1280px) 720px, (min-width:1024px) 57vw, 100vw"}
-                />
+                {own ? (
+                  <OwnerFigure
+                    file={own.file}
+                    sizes={tall ? "(min-width:1280px) 400px, (min-width:1024px) 32vw, 100vw" : "(min-width:1280px) 720px, (min-width:1024px) 57vw, 100vw"}
+                  />
+                ) : (
+                  <CreditedPhoto
+                    id={e.photoId!}
+                    sizes={tall ? "(min-width:1280px) 400px, (min-width:1024px) 32vw, 100vw" : "(min-width:1280px) 720px, (min-width:1024px) 57vw, 100vw"}
+                  />
+                )}
               </div>
               <div className={`col-span-4 md:col-span-6 lg:row-start-1 ${textCols}`}>
                 <Text e={e} n={i + 1} />

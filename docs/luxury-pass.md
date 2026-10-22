@@ -12,8 +12,8 @@ confidence, warmth and finish: it reads as a carefully kept document, not as arr
 2. **One temperature throughout.** Cool mineral grey paper, grey stone, a green-grey dark band. Every surface
    sits within a narrow cool range, so the page has no rhythm of light and dark and feels clinical.
 3. **Photographs treated as thumbnails.** Small, cropped to 4:5 and 3:4 in a collage, beside and below
-   dense text. Luxury publications give a picture a page. (Cropping also cut into the frames; all six owner
-   photographs are 3:2 and will now be shown whole, at their native ratio, with nothing laid over them.)
+   dense text. Luxury publications give a picture a page. (Cropping also cut into the frames; owner
+   photographs are now shown whole, at their native ratio, with nothing laid over them.)
 4. **Apparatus typography is plain.** Labels, running heads, table heads and buttons are all 12 to 13px
    sentence-case grotesk. There is no letterspaced, small-capital layer, which is what gives print its finish.
 5. **The display setting has no voice.** "Prince of Tides" is set well but neutrally; nothing in the type

@@ -52,9 +52,9 @@ function BedSchematic({ room }: { room: SleepingRoom }) {
   );
 }
 
-function BedroomPlate({ room, n }: { room: SleepingRoom; n: number }) {
+function BedroomPlate({ room, n, photo, className = "" }: { room: SleepingRoom; n: number; photo?: PhotoType; className?: string }) {
   return (
-    <article aria-labelledby={`room-${room.id}`} className="flex flex-col border-t border-ink pt-5">
+    <article aria-labelledby={`room-${room.id}`} className={`flex flex-col border-t border-ink pt-5 ${className}`}>
       <p className="smallcaps flex items-baseline justify-between text-ink-muted">
         <span>Bedroom {n}</span>
         <span className="font-serif text-small normal-case italic tracking-normal">
@@ -95,6 +95,14 @@ function BedroomPlate({ room, n }: { room: SleepingRoom; n: number }) {
           <dd className="font-serif text-body italic">{room.suits}</dd>
         </div>
       </dl>
+
+      {/* The owner's photograph of the room, where one exists. Without one the schematic stands alone: no empty frame. */}
+      {photo ? (
+        <figure data-reveal="room" className="mt-8">
+          <Photo photo={photo} slot={photo.slot} ratio="native" sizes="(min-width:1280px) 560px, (min-width:1024px) 45vw, 100vw" />
+          <figcaption className="mt-2 font-serif text-caption italic text-ink-muted">{photo.caption}</figcaption>
+        </figure>
+      ) : null}
     </article>
   );
 }
@@ -116,11 +124,13 @@ function CommonRoom({
 }) {
   return (
     <figure data-reveal="room" className={className}>
-      {photo ? <Photo photo={photo} slot={photo.slot} ratio="3/2" sizes={sizes} /> : null}
+      {photo ? <Photo photo={photo} slot={photo.slot} ratio="native" sizes={sizes} /> : null}
       <figcaption className={photo ? "mt-4" : ""}>
         <span className="flex flex-wrap items-baseline justify-between gap-x-4 border-b border-ink pb-2">
           <span className="font-serif text-h3 font-light">{name}</span>
-          {photo ? <span className="font-serif text-caption italic text-ink-muted">{photo.caption}</span> : null}
+          {photo && photo.caption.toLowerCase() !== name.toLowerCase() ? (
+            <span className="font-serif text-caption italic text-ink-muted">{photo.caption}</span>
+          ) : null}
         </span>
         <span className="mt-3 block max-w-[34rem] font-serif text-body leading-relaxed oldstyle">{smart(body)}</span>
         <span className="mt-2 block text-small text-ink-muted">{details.join(", ")}</span>
@@ -130,10 +140,41 @@ function CommonRoom({
 }
 
 /**
+ * The two full baths, set as a short note with the owner's photograph of one of them. Which bath the
+ * photograph shows is not recorded, so the caption says only that it is one of the two.
+ */
+function Baths({ photo, className = "" }: { photo?: PhotoType; className?: string }) {
+  return (
+    <article aria-labelledby="room-baths" className={`border-t border-ink pt-5 ${className}`}>
+      <p className="smallcaps flex items-baseline justify-between text-ink-muted">
+        <span>The baths</span>
+        <span className="font-serif text-small normal-case italic tracking-normal">
+          <span className="tabular not-italic">2</span> full
+        </span>
+      </p>
+      <h3 id="room-baths" className="mt-3 font-serif text-[clamp(1.5rem,1.3rem+0.8vw,2rem)] font-light leading-[1.05] tracking-[-0.02em]">
+        Two full baths
+      </h3>
+      <p className="mt-3 max-w-[30rem] font-serif text-body leading-relaxed oldstyle">
+        Each has a single vanity and a shower over the tub. One is the primary bedroom&rsquo;s ensuite; the other is the hall bath, used by the
+        second bedroom.
+      </p>
+      {photo ? (
+        <figure data-reveal="room" className="mt-6 sm:w-5/6">
+          <Photo photo={photo} slot={photo.slot} ratio="native" sizes="(min-width:1280px) 460px, (min-width:1024px) 38vw, (min-width:640px) 83vw, 100vw" />
+          <figcaption className="mt-2 font-serif text-caption italic text-ink-muted">{photo.caption}, one of the two</figcaption>
+        </figure>
+      ) : null}
+    </article>
+  );
+}
+
+/**
  * II. The rooms. First the sleeping arrangements, unmistakably: each bedroom with its beds drawn in
- * proportion, who sleeps there, which bath it uses and who it suits. Then the common rooms, with the
- * owner photographs where they exist (bedroom photographs are not yet made, so the schematic stands in
- * rather than an empty frame).
+ * proportion, who sleeps there, which bath it uses and who it suits, with the owner's photograph
+ * where one exists (the second bedroom and one bath so far; the primary bedroom has none yet, so its
+ * schematic stands alone rather than beside an empty frame). Then the common rooms, each photograph
+ * shown whole at its own 4:3.
  */
 export function Rooms() {
   const { numeral, title } = splitHeading(sleeping.heading);
@@ -144,6 +185,11 @@ export function Rooms() {
   const livingPhoto = pick("living-room.jpg", "living");
   const kitchenPhoto = pick("kitchen-appliances.jpg", "kitchen");
   const diningPhoto = pick("dining-kitchen.jpg", "dining");
+  const roomPhotos: Record<string, PhotoType | undefined> = {
+    primary: photos.find((p) => p.slot === "bedroom1"),
+    second: photos.find((p) => p.slot === "bedroom2"),
+  };
+  const bathPhoto = photos.find((p) => p.slot === "bath");
   const totalBeds = sleeping.rooms.reduce((n, r) => n + r.beds.length, 0);
 
   return (
@@ -174,10 +220,22 @@ export function Rooms() {
           ))}
         </dl>
 
-        <div className="col-span-4 mt-6 grid gap-x-[clamp(1.5rem,0.5rem+4vw,5rem)] gap-y-14 md:col-span-8 lg:col-span-12 lg:grid-cols-2">
+        {/*
+          lg: the two bedrooms side by side, so the schematics and ledgers align and compare; the second
+          bedroom's photograph hangs below its ledger, and the baths take the space below the first.
+          Below lg they read in order: bedroom, bedroom, baths.
+        */}
+        <div className="col-span-4 mt-6 grid gap-x-[clamp(1.5rem,0.5rem+4vw,5rem)] gap-y-14 md:col-span-8 lg:col-span-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
           {sleeping.rooms.map((room, i) => (
-            <BedroomPlate key={room.id} room={room} n={i + 1} />
+            <BedroomPlate
+              key={room.id}
+              room={room}
+              n={i + 1}
+              photo={roomPhotos[room.id]}
+              className={i === 0 ? "lg:col-start-1 lg:row-start-1" : "lg:col-start-2 lg:row-span-2 lg:row-start-1"}
+            />
           ))}
+          <Baths photo={bathPhoto} className="lg:col-start-1 lg:row-start-2 lg:self-start" />
         </div>
         <ul className="col-span-4 mt-2 flex flex-wrap gap-x-8 gap-y-1 text-caption text-ink-muted md:col-span-8 lg:col-span-12">
           {sleeping.notes.map((n) => (
@@ -212,8 +270,8 @@ export function Rooms() {
         <CommonRoom
           name="The dining table"
           photo={diningPhoto}
-          body="A white table with four chairs and a bench, under a small chandelier. Somewhere to sit down properly after the kitchen has done its work."
-          details={["Four chairs and a bench"]}
+          body="A white table with four chairs, under a small chandelier. Somewhere to sit down properly after the kitchen has done its work."
+          details={["Table with four chairs"]}
           className="col-span-4 mt-6 md:col-span-6 lg:col-span-5 lg:col-start-2 lg:mt-10"
           sizes="(min-width:1280px) 520px, (min-width:1024px) 40vw, 100vw"
         />

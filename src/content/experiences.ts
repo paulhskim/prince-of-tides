@@ -41,6 +41,11 @@ export interface Experience {
   /** Two to three sentences. */
   body: string;
   photoId?: AreaPhotoId;
+  /**
+   * An owner photograph (a file in public/photos) used instead of an area photograph when the owner
+   * has photographed the same subject at the resort. Shown with its manifest caption, never a credit.
+   */
+  ownerPhoto?: string;
   /** The real place name. */
   place: string;
   /** Approx. drive from the resort gate, from area-guide data. null when on foot or not measured. */
@@ -85,11 +90,11 @@ export const experiences: Experience[] = [
   },
   {
     id: "beach-evening",
-    title: "The beach, toward evening",
+    title: "The beach, early or late",
     kicker: "By the boardwalk",
     body:
-      "Take the resort's raised boardwalk over the salt marsh, 0.8 to 1.1 miles, with two chairs from your locker. Late in the day the sand cools and the light runs long across the water line. Coco's on the Beach is at the end of the walk, for something cold.",
-    photoId: "hilton-head-beach-sunset",
+      "Take the resort's raised boardwalk over the salt marsh, 0.8 to 1.1 miles, with two chairs from your locker. Early, at low tide, the sand runs wide and pale; late in the day it cools and the light runs long across the water line. Coco's on the Beach is at the end of the walk, for something cold.",
+    ownerPhoto: "beach-morning.jpg",
     place: "The beach at the end of the Hilton Head Resort boardwalk",
     approxDriveMinutes: null,
     access: "On foot by the marsh boardwalk, or the seasonal resort shuttle",

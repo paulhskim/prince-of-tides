@@ -26,6 +26,7 @@ import { serializeJsonLd } from "@/components/seo/JsonLd";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 import manifest from "@/app/manifest";
+import { getPhotos } from "@/lib/photos";
 
 const PAGES = Object.keys(seo.pages) as PageKey[];
 const EM_DASH = String.fromCharCode(0x2014);
@@ -158,6 +159,17 @@ test("VacationRental has Google's required fields", () => {
   assert.ok(s.containsPlace.amenityFeature.length > 10);
   assert.equal(s.address.streetAddress, "663 William Hilton Parkway");
   assert.equal(s.checkinTime, "16:00:00");
+});
+
+test("the owner photographs in public/photos qualify: the home page emits VacationRental", () => {
+  const photos = getPhotos();
+  assert.ok(photos.length >= 8, `only ${photos.length} owner photographs`);
+  const s = propertySchema(photos) as Record<string, any>;
+  assert.equal(s["@type"], "VacationRental");
+  assert.equal(s.image.length, photos.filter((p) => p.slot !== "host").length);
+  assert.ok(s.image.every((u: string) => u.startsWith("http") && u.includes("/photos/")));
+  const out = serializeJsonLd(s);
+  assert.ok(!out.includes(UNIT) && !out.includes(EM_DASH));
 });
 
 test("LodgingBusiness lite has the fields from docs/seo.md 4.3", () => {
