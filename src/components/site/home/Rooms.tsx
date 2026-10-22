@@ -141,9 +141,9 @@ export function Rooms() {
   const pick = (file: string, slot: PhotoType["slot"]) => photos.find((p) => p.file === file) ?? photos.find((p) => p.slot === slot);
   const living = theSpace.rooms.find((r) => r.name === "Living");
   const kitchen = theSpace.rooms.find((r) => r.name.startsWith("Kitchen"));
-  const livingPhoto = pick("living-lounge.jpg", "living");
-  const kitchenPhoto = pick("kitchen.jpg", "kitchen");
-  const diningPhoto = pick("dining.jpg", "dining");
+  const livingPhoto = pick("living-room.jpg", "living");
+  const kitchenPhoto = pick("kitchen-appliances.jpg", "kitchen");
+  const diningPhoto = pick("dining-kitchen.jpg", "dining");
   const totalBeds = sleeping.rooms.reduce((n, r) => n + r.beds.length, 0);
 
   return (

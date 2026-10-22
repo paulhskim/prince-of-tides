@@ -1,44 +1,41 @@
 [
-  {
-    "file": "living-wide.jpg",
-    "alt": "Living room with a grey sectional and tufted ottoman, the dining table and chandelier beyond, tiled floors throughout",
-    "caption": "The living room, with the dining table beyond",
-    "slot": "living",
-    "order": 1
-  },
-  {
-    "file": "dining.jpg",
-    "alt": "White dining table with four chairs and a bench under a small chandelier, with the hall to the bedrooms on the right",
-    "caption": "The dining table",
-    "slot": "dining",
-    "order": 2
-  },
-  {
-    "file": "kitchen.jpg",
-    "alt": "Kitchen with white cabinets, stainless steel refrigerator, range, microwave and dishwasher, and a coffee maker on the counter",
-    "caption": "The kitchen, fully equipped",
-    "slot": "kitchen",
-    "order": 3
-  },
-  {
-    "file": "living-lounge.jpg",
-    "alt": "Sectional sofa facing a television on a black media stand, with a floor lamp and armchair by the window",
-    "caption": "The sitting area",
-    "slot": "living",
-    "order": 4
-  },
-  {
-    "file": "living-entry.jpg",
-    "alt": "The living room seen from the front door, with the hall to the bathroom and bedrooms",
-    "caption": "Arriving through the front door",
-    "slot": "living",
-    "order": 5
-  },
-  {
-    "file": "living-corner.jpg",
-    "alt": "Corner of the living room with the sectional, television and front door",
-    "caption": "The sitting area, toward the front door",
-    "slot": "living",
-    "order": 6
-  }
+  { "file": "cover-boardwalk-heron.jpg", "slot": "hero", "order": 1,
+    "alt": "A heron standing on the railing of a wooden boardwalk over golden salt marsh grass, trees and a blue sky beyond",
+    "caption": "A heron on the boardwalk rail, over the salt marsh" },
+  { "file": "living-room.jpg", "slot": "living", "order": 2,
+    "alt": "Living room with a grey sectional sofa, tufted ottoman, shag rug, turquoise side table with a lamp, and a television on a black stand",
+    "caption": "The living room" },
+  { "file": "dining-kitchen.jpg", "slot": "dining", "order": 3,
+    "alt": "Dining table with four white chairs under a chandelier, the open kitchen with white cabinets and stainless appliances behind",
+    "caption": "The dining table and the kitchen beyond" },
+  { "file": "kitchen-appliances.jpg", "slot": "kitchen", "order": 4,
+    "alt": "Kitchen with white cabinets, a stainless side-by-side refrigerator, range, microwave and dishwasher, on tiled floors",
+    "caption": "The kitchen" },
+  { "file": "kitchen-corner.jpg", "slot": "kitchen", "order": 5,
+    "alt": "Corner of the kitchen with a drip coffee maker and a pod coffee maker on the counter, white cabinets and a wine rack",
+    "caption": "Two coffee makers, and room to cook" },
+  { "file": "bedroom-two.jpg", "slot": "bedroom2", "order": 6,
+    "alt": "Second bedroom with two beds in navy and white floral duvets, navy pillows, a nightstand lamp between them and a window with blinds",
+    "caption": "The second bedroom, a queen and a full" },
+  { "file": "bath-hall.jpg", "slot": "bath", "order": 7,
+    "alt": "Bathroom with a patterned shower curtain over the tub, a white toilet, and a vanity with a granite top and mirror",
+    "caption": "A full bath, shower over tub" },
+  { "file": "atrium-water.jpg", "slot": "pool", "order": 8,
+    "alt": "A lit water feature with a small waterfall curving through artificial turf inside the resort's indoor atrium at night",
+    "caption": "The indoor atrium, in the evening" },
+  { "file": "boardwalk-marsh.jpg", "slot": "boardwalk", "order": 9,
+    "alt": "A long wooden boardwalk with pale railings running straight across green salt marsh toward a row of beach houses",
+    "caption": "The boardwalk across the salt marsh" },
+  { "file": "resort-cocos.jpg", "slot": "resort", "order": 10,
+    "alt": "Coco's on the Beach, a raised wooden beach bar with colorful posts, beside a windswept tree and a signpost in the sand",
+    "caption": "Coco's on the Beach, at the end of the boardwalk" },
+  { "file": "resort-fairways.jpg", "slot": "resort", "order": 11,
+    "alt": "Tall palms in front of a green fairway with sand bunkers, under a bright winter sun, with a sandy rest area and pergola in the foreground",
+    "caption": "Palms and fairways near the beach" },
+  { "file": "beach-dunes.jpg", "slot": "beach", "order": 12,
+    "alt": "A single palmetto on a sand dune with sea oats, a wide sandy beach in front and pine trees in the distance",
+    "caption": "Dunes and a palmetto, morning" },
+  { "file": "beach-morning.jpg", "slot": "beach", "order": 13,
+    "alt": "A quiet beach at low tide under layered blue-grey clouds with a band of pale light at the horizon",
+    "caption": "The beach at low tide, early" }
 ]
